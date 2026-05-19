@@ -83,3 +83,15 @@ Requires [Vercel CLI](https://vercel.com/docs/cli): `npm i -g vercel`
 | Repo | Description |
 |---|---|
 | [feasibility-agent](https://github.com/KeenanHusselmannX4O/feasibility-agent) | Python backend powering the Feasibility Cost Estimator |
+
+---
+
+## Monitoring
+
+The Feasibility API is monitored by a Claude Code scheduled routine that runs daily at **06:00 WAT**:
+
+- Hits `/health` + all 4 golden scenarios against the live Railway API
+- Emails a PASS/FAIL accuracy report to the team
+- Flags any result outside the ASAQS ±25% band with the failing accuracy layer
+
+Manage the routine: [claude.ai/code/routines/trig_01KVdVZyu92oWPLnBTmdVG9J](https://claude.ai/code/routines/trig_01KVdVZyu92oWPLnBTmdVG9J)
