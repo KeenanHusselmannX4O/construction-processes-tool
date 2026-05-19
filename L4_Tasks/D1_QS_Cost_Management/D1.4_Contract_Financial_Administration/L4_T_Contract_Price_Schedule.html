@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>L4 — Tasks: Contract Price Schedule Setup</title>
+    <style>
+        :root{--navy-950:#0a0f1e;--navy-900:#0f172a;--navy-800:#1e293b;--navy-700:#334155;--navy-600:#475569;--slate-400:#94a3b8;--slate-300:#cbd5e1;--white:#f8fafc;--accent:#3b82f6;--accent-light:#60a5fa}
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:var(--navy-950);color:var(--slate-300);line-height:1.7;font-size:12px}
+        @page{size:A4;margin:15mm}.page{max-width:210mm;margin:0 auto;padding:32px 40px;background:var(--navy-900)}
+        .doc-header{border-bottom:3px solid var(--accent);padding-bottom:18px;margin-bottom:24px}
+        .doc-header .level-badge{display:inline-block;padding:3px 12px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:rgba(59,130,246,.15);color:var(--accent-light);margin-bottom:6px}
+        .doc-header h1{font-size:22px;font-weight:800;color:var(--white);margin-bottom:4px}
+        .doc-header .subtitle{font-size:13px;color:var(--slate-400)}
+        .doc-header .meta{display:flex;gap:20px;margin-top:10px;font-size:10px;color:var(--slate-400)}
+        h2{font-size:16px;font-weight:700;color:var(--white);margin:24px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--navy-700)}
+        h3{font-size:13px;font-weight:600;color:var(--accent-light);margin:16px 0 6px}
+        p{margin-bottom:10px}
+        .nav-bar{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
+        .nav-link{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:6px;font-size:10px;font-weight:600;text-decoration:none;border:1px solid var(--navy-700);color:var(--slate-300);background:var(--navy-800);transition:all .2s}
+        .nav-link:hover{border-color:var(--accent);color:var(--accent-light)}
+        .nav-link.active{border-color:var(--accent);color:var(--accent-light);background:rgba(59,130,246,.1)}
+        .nav-link .arrow{font-size:12px}
+        table{width:100%;border-collapse:collapse;margin:10px 0;font-size:11px}
+        thead th{background:var(--navy-800);color:var(--accent-light);font-weight:600;text-align:left;padding:7px 10px;border-bottom:2px solid var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+        tbody td{padding:7px 10px;border-bottom:1px solid var(--navy-700);vertical-align:top}
+        ul{margin:4px 0 8px 14px;font-size:11px}li{margin-bottom:3px}
+        .task-block{background:var(--navy-800);border:1px solid var(--navy-700);border-left:3px solid var(--accent);border-radius:8px;padding:14px;margin:10px 0}
+        .task-block .task-id{font-size:9px;font-weight:700;color:var(--accent-light);letter-spacing:1px;margin-bottom:3px}
+        .task-block h4{font-size:12px;font-weight:700;color:var(--white);margin-bottom:6px}
+        .task-block .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10px}
+        .task-block .detail-label{font-weight:600;color:var(--accent-light);font-size:9px;text-transform:uppercase;letter-spacing:.5px}
+        .task-block .detail-value{color:var(--slate-300)}
+        .check{color:#34d399;font-weight:600}
+        .doc-footer{margin-top:28px;padding-top:10px;border-top:1px solid var(--navy-700);font-size:9px;color:var(--navy-600);display:flex;justify-content:space-between}
+    </style>
+    <style id="pro-override">
+        :root{
+            --navy-950:#f0f0f0;--navy-900:#ffffff;--navy-800:#f5f5f5;
+            --navy-700:#d4d4d4;--navy-600:#888;
+            --slate-400:#666;--slate-300:#333;--white:#1c1c1c;
+            --blue-500:#555;--blue-400:#555;
+            --accent:#555;--accent-light:#555;
+            --amber-500:#888;--amber-400:#aaa;
+            --green-500:#666;--green-400:#888;
+            --cyan-500:#777;--cyan-400:#999;
+            --purple-500:#666;--purple-400:#888;
+            --rose-500:#777;--rose-400:#999;
+            --teal-500:#666;--teal-400:#888;
+            --red-500:#666;--orange-500:#777;--orange-400:#999;
+            --violet-500:#666;--violet-400:#888
+        }
+        body{font-family:'Segoe UI',Arial,sans-serif!important;background:#f0f0f0!important;color:#333!important}
+        .page{background:#fff!important;border:1px solid #d4d4d4;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+        .doc-header{border-bottom:1px solid #d4d4d4!important}
+        .level-badge{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc}
+        .doc-header h1{color:#1c1c1c!important;font-weight:700!important}
+        .doc-header .subtitle{color:#555!important}
+        .doc-header .meta{color:#888!important}
+        h2{color:#1c1c1c!important;border-bottom:1px solid #d4d4d4!important;font-weight:700!important}
+        h3{color:#444!important}
+        h4{color:#333!important}
+        p{color:#444}
+        .nav-bar{gap:6px}
+        .nav-link{background:#f5f5f5!important;border:1px solid #d0d0d0!important;color:#444!important;border-radius:3px!important}
+        .nav-link:hover{border-color:#888!important;color:#1c1c1c!important;background:#ebebeb!important}
+        .nav-link.active{border-color:#888!important;color:#1c1c1c!important;background:#e4e4e4!important;font-weight:600!important}
+        table{border:1px solid #e0e0e0}
+        thead th{background:#f0f0f0!important;color:#333!important;border-bottom:2px solid #d4d4d4!important;font-weight:700!important}
+        tbody td{border-bottom:1px solid #ebebeb!important;color:#444!important}
+        tbody tr:hover td{background:#fafafa}
+        .card,.phase-card,.domain-card,.info-card,.process-card,.step-card,.task-card{background:#f8f8f8!important;border:1px solid #d4d4d4!important}
+        .card h4{color:#333!important;text-transform:none!important}
+        .phase-card .phase-num{color:#666!important}
+        .phase-card h4{color:#1c1c1c!important}
+        .phase-card p{color:#555!important}
+        .phase-card.p1,.phase-card.p2,.phase-card.p3,.phase-card.p4,.phase-card.p5,.phase-card.p6,.phase-card.p7{border-top:2px solid #bbb!important}
+        .domain-card .domain-icon,.d1,.d2,.d3,.d4,.d5,.d6,.d7,.d8{background:#e8e8e8!important;color:#444!important}
+        .domain-card .domain-info h4{color:#1c1c1c!important}
+        .domain-card .domain-info .pa-count{color:#666!important}
+        .domain-card .domain-info .link{color:#444!important}
+        .domain-card:hover{border-color:#888!important}
+        .callout{background:#f5f5f5!important;border-left:3px solid #888!important;color:#444!important}
+        .callout strong{color:#333!important}
+        .doc-footer{border-top:1px solid #e4e4e4!important;color:#aaa!important}
+        .mermaid{background:#fff!important}
+        a{color:#333}
+        a:hover{color:#000}
+        code{background:#efefef!important;color:#333!important;border:1px solid #ddd}
+        li{color:#444}
+        .pa-card,.process-area-card{background:#f8f8f8!important;border-color:#d4d4d4!important}
+        .badge,.tag,.label{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc!important}
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="doc-header">
+        <div class="level-badge">Level 4 — Tasks</div>
+        <h1>Tasks: Contract Price Schedule Setup</h1>
+        <div class="subtitle">L0 → L1: D1 QS → L2: D1.4 Contract Financial Admin → L3: Contract Price Schedule → <strong>L4: Tasks</strong></div>
+        <div class="meta"><span>Task Set: D1.4-SP-001-T</span><span>BPMN Level: 4</span><span>7 Tasks</span><span>Version 2.0</span><span>April 2026</span></div>
+    </div>
+
+    <div class="nav-bar">
+        <a class="nav-link" href="../../../L3_Sub_Processes/D1_QS_Cost_Management/D1.4_Contract_Financial_Administration/SP_Contract_Price_Schedule.html"><span class="arrow">↑</span> L3 Contract Price Schedule</a>
+        <span class="nav-link active"><span class="arrow">●</span> L4 Tasks</span>
+    </div>
+
+    <h2>1. Task Overview</h2>
+    <p>This task set expands the Contract Price Schedule Setup sub-process into granular work instructions. Each task captures the accepted tender amount, agrees the contract sum breakdown by BoQ section, records CPA baseline indices, documents provisional sum and prime cost allocations, establishes retention parameters, builds the master financial tracking register, and obtains formal sign-off. These tasks form the financial foundation upon which all subsequent construction-phase financial administration is built.</p>
+
+    <h2>2. Detailed Task Breakdown</h2>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.1-01</div>
+        <h4>Record Accepted Tender Sum &amp; Negotiated Adjustments</h4>
+        <p>Capture the accepted tender figure from the letter of acceptance. Cross-reference any negotiated savings, qualifications, or scope adjustments agreed during post-tender negotiations. Record the final agreed contract sum in the contract administration register.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 working day from letter of acceptance</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Letter of acceptance; post-tender negotiation minutes; tender adjudication report</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Agreed contract sum recorded; adjustment schedule filed</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Contract register template; platform contract module</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC clause 25 (Contract Sum); NEC clause 50</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Open the letter of acceptance and verify the accepted tender figure matches the tender adjudication recommendation</li>
+            <li>Reconcile any post-tender negotiation adjustments (e.g., value engineering savings, programme reductions) against the original tender price</li>
+            <li>Document every adjustment with a line-item reference showing original amount → adjusted amount → reason</li>
+            <li>Record the final agreed contract sum (excl. VAT and incl. VAT) in the contract register</li>
+            <li class="check">✓ Quality Check: Contract sum reconciles to tender total ± negotiated adjustments; documented approval from PA</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.1-02</div>
+        <h4>Agree Contract Sum Breakdown by BoQ Section</h4>
+        <p>Work with the contractor QS to agree the breakdown of the contract sum by BoQ section. This forms the basis for monthly valuations and progress tracking. Each section total must reconcile to the overall contract sum.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS + Contractor QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">2–3 working days</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Priced BoQ; contract sum from Task 1.4.1-01</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Signed section-by-section breakdown schedule</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">BoQ pricing software; breakdown template spreadsheet</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">ASAQS Standard System of Measuring; SACQSP guidelines</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Extract section totals from the priced BoQ (Preliminaries, Substructure, Superstructure, Finishes, etc.)</li>
+            <li>Schedule a meeting with the contractor QS to agree the breakdown — confirm each section total and any lump-sum items</li>
+            <li>Ensure the sum of all section totals equals the agreed contract sum from Task 1.4.1-01 (zero variance)</li>
+            <li>Identify sections with Provisional Sums and PC items — mark these for separate tracking</li>
+            <li>Both parties sign the agreed breakdown schedule; file as an annexure to the contract documentation</li>
+            <li class="check">✓ Quality Check: Section totals sum to contract sum; both QS parties have signed; lump-sum items clearly identified</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.1-03</div>
+        <h4>Record CPA Baseline Indices</h4>
+        <p>Record the Contract Price Adjustment baseline indices at the base month (month preceding tender closing date). These indices are the reference point for all future CPA calculations throughout the contract. Sources include BER Building Cost Index and Stats SA PPI data.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">0.5 working day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">BER Building Cost Index publication; Stats SA PPI (steel, fuel, electrical); tender closing date</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">CPA baseline record with all index values and source references</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">BER subscription portal; Stats SA website; CPA baseline template</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC CPA provisions; BER methodology</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Identify the base month — this is the calendar month immediately preceding the tender closing date</li>
+            <li>Retrieve the BER Building Cost Index value for the base month from the BER publication or subscription service</li>
+            <li>Retrieve Stats SA PPI indices for steel (SIC 2710), fuel, and electrical materials for the same base month</li>
+            <li>Record all index values with their publication reference numbers and dates in the CPA baseline template</li>
+            <li>Cross-reference the contract CPA clause to confirm which indices apply (some contracts use BER only; others use a weighted formula)</li>
+            <li class="check">✓ Quality Check: All indices match published source values; base month correctly identified relative to tender closing</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.1-04</div>
+        <h4>Document Provisional Sum &amp; Prime Cost Allocations</h4>
+        <p>Extract all provisional sums and prime cost items from the BoQ. Classify each as Defined PS, Undefined PS, or PC item per JBCC definitions. Create the PS/PC register that will track expenditure throughout the contract.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 working day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Priced BoQ — PS and PC sections; contract conditions</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">PS/PC register with classifications, allowances, and responsible parties</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">PS/PC register template; BoQ extraction tool</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC PS clauses (Defined &amp; Undefined); GCC 2015 clause 49</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Extract every PS and PC line item from the priced BoQ — note item number, description, and allowance amount</li>
+            <li>Classify each item: Defined Provisional Sum (work described sufficiently), Undefined Provisional Sum (scope unknown), or Prime Cost item</li>
+            <li>Record the contractor's entitlements per classification: profit-only (Defined PS), full mark-up (Undefined PS), attendance (PC)</li>
+            <li>Identify the responsible design team member or nominated supplier for each item</li>
+            <li>Populate the PS/PC register with status columns: Not Instructed → Instructed → Quoted → Agreed → Expended</li>
+            <li>Calculate total PS/PC exposure and compare against contingency allowance</li>
+            <li class="check">✓ Quality Check: All BoQ PS/PC items captured; classifications align with contract conditions; register totals reconcile to BoQ</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.1-05</div>
+        <h4>Set Up Retention Parameters</h4>
+        <p>Configure retention deduction parameters as specified in the contract data. Record the retention percentage, retention limit, release triggers, and any guarantee substitution provisions per JBCC clause 32 or equivalent NEC/GCC clause.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">0.5 working day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Contract data (JBCC/NEC/GCC); signed contract agreement</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Retention schedule with parameters; retention tracking register</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Retention parameter template; financial register</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC clause 32; NEC clause 51.3 (option X16); GCC 2015 clause 44</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Extract retention parameters from the contract data: retention percentage (typically 5%), retention limit (typically 5% of contract sum)</li>
+            <li>Calculate the maximum retention amount: contract sum × retention limit percentage</li>
+            <li>Record release triggers: first moiety at practical completion (50%), second moiety at final completion (50%)</li>
+            <li>Note any special provisions: retention guarantee substitution allowed (Y/N), NHBRC requirements for housing projects</li>
+            <li>Set up the retention tracking register with columns for each certificate: certified value, retention deducted, cumulative retention, limit remaining</li>
+            <li class="check">✓ Quality Check: Retention % and limit match contract data; retention register calculates correctly; release triggers documented</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.1-06</div>
+        <h4>Establish Master Financial Tracking Register</h4>
+        <p>Create the comprehensive financial tracking register that consolidates all contract sum components into a single control document. This register is the QS's primary tool for tracking the financial status of the contract from commencement to final account.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 working day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">All outputs from Tasks 1.4.1-01 to 1.4.1-05</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Master financial register with all sections linked and baselined</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Financial register template; platform contract finance module</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">SACQSP practice note on contract financial management</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Structure the register with the following sections: Contract Sum Summary, Section Breakdown, Variations Register, PS/PC Register, CPA Register, Retention Schedule, Payment Certificate Summary</li>
+            <li>Populate the Contract Sum Summary with: original tender sum, negotiated adjustments, agreed contract sum, contingency allowance</li>
+            <li>Link each section to source data: section breakdown from Task 1.4.1-02, CPA baseline from Task 1.4.1-03, PS/PC register from Task 1.4.1-04, retention parameters from Task 1.4.1-05</li>
+            <li>Set up formulae for automatic calculation of: adjusted contract sum (original + variations + CPA − contingency used), anticipated final account</li>
+            <li>Create a dashboard summary showing: original contract sum, approved variations to date, CPA to date, anticipated final account, % variance</li>
+            <li class="check">✓ Quality Check: All registers linked and reconciling; formulae tested with sample data; dashboard summary accurate</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.1-07</div>
+        <h4>Obtain PA &amp; Contractor Sign-Off on Contract Price Schedule</h4>
+        <p>Present the complete contract price schedule to the Principal Agent and Contractor for formal review and sign-off. This signed document forms the financial baseline against which all future adjustments, variations, and claims are measured.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Principal Agent + Contractor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">3–5 working days</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Complete contract price schedule; master financial register</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Signed contract price schedule; distribution confirmation</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Document management system; digital signature platform</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">Schedule reconciles to accepted tender; all components accurately recorded; PA and contractor agree on breakdown</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Compile the contract price schedule into a formal document with cover page, contents, and all component schedules</li>
+            <li>Issue to the Principal Agent for review — allow 2 working days for review and queries</li>
+            <li>Issue simultaneously to the Contractor QS for independent verification</li>
+            <li>Resolve any discrepancies raised by either party — amend the schedule if corrections are required</li>
+            <li>Obtain signatures from: QS (preparer), PA (approver), Contractor representative (acceptance)</li>
+            <li>Distribute signed copies: original to PA, copy to contractor, copy to employer, QS retains working copy</li>
+            <li class="check">✓ Quality Check: All three parties have signed; no unresolved queries; distribution register completed</li>
+        </ul>
+    </div>
+
+    <h2>3. Task Summary</h2>
+    <table>
+        <thead><tr><th>Task ID</th><th>Task Name</th><th>Role</th><th>SLA</th><th>Key Output</th></tr></thead>
+        <tbody>
+            <tr><td>1.4.1-01</td><td>Record Accepted Tender Sum</td><td>QS</td><td>1 day</td><td>Agreed contract sum</td></tr>
+            <tr><td>1.4.1-02</td><td>Agree Contract Sum Breakdown</td><td>QS + Contractor QS</td><td>2–3 days</td><td>Signed section breakdown</td></tr>
+            <tr><td>1.4.1-03</td><td>Record CPA Baseline Indices</td><td>QS</td><td>0.5 day</td><td>CPA baseline record</td></tr>
+            <tr><td>1.4.1-04</td><td>Document PS/PC Allocations</td><td>QS</td><td>1 day</td><td>PS/PC register</td></tr>
+            <tr><td>1.4.1-05</td><td>Set Up Retention Parameters</td><td>QS</td><td>0.5 day</td><td>Retention schedule</td></tr>
+            <tr><td>1.4.1-06</td><td>Establish Financial Register</td><td>QS</td><td>1 day</td><td>Master financial register</td></tr>
+            <tr><td>1.4.1-07</td><td>Obtain PA &amp; Contractor Sign-Off</td><td>PA + Contractor</td><td>3–5 days</td><td>Signed contract price schedule</td></tr>
+        </tbody>
+    </table>
+
+    <div class="doc-footer"><span>L4 Tasks — D1.4-SP-001 Contract Price Schedule v2.0</span><span>Confidential — Swift Designz</span></div>
+</div>
+    <script src="../../../nav.js"></script>
+</body>
+</html>

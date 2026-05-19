@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Construction Platform — BPMN Process Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+    <style>
+        /* ── Reset ─────────────────────────────────────────────────────── */
+        *{margin:0;padding:0;box-sizing:border-box}
+        /* ── Base ──────────────────────────────────────────────────────── */
+        body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f0f0;color:#1c1c1c;min-height:100vh;font-size:13px}
+        /* ── Site Header ────────────────────────────────────────────────── */
+        .site-header{background:#1e1e1e;color:#fff;padding:11px 32px;display:flex;align-items:baseline;gap:18px;border-bottom:2px solid #0a0a0a}
+        .site-header h1{font-size:13px;font-weight:600;letter-spacing:.2px;color:#f0f0f0;white-space:nowrap}
+        .site-header .tagline{font-size:11px;color:#999;font-weight:400}
+        /* ── Stats Bar ──────────────────────────────────────────────────── */
+        .stats-bar{background:#fff;border-bottom:1px solid #d4d4d4;padding:7px 32px;display:flex;gap:36px;align-items:center;flex-wrap:wrap}
+        .stat-item{display:flex;align-items:baseline;gap:5px}
+        .stat-item .num{font-size:14px;font-weight:700;color:#1c1c1c}
+        .stat-item .lbl{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.8px;font-weight:500}
+        /* ── Main Content ───────────────────────────────────────────────── */
+        .main{max-width:1100px;margin:20px auto;padding:0 24px}
+        .section-lbl{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#888;margin-bottom:6px;padding-left:1px}
+        /* ── Level Panels ───────────────────────────────────────────────── */
+        .level-panels{display:flex;flex-direction:column;border:1px solid #c4c4c4;background:#fff;border-radius:3px;overflow:hidden;margin-bottom:24px}
+        .lp{border-bottom:1px solid #e0e0e0}
+        .lp:last-child{border-bottom:none}
+        .lp-hdr{display:flex;align-items:center;gap:10px;padding:8px 14px;cursor:pointer;user-select:none;background:#f7f7f7;transition:background .1s}
+        .lp-hdr:hover{background:#efefef}
+        .lp.open>.lp-hdr{background:#e8e8e8;border-bottom:1px solid #d0d0d0}
+        .lp-arr{font-size:8px;color:#888;width:10px;text-align:center;flex-shrink:0;transition:transform .15s}
+        .lp.open .lp-arr{transform:rotate(90deg)}
+        .lp-badge{font-size:10px;font-weight:700;font-family:'Courier New',Courier,monospace;color:#444;background:#e4e4e4;border:1px solid #cacaca;padding:1px 7px;border-radius:2px;flex-shrink:0}
+        .lp-meta{flex:1;min-width:0}
+        .lp-title{font-size:12px;font-weight:600;color:#1c1c1c}
+        .lp-desc{font-size:10px;color:#888;margin-top:1px}
+        .lp-count{font-size:9px;font-family:'Courier New',Courier,monospace;color:#888;background:#ececec;border:1px solid #d4d4d4;padding:1px 7px;border-radius:2px;flex-shrink:0;white-space:nowrap}
+        /* ── Panel Body ─────────────────────────────────────────────────── */
+        .lp-body{display:none;padding:12px 14px 14px 32px;background:#fff}
+        .lp.open .lp-body{display:block}
+        /* ── Domain Groups ──────────────────────────────────────────────── */
+        .lp-group{margin-bottom:12px}
+        .lp-group:last-child{margin-bottom:0}
+        .lp-group-lbl{font-size:9px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:#888;padding-bottom:4px;margin-bottom:5px;border-bottom:1px solid #ebebeb}
+        /* ── Item Grid ──────────────────────────────────────────────────── */
+        .lp-grid{display:grid;gap:3px}
+        .lp-grid.cols-1{grid-template-columns:1fr}
+        .lp-grid.cols-2{grid-template-columns:repeat(2,1fr)}
+        .lp-grid.cols-3{grid-template-columns:repeat(3,1fr)}
+        .lp-grid.cols-4{grid-template-columns:repeat(4,1fr)}
+        @media(max-width:700px){.lp-grid.cols-4,.lp-grid.cols-3{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:500px){.lp-grid{grid-template-columns:1fr!important}}
+        .lp-item{display:flex;align-items:center;gap:6px;padding:4px 8px;text-decoration:none;color:#444;background:transparent;border:1px solid transparent;font-size:11px;transition:all .1s;line-height:1.35;border-radius:2px}
+        .lp-item:hover{background:#f0f0f0;border-color:#d4d4d4;color:#1c1c1c}
+        .lp-item .li-id{font-size:8px;font-weight:600;font-family:'Courier New',Courier,monospace;flex-shrink:0;padding:1px 4px;background:#e4e4e4;border:1px solid #c8c8c8;border-radius:2px;color:#666;letter-spacing:.2px}
+        /* ── Domain Quick Links ─────────────────────────────────────────── */
+        .domain-strip{margin-bottom:18px}
+        .domain-strip h2{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#888;margin-bottom:6px}
+        .domain-row{display:flex;gap:4px;flex-wrap:wrap}
+        .domain-tag{padding:4px 11px;font-size:10px;font-weight:500;text-decoration:none;border:1px solid #c8c8c8;color:#444;background:#fff;border-radius:2px;transition:all .1s}
+        .domain-tag:hover{background:#efefef;color:#1c1c1c;border-color:#aaa}
+        /* ── Map Link ───────────────────────────────────────────────────── */
+        .map-section{margin-bottom:24px}
+        .map-btn{display:inline-flex;flex-direction:column;padding:10px 18px;background:#fff;border:1px solid #c8c8c8;text-decoration:none;color:#1c1c1c;font-size:11px;font-weight:600;border-radius:2px;transition:all .1s}
+        .map-btn:hover{background:#f0f0f0;border-color:#aaa}
+        .map-btn .sub{font-size:10px;font-weight:400;color:#888;margin-top:2px}
+        /* ── AI Tools ───────────────────────────────────────────────────── */
+        .tools-section{margin-bottom:24px}
+        .tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px}
+        .tool-card{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:#fff;border:1px solid #c8c8c8;text-decoration:none;color:#1c1c1c;border-radius:2px;transition:all .1s}
+        .tool-card:hover{background:#f0f0f0;border-color:#aaa}
+        .tool-card-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+        .tool-card-body{flex:1;min-width:0}
+        .tool-card-title{font-size:12px;font-weight:600;color:#1c1c1c;margin-bottom:2px}
+        .tool-card-meta{font-size:10px;color:#888;margin-bottom:3px}
+        .tool-card-tags{display:flex;gap:4px;flex-wrap:wrap}
+        .tool-tag{font-size:8px;font-weight:700;font-family:'Courier New',Courier,monospace;padding:1px 5px;background:#e4e4e4;border:1px solid #c8c8c8;border-radius:2px;color:#666;letter-spacing:.3px;text-transform:uppercase}
+        .tool-tag.live{background:#d4edda;border-color:#9ec7a8;color:#2d6a3f}
+        /* ── Footer ─────────────────────────────────────────────────────── */
+        .footer{font-size:10px;color:#aaa;padding:12px 0;border-top:1px solid #e0e0e0;margin-top:8px}
+        .footer span{color:#666}
+    </style>
+</head>
+<body>
+
+<div class="site-header">
+  <h1>Construction Platform &mdash; BPMN Process Documentation</h1>
+  <span class="tagline">Full BPMN hierarchy from Enterprise Value Chain (L0) through Task definitions (L4) &middot; 8 Professional Domains</span>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-item"><span class="num">281</span><span class="lbl">Documents</span></div>
+  <div class="stat-item"><span class="num">5</span><span class="lbl">BPMN Levels</span></div>
+  <div class="stat-item"><span class="num">8</span><span class="lbl">Domains</span></div>
+  <div class="stat-item"><span class="num">52</span><span class="lbl">Process Areas</span></div>
+  <div class="stat-item"><span class="num">1</span><span class="lbl">AI Tools</span></div>
+</div>
+
+<div class="main">
+<div class="section-lbl">Process Documentation Index</div>
+<div class="level-panels">
+
+  <!-- L0 -->
+  <div class="lp l0 open">
+    <div class="lp-hdr" onclick="this.closest('.lp').classList.toggle('open')">
+      <span class="lp-badge">L0</span>
+      <div class="lp-meta">
+        <div class="lp-title">Enterprise Value Chain</div>
+        <div class="lp-desc">7-phase construction lifecycle overview across all professional domains</div>
+      </div>
+      <span class="lp-count">1 Document</span>
+      <span class="lp-arr">&#9658;</span>
+    </div>
+    <div class="lp-body">
+      <div class="lp-grid cols-1">
+        <a class="lp-item" href="L0_Enterprise_Value_Chain/L0_Construction_Value_Chain.html"><span class="li-id">L0</span>Construction Industry Value Chain</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- L1 -->
+  <div class="lp l1">
+    <div class="lp-hdr" onclick="this.closest('.lp').classList.toggle('open')">
+      <span class="lp-badge">L1</span>
+      <div class="lp-meta">
+        <div class="lp-title">Professional Domains</div>
+        <div class="lp-desc">8 professional discipline areas — D1 through D8</div>
+      </div>
+      <span class="lp-count">8 Documents</span>
+      <span class="lp-arr">&#9658;</span>
+    </div>
+    <div class="lp-body">
+      <div class="lp-grid cols-2">
+        <a class="lp-item" href="L1_Professional_Domains/L1_D1_QS_Cost_Management.html"><span class="li-id">D1</span>QS &amp; Cost Management</a>
+        <a class="lp-item" href="L1_Professional_Domains/L1_D2_Project_Management.html"><span class="li-id">D2</span>Project Management</a>
+        <a class="lp-item" href="L1_Professional_Domains/L1_D3_Architecture_Design.html"><span class="li-id">D3</span>Architecture &amp; Design</a>
+        <a class="lp-item" href="L1_Professional_Domains/L1_D4_Engineering.html"><span class="li-id">D4</span>Engineering</a>
+        <a class="lp-item" href="L1_Professional_Domains/L1_D5_Construction_Management.html"><span class="li-id">D5</span>Construction Management</a>
+        <a class="lp-item" href="L1_Professional_Domains/L1_D6_Contract_Administration.html"><span class="li-id">D6</span>Contract Administration</a>
+        <a class="lp-item" href="L1_Professional_Domains/L1_D7_Compliance_Regulatory.html"><span class="li-id">D7</span>Compliance &amp; Regulatory</a>
+        <a class="lp-item" href="L1_Professional_Domains/L1_D8_Procurement_Supply_Chain.html"><span class="li-id">D8</span>Procurement &amp; Supply Chain</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- L2 -->
+  <div class="lp l2">
+    <div class="lp-hdr" onclick="this.closest('.lp').classList.toggle('open')">
+      <span class="lp-badge">L2</span>
+      <div class="lp-meta">
+        <div class="lp-title">Process Areas</div>
+        <div class="lp-desc">52 process area documents across all 8 professional domains</div>
+      </div>
+      <span class="lp-count">52 Documents</span>
+      <span class="lp-arr">&#9658;</span>
+    </div>
+    <div class="lp-body">
+      <div class="lp-group">
+        <div class="lp-group-lbl">D1 · QS &amp; Cost Management</div>
+        <div class="lp-grid cols-3">
+          <a class="lp-item" href="L2_Process_Areas/D1_QS_Cost_Management/L2_D1.1_Cost_Planning_Estimation.html"><span class="li-id">D1.1</span>Cost Planning &amp; Estimation</a>
+          <a class="lp-item" href="L2_Process_Areas/D1_QS_Cost_Management/L2_D1.2_BoQ_Production.html"><span class="li-id">D1.2</span>BoQ Production</a>
+          <a class="lp-item" href="L2_Process_Areas/D1_QS_Cost_Management/L2_D1.3_Tender_Documentation_Evaluation.html"><span class="li-id">D1.3</span>Tender Documentation &amp; Evaluation</a>
+          <a class="lp-item" href="L2_Process_Areas/D1_QS_Cost_Management/L2_D1.4_Contract_Financial_Administration.html"><span class="li-id">D1.4</span>Contract Financial Administration</a>
+          <a class="lp-item" href="L2_Process_Areas/D1_QS_Cost_Management/L2_D1.5_Monthly_Valuations_Payment.html"><span class="li-id">D1.5</span>Monthly Valuations &amp; Payment</a>
+          <a class="lp-item" href="L2_Process_Areas/D1_QS_Cost_Management/L2_D1.6_Variation_Assessment_Management.html"><span class="li-id">D1.6</span>Variation Assessment &amp; Management</a>
+          <a class="lp-item" href="L2_Process_Areas/D1_QS_Cost_Management/L2_D1.7_Budget_Tracking_Cost_Control.html"><span class="li-id">D1.7</span>Budget Tracking &amp; Cost Control</a>
+          <a class="lp-item" href="L2_Process_Areas/D1_QS_Cost_Management/L2_D1.8_Final_Account_Closeout.html"><span class="li-id">D1.8</span>Final Account &amp; Close-out</a>
+          <a class="lp-item" href="L2_Process_Areas/D1_QS_Cost_Management/L2_D1.9_Funder_Reporting_Drawdowns.html"><span class="li-id">D1.9</span>Funder Reporting &amp; Drawdowns</a>
+        </div>
+      </div>
+      <div class="lp-group">
+        <div class="lp-group-lbl">D2 · Project Management</div>
+        <div class="lp-grid cols-3">
+          <a class="lp-item" href="L2_Process_Areas/D2_Project_Management/L2_D2_1_Project_Initiation.html"><span class="li-id">D2.1</span>Project Initiation &amp; Charter</a>
+          <a class="lp-item" href="L2_Process_Areas/D2_Project_Management/L2_D2_2_Stakeholder_Mgmt.html"><span class="li-id">D2.2</span>Stakeholder Management</a>
+          <a class="lp-item" href="L2_Process_Areas/D2_Project_Management/L2_D2_3_Programme_Scheduling.html"><span class="li-id">D2.3</span>Programme &amp; Scheduling</a>
+          <a class="lp-item" href="L2_Process_Areas/D2_Project_Management/L2_D2_4_Risk_Management.html"><span class="li-id">D2.4</span>Risk Management</a>
+          <a class="lp-item" href="L2_Process_Areas/D2_Project_Management/L2_D2_5_Quality_Management.html"><span class="li-id">D2.5</span>Quality Management</a>
+          <a class="lp-item" href="L2_Process_Areas/D2_Project_Management/L2_D2_6_Communication_Reporting.html"><span class="li-id">D2.6</span>Communication &amp; Reporting</a>
+          <a class="lp-item" href="L2_Process_Areas/D2_Project_Management/L2_D2_7_Close_out_Handover.html"><span class="li-id">D2.7</span>Project Close-out &amp; Handover</a>
+        </div>
+      </div>
+      <div class="lp-group">
+        <div class="lp-group-lbl">D3 · Architecture &amp; Design</div>
+        <div class="lp-grid cols-3">
+          <a class="lp-item" href="L2_Process_Areas/D3_Architecture_Design/L2_D3_1_Briefing_Site_Analysis.html"><span class="li-id">D3.1</span>Briefing &amp; Site Analysis</a>
+          <a class="lp-item" href="L2_Process_Areas/D3_Architecture_Design/L2_D3_2_Concept_Scheme_Design.html"><span class="li-id">D3.2</span>Concept &amp; Scheme Design</a>
+          <a class="lp-item" href="L2_Process_Areas/D3_Architecture_Design/L2_D3_3_Design_Development.html"><span class="li-id">D3.3</span>Design Development</a>
+          <a class="lp-item" href="L2_Process_Areas/D3_Architecture_Design/L2_D3_4_Construction_Documentation.html"><span class="li-id">D3.4</span>Construction Documentation</a>
+          <a class="lp-item" href="L2_Process_Areas/D3_Architecture_Design/L2_D3_5_Building_Plan_Approval.html"><span class="li-id">D3.5</span>Building Plan Approval</a>
+          <a class="lp-item" href="L2_Process_Areas/D3_Architecture_Design/L2_D3_6_Construction_Stage_Services.html"><span class="li-id">D3.6</span>Construction Stage Services</a>
+        </div>
+      </div>
+      <div class="lp-group">
+        <div class="lp-group-lbl">D4 · Engineering</div>
+        <div class="lp-grid cols-3">
+          <a class="lp-item" href="L2_Process_Areas/D4_Engineering/L2_D4_1_Geotechnical_Investigation.html"><span class="li-id">D4.1</span>Geotechnical Investigation</a>
+          <a class="lp-item" href="L2_Process_Areas/D4_Engineering/L2_D4_2_Structural_Design.html"><span class="li-id">D4.2</span>Structural Design</a>
+          <a class="lp-item" href="L2_Process_Areas/D4_Engineering/L2_D4_3_Civil_Infrastructure.html"><span class="li-id">D4.3</span>Civil &amp; Infrastructure Design</a>
+          <a class="lp-item" href="L2_Process_Areas/D4_Engineering/L2_D4_4_Mechanical_HVAC.html"><span class="li-id">D4.4</span>Mechanical &amp; HVAC Design</a>
+          <a class="lp-item" href="L2_Process_Areas/D4_Engineering/L2_D4_5_Electrical_Plumbing.html"><span class="li-id">D4.5</span>Electrical &amp; Plumbing Design</a>
+          <a class="lp-item" href="L2_Process_Areas/D4_Engineering/L2_D4_6_Construction_Supervision.html"><span class="li-id">D4.6</span>Construction Supervision &amp; Testing</a>
+        </div>
+      </div>
+      <div class="lp-group">
+        <div class="lp-group-lbl">D5 · Construction Management</div>
+        <div class="lp-grid cols-3">
+          <a class="lp-item" href="L2_Process_Areas/D5_Construction_Management/L2_D5_1_Site_Establishment.html"><span class="li-id">D5.1</span>Site Establishment &amp; Mobilisation</a>
+          <a class="lp-item" href="L2_Process_Areas/D5_Construction_Management/L2_D5_2_Programme_Execution.html"><span class="li-id">D5.2</span>Construction Programme Execution</a>
+          <a class="lp-item" href="L2_Process_Areas/D5_Construction_Management/L2_D5_3_Quality_Assurance.html"><span class="li-id">D5.3</span>Quality Assurance &amp; Control</a>
+          <a class="lp-item" href="L2_Process_Areas/D5_Construction_Management/L2_D5_4_Health_Safety_Env.html"><span class="li-id">D5.4</span>Health, Safety &amp; Environment</a>
+          <a class="lp-item" href="L2_Process_Areas/D5_Construction_Management/L2_D5_5_Subcontractor_Mgmt.html"><span class="li-id">D5.5</span>Subcontractor Management</a>
+          <a class="lp-item" href="L2_Process_Areas/D5_Construction_Management/L2_D5_6_Resource_Plant.html"><span class="li-id">D5.6</span>Resource &amp; Plant Management</a>
+          <a class="lp-item" href="L2_Process_Areas/D5_Construction_Management/L2_D5_7_Practical_Completion.html"><span class="li-id">D5.7</span>Practical Completion &amp; Handover</a>
+        </div>
+      </div>
+      <div class="lp-group">
+        <div class="lp-group-lbl">D6 · Contract Administration</div>
+        <div class="lp-grid cols-3">
+          <a class="lp-item" href="L2_Process_Areas/D6_Contract_Administration/L2_D6_1_Contract_Formation.html"><span class="li-id">D6.1</span>Contract Formation &amp; Execution</a>
+          <a class="lp-item" href="L2_Process_Areas/D6_Contract_Administration/L2_D6_2_Site_Instructions.html"><span class="li-id">D6.2</span>Site Instructions &amp; Correspondence</a>
+          <a class="lp-item" href="L2_Process_Areas/D6_Contract_Administration/L2_D6_3_Claims_Time_Mgmt.html"><span class="li-id">D6.3</span>Claims &amp; Time Management</a>
+          <a class="lp-item" href="L2_Process_Areas/D6_Contract_Administration/L2_D6_4_Dispute_Resolution.html"><span class="li-id">D6.4</span>Dispute Resolution</a>
+          <a class="lp-item" href="L2_Process_Areas/D6_Contract_Administration/L2_D6_5_Completion_Certification.html"><span class="li-id">D6.5</span>Completion &amp; Certification</a>
+        </div>
+      </div>
+      <div class="lp-group">
+        <div class="lp-group-lbl">D7 · Compliance &amp; Regulatory</div>
+        <div class="lp-grid cols-3">
+          <a class="lp-item" href="L2_Process_Areas/D7_Compliance_Regulatory/L2_D7_1_Building_Plan_Approval.html"><span class="li-id">D7.1</span>Building Plan &amp; Zoning Approval</a>
+          <a class="lp-item" href="L2_Process_Areas/D7_Compliance_Regulatory/L2_D7_2_NHBRC_Enrolment.html"><span class="li-id">D7.2</span>NHBRC Enrolment &amp; Inspection</a>
+          <a class="lp-item" href="L2_Process_Areas/D7_Compliance_Regulatory/L2_D7_3_Environmental_Compliance.html"><span class="li-id">D7.3</span>Environmental Compliance</a>
+          <a class="lp-item" href="L2_Process_Areas/D7_Compliance_Regulatory/L2_D7_4_OHS_Act_Compliance.html"><span class="li-id">D7.4</span>OHS Act Compliance</a>
+          <a class="lp-item" href="L2_Process_Areas/D7_Compliance_Regulatory/L2_D7_5_B_BBEE_Transformation.html"><span class="li-id">D7.5</span>B-BBEE &amp; Transformation</a>
+          <a class="lp-item" href="L2_Process_Areas/D7_Compliance_Regulatory/L2_D7_6_Municipal_Services.html"><span class="li-id">D7.6</span>Municipal Services &amp; Certificates</a>
+          <a class="lp-item" href="L2_Process_Areas/D7_Compliance_Regulatory/L2_D7_7_Nat_Building_Regulations.html"><span class="li-id">D7.7</span>National Building Regulations</a>
+        </div>
+      </div>
+      <div class="lp-group">
+        <div class="lp-group-lbl">D8 · Procurement &amp; Supply Chain</div>
+        <div class="lp-grid cols-3">
+          <a class="lp-item" href="L2_Process_Areas/D8_Procurement_Supply_Chain/L2_D8_1_Procurement_Strategy.html"><span class="li-id">D8.1</span>Procurement Strategy &amp; Planning</a>
+          <a class="lp-item" href="L2_Process_Areas/D8_Procurement_Supply_Chain/L2_D8_2_Supplier_Pre_qualification.html"><span class="li-id">D8.2</span>Supplier Pre-qualification</a>
+          <a class="lp-item" href="L2_Process_Areas/D8_Procurement_Supply_Chain/L2_D8_3_Tender_Bid_Admin.html"><span class="li-id">D8.3</span>Tender &amp; Bid Administration</a>
+          <a class="lp-item" href="L2_Process_Areas/D8_Procurement_Supply_Chain/L2_D8_4_Material_Procurement.html"><span class="li-id">D8.4</span>Material Procurement &amp; Logistics</a>
+          <a class="lp-item" href="L2_Process_Areas/D8_Procurement_Supply_Chain/L2_D8_5_Subcontractor_Procurement.html"><span class="li-id">D8.5</span>Subcontractor Procurement</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- L3 -->
+  <div class="lp l3">
+    <div class="lp-hdr" onclick="this.closest('.lp').classList.toggle('open')">
+      <span class="lp-badge">L3</span>
+      <div class="lp-meta">
+        <div class="lp-title">Sub-Processes</div>
+        <div class="lp-desc">109 detailed sub-process workflow documents across all domains</div>
+      </div>
+      <span class="lp-count">109 Documents</span>
+      <span class="lp-arr">&#9658;</span>
+    </div>
+    <div class="lp-body">
+      <div class="lp-group">
+        <div class="lp-group-lbl">D1 · QS &amp; Cost Management</div>
+        <div class="lp-grid cols-4">
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.1_Cost_Planning_Estimation/SP_Feasibility_Cost_Estimate.html"><span class="li-id">D1.1</span>Feasibility Cost Estimate</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.1_Cost_Planning_Estimation/SP_Elemental_Cost_Plan.html"><span class="li-id">D1.1</span>Elemental Cost Plan</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.1_Cost_Planning_Estimation/SP_Cost_Plan_Revision.html"><span class="li-id">D1.1</span>Cost Plan Revision</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.2_BoQ_Production/SP_BoQ_Compilation.html"><span class="li-id">D1.2</span>BoQ Compilation</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.2_BoQ_Production/SP_Measurement_Takeoff.html"><span class="li-id">D1.2</span>Measurement Takeoff</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.2_BoQ_Production/SP_Preambles_Preliminaries.html"><span class="li-id">D1.2</span>Preambles &amp; Prelims</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.3_Tender_Documentation_Evaluation/SP_Tender_Document_Compilation.html"><span class="li-id">D1.3</span>Tender Document Compilation</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.3_Tender_Documentation_Evaluation/SP_Arithmetic_Check_Qualification.html"><span class="li-id">D1.3</span>Arithmetic Check &amp; Qualification</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.3_Tender_Documentation_Evaluation/SP_Comparative_Analysis.html"><span class="li-id">D1.3</span>Comparative Analysis</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.4_Contract_Financial_Administration/SP_Contract_Price_Schedule.html"><span class="li-id">D1.4</span>Contract Price Schedule</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.4_Contract_Financial_Administration/SP_CPA_Adjustments.html"><span class="li-id">D1.4</span>CPA Adjustments</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.4_Contract_Financial_Administration/SP_Provisional_Sum_Admin.html"><span class="li-id">D1.4</span>Provisional Sum Admin</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.4_Contract_Financial_Administration/SP_Retention_Management.html"><span class="li-id">D1.4</span>Retention Management</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.5_Monthly_Valuations_Payment/SP_Site_Measurement.html"><span class="li-id">D1.5</span>Site Measurement</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.5_Monthly_Valuations_Payment/SP_Valuation_Payment_Certificate.html"><span class="li-id">D1.5</span>Valuation &amp; Payment Certificate</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.6_Variation_Assessment_Management/SP_Variation_Registration_Cost_Assessment.html"><span class="li-id">D1.6</span>Variation Registration</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.7_Budget_Tracking_Cost_Control/SP_Budget_Monitoring_PFC.html"><span class="li-id">D1.7</span>Budget Monitoring &amp; PFC</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.7_Budget_Tracking_Cost_Control/SP_Contingency_Cash_Flow.html"><span class="li-id">D1.7</span>Contingency &amp; Cash Flow</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.8_Final_Account_Closeout/SP_Final_Measurement_Account.html"><span class="li-id">D1.8</span>Final Measurement &amp; Account</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.8_Final_Account_Closeout/SP_Defects_Liability_Closeout.html"><span class="li-id">D1.8</span>Defects Liability Close-out</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.9_Funder_Reporting_Drawdowns/SP_Drawdown_Request.html"><span class="li-id">D1.9</span>Drawdown Request</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.9_Funder_Reporting_Drawdowns/SP_Monthly_Cost_Report.html"><span class="li-id">D1.9</span>Monthly Cost Report</a>
+          <a class="lp-item" href="L3_Sub_Processes/D1_QS_Cost_Management/D1.9_Funder_Reporting_Drawdowns/SP_Subsidy_Claim_Documentation.html"><span class="li-id">D1.9</span>Subsidy Claim Documentation</a>
+        </div>
+      </div>
+      <div class="lp-group">
+        <div class="lp-group-lbl">D2 · Project Management</div>
+        <div class="lp-grid cols-4">
+          <a class="lp-item" href="L3_Sub_Processes/D2_Project_Management/D21/SP_Project_Charter.html"><span class="li-id">D2.1</span>Project Charter Development</a>
+          <a class="lp-item" href="L3_Sub_Processes/D2_Project_Management/D21/SP_Execution_Strategy.html"><span class="li-id">D2.1</span>Project Execution Strategy</a>
+          <a class="lp-item" href="L3_Sub_Processes/D2_Project_Management/D22/SP_Stakeholder_Register.html"><span class="li-id">D2.2</span>Stakeholder Register</a>
+          <a class="lp-item" href="L3_Sub_Processes/D2_Project_Management/D22/SP_Communication_Plan.html"><span class="li-id">D2.2</span>Communication Plan</a>
+          <a class="lp-item" href="L3_Sub_Processes/D2_Project_Management/D23/SP_Master_Programme.html"><span class="li-id">D2.3</span>Master Programme</a>
+          <a class="lp-item" href="L3_Sub_Processes/D2_Project_Management/D23/SP_Critical_Path_Monitoring.html"><span class="li-id">D2.3</span>Critical Path Monitoring</a>
+          <a class="lp-item" href="L3_Sub_Processes/D2_Project_Management/D24/SP_Risk_Register_Assessment.html"><span class="li-id">D2.4</span>Risk Register &amp; Assessment</a>
+          <a class="lp-item" href="L3_Sub_Processes/D2_Project_Management/D24/SP_Risk_Mitigation_Monitoring.html"><span class="li-id">D2.4</span>Risk Mitigation &amp; Monitoring</a>
+          <a class="lp-item" href="L3_Sub_Processes/D2_Project_Management/D25/SP_QA_QC_Plan.html"><span class="li-id">D2.5</span>QA/QC Plan Development</a>
+          <a class="lp-item" href="L3_Sub_Processes/D2_Project_Management/D25/SP_Inspection_Non_Conformance.html"><span class="li-id">D2.5</span>Inspection &amp; Non-Conformance</a>
+          <a class="lp-item" href="L3_Sub_Processes/D2_Project_Management/D26/SP_Progress_Reporting.html"><span class="li-id">D2.6</span>Progress Report Production</a>
+          <a class="lp-item" href="L3_Sub_Processes/D2_Project_Management/D26/SP_Meeting_Management.html"><span class="li-id">D2.6</span>Meeting Management &amp; Minutes</a>
+          <a class="lp-item" href="L3_Sub_Processes/D2_Project_Management/D27/SP_Closeout_Report.html"><span class="li-id">D2.7</span>Project Close-out Report</a>
+          <a class="lp-item" href="L3_Sub_Processes/D2_Project_Management/D27/SP_Lessons_Learned.html"><span class="li-id">D2.7</span>Lessons Learned &amp; Archive</a>
+        </div>
+      </div>
+      <div class="lp-group">
+        <div class="lp-group-lbl">D3 · Architecture &amp; Design</div>
+        <div class="lp-grid cols-4">
+          <a class="lp-item" href="L3_Sub_Processes/D3_Architecture_Design/D31/SP_Client_Brief_Capture.html"><span class="li-id">D3.1</span>Client Brief Capture</a>
+          <a class="lp-item" href="L3_Sub_Processes/D3_Architecture_Design/D31/SP_Site_Analysis_Zoning.html"><span class="li-id">D3.1</span>Site Analysis &amp; Zoning</a>
+          <a class="lp-item" href="L3_Sub_Processes/D3_Architecture_Design/D32/SP_Concept_Generation.html"><span class="li-id">D3.2</span>Concept Design Generation</a>
+          <a class="lp-item" href="L3_Sub_Processes/D3_Architecture_Design/D32/SP_Scheme_Design_Approval.html"><span class="li-id">D3.2</span>Scheme Design &amp; Approval</a>
+          <a class="lp-item" href="L3_Sub_Processes/D3_Architecture_Design/D33/SP_Design_Development_Drawings.html"><span class="li-id">D3.3</span>Design Development Drawings</a>
+          <a class="lp-item" href="L3_Sub_Processes/D3_Architecture_Design/D33/SP_Material_Specifications.html"><span class="li-id">D3.3</span>Material &amp; Specifications</a>
+          <a class="lp-item" href="L3_Sub_Processes/D3_Architecture_Design/D34/SP_Working_Drawings_Production.html"><span class="li-id">D3.4</span>Working Drawings Production</a>
+          <a class="lp-item" href="L3_Sub_Processes/D3_Architecture_Design/D34/SP_Tender_Drawings.html"><span class="li-id">D3.4</span>Tender Drawings &amp; Specification</a>
+          <a class="lp-item" href="L3_Sub_Processes/D3_Architecture_Design/D35/SP_Municipal_Submission.html"><span class="li-id">D3.5</span>Municipal Plan Submission</a>
+          <a class="lp-item" href="L3_Sub_Processes/D3_Architecture_Design/D35/SP_Plan_Approval_Response.html"><span class="li-id">D3.5</span>Plan Approval Response</a>
+          <a class="lp-item" href="L3_Sub_Processes/D3_Architecture_Design/D36/SP_Site_Inspection_RFI.html"><span class="li-id">D3.6</span>Site Inspections &amp; RFI</a>
+          <a class="lp-item" href="L3_Sub_Processes/D3_Architecture_Design/D36/SP_Design_Change_Control.html"><span class="li-id">D3.6</span>Design Change Control</a>
+        </div>
+      </div>
+      <div class="lp-group">
+        <div class="lp-group-lbl">D4 · Engineering</div>
+        <div class="lp-grid cols-4">
+          <a class="lp-item" href="L3_Sub_Processes/D4_Engineering/D41/SP_Site_Investigation.html"><span class="li-id">D4.1</span>Site Investigation &amp; Testing</a>
+          <a class="lp-item" href="L3_Sub_Processes/D4_Engineering/D41/SP_Foundation_Recommendation.html"><span class="li-id">D4.1</span>Foundation Recommendation</a>
+          <a class="lp-item" href="L3_Sub_Processes/D4_Engineering/D42/SP_Structural_Analysis_Design.html"><span class="li-id">D4.2</span>Structural Analysis &amp; Design</a>
+          <a class="lp-item" href="L3_Sub_Processes/D4_Engineering/D42/SP_Structural_Drawing_Production.html"><span class="li-id">D4.2</span>Structural Drawing Production</a>
+          <a class="lp-item" href="L3_Sub_Processes/D4_Engineering/D43/SP_Stormwater_Road_Design.html"><span class="li-id">D4.3</span>Stormwater &amp; Road Design</a>
+          <a class="lp-item" href="L3_Sub_Processes/D4_Engineering/D43/SP_Services_Reticulation.html"><span class="li-id">D4.3</span>Services Reticulation</a>
+          <a class="lp-item" href="L3_Sub_Processes/D4_Engineering/D44/SP_HVAC_Fire_Design.html"><span class="li-id">D4.4</span>HVAC &amp; Fire Suppression</a>
+          <a class="lp-item" href="L3_Sub_Processes/D4_Engineering/D44/SP_Mechanical_Specification.html"><span class="li-id">D4.4</span>Mechanical Specification</a>
+          <a class="lp-item" href="L3_Sub_Processes/D4_Engineering/D45/SP_Electrical_Design_Distrib.html"><span class="li-id">D4.5</span>Electrical Design &amp; Distribution</a>
+          <a class="lp-item" href="L3_Sub_Processes/D4_Engineering/D45/SP_Plumbing_Solar_Design.html"><span class="li-id">D4.5</span>Plumbing &amp; Solar Design</a>
+          <a class="lp-item" href="L3_Sub_Processes/D4_Engineering/D46/SP_Site_Inspection_Testing.html"><span class="li-id">D4.6</span>Site Inspection &amp; Testing</a>
+          <a class="lp-item" href="L3_Sub_Processes/D4_Engineering/D46/SP_MEP_Commissioning.html"><span class="li-id">D4.6</span>MEP Commissioning</a>
+        </div>
+      </div>
+      <div class="lp-group">
+        <div class="lp-group-lbl">D5 · Construction Management</div>
+        <div class="lp-grid cols-4">
+          <a class="lp-item" href="L3_Sub_Processes/D5_Construction_Management/D51/SP_Site_Setup_Camp.html"><span class="li-id">D5.1</span>Site Setup &amp; Camp Establishment</a>
+          <a class="lp-item" href="L3_Sub_Processes/D5_Construction_Management/D51/SP_Plant_Mobilisation.html"><span class="li-id">D5.1</span>Plant &amp; Enabling Works Mobilisation</a>
+          <a class="lp-item" href="L3_Sub_Processes/D5_Construction_Management/D52/SP_Activity_Scheduling.html"><span class="li-id">D5.2</span>Activity Scheduling &amp; Sequencing</a>
+          <a class="lp-item" href="L3_Sub_Processes/D5_Construction_Management/D52/SP_Look_Ahead_Planning.html"><span class="li-id">D5.2</span>Look-Ahead Planning</a>
+          <a class="lp-item" href="L3_Sub_Processes/D5_Construction_Management/D53/SP_Inspection_Test_Plan.html"><span class="li-id">D5.3</span>Inspection &amp; Test Plan</a>
+          <a class="lp-item" href="L3_Sub_Processes/D5_Construction_Management/D53/SP_Non_Conformance_Management.html"><span class="li-id">D5.3</span>Non-Conformance Management</a>
+          <a class="lp-item" href="L3_Sub_Processes/D5_Construction_Management/D54/SP_HS_Plan_File.html"><span class="li-id">D5.4</span>H&amp;S Plan &amp; Safety File</a>
+          <a class="lp-item" href="L3_Sub_Processes/D5_Construction_Management/D54/SP_Incident_Management.html"><span class="li-id">D5.4</span>Incident Management &amp; Reporting</a>
+          <a class="lp-item" href="L3_Sub_Processes/D5_Construction_Management/D55/SP_Subcontract_Administration.html"><span class="li-id">D5.5</span>Subcontract Administration</a>
+          <a class="lp-item" href="L3_Sub_Processes/D5_Construction_Management/D55/SP_Subcontractor_Performance.html"><span class="li-id">D5.5</span>Subcontractor Performance</a>
+          <a class="lp-item" href="L3_Sub_Processes/D5_Construction_Management/D56/SP_Labour_Allocation.html"><span class="li-id">D5.6</span>Labour Allocation &amp; Tracking</a>
+          <a class="lp-item" href="L3_Sub_Processes/D5_Construction_Management/D56/SP_Plant_Material_Logistics.html"><span class="li-id">D5.6</span>Plant &amp; Material Logistics</a>
+          <a class="lp-item" href="L3_Sub_Processes/D5_Construction_Management/D57/SP_Snag_List_Resolution.html"><span class="li-id">D5.7</span>Snag List Resolution</a>
+          <a class="lp-item" href="L3_Sub_Processes/D5_Construction_Management/D57/SP_OM_Manual_Handover.html"><span class="li-id">D5.7</span>O&amp;M Manual &amp; Handover Package</a>
+        </div>
+      </div>
+      <div class="lp-group">
+        <div class="lp-group-lbl">D6 · Contract Administration</div>
+        <div class="lp-grid cols-4">
+          <a class="lp-item" href="L3_Sub_Processes/D6_Contract_Administration/D61/SP_Contract_Selection_Formation.html"><span class="li-id">D6.1</span>Contract Selection &amp; Formation</a>
+          <a class="lp-item" href="L3_Sub_Processes/D6_Contract_Administration/D61/SP_Contract_Execution.html"><span class="li-id">D6.1</span>Contract Execution &amp; Commencement</a>
+          <a class="lp-item" href="L3_Sub_Processes/D6_Contract_Administration/D62/SP_PA_Site_Instructions.html"><span class="li-id">D6.2</span>PA Site Instructions</a>
+          <a class="lp-item" href="L3_Sub_Processes/D6_Contract_Administration/D62/SP_RFI_Correspondence.html"><span class="li-id">D6.2</span>RFI &amp; Official Correspondence</a>
+          <a class="lp-item" href="L3_Sub_Processes/D6_Contract_Administration/D63/SP_EOT_Delay_Analysis.html"><span class="li-id">D6.3</span>EOT &amp; Delay Analysis</a>
+          <a class="lp-item" href="L3_Sub_Processes/D6_Contract_Administration/D63/SP_Penalty_Management.html"><span class="li-id">D6.3</span>Penalty &amp; Bonus Management</a>
+          <a class="lp-item" href="L3_Sub_Processes/D6_Contract_Administration/D64/SP_Dispute_Notice_Register.html"><span class="li-id">D6.4</span>Dispute Notice &amp; Register</a>
+          <a class="lp-item" href="L3_Sub_Processes/D6_Contract_Administration/D64/SP_Mediation_Adjudication.html"><span class="li-id">D6.4</span>Mediation &amp; Adjudication</a>
+          <a class="lp-item" href="L3_Sub_Processes/D6_Contract_Administration/D65/SP_Practical_Completion_Cert.html"><span class="li-id">D6.5</span>Practical Completion Certificate</a>
+          <a class="lp-item" href="L3_Sub_Processes/D6_Contract_Administration/D65/SP_Final_Completion_Cert.html"><span class="li-id">D6.5</span>Final Completion Certificate</a>
+        </div>
+      </div>
+      <div class="lp-group">
+        <div class="lp-group-lbl">D7 · Compliance &amp; Regulatory</div>
+        <div class="lp-grid cols-4">
+          <a class="lp-item" href="L3_Sub_Processes/D7_Compliance_Regulatory/D71/SP_Plan_Submission_Process.html"><span class="li-id">D7.1</span>Building Plan Submission</a>
+          <a class="lp-item" href="L3_Sub_Processes/D7_Compliance_Regulatory/D71/SP_Zoning_Land_Use.html"><span class="li-id">D7.1</span>Zoning &amp; Land-Use Rights</a>
+          <a class="lp-item" href="L3_Sub_Processes/D7_Compliance_Regulatory/D72/SP_Project_Enrolment.html"><span class="li-id">D7.2</span>NHBRC Project Enrolment</a>
+          <a class="lp-item" href="L3_Sub_Processes/D7_Compliance_Regulatory/D72/SP_Stage_Inspections.html"><span class="li-id">D7.2</span>NHBRC Stage Inspections</a>
+          <a class="lp-item" href="L3_Sub_Processes/D7_Compliance_Regulatory/D73/SP_EIA_Screening.html"><span class="li-id">D7.3</span>EIA Screening &amp; Scoping</a>
+          <a class="lp-item" href="L3_Sub_Processes/D7_Compliance_Regulatory/D73/SP_EMPr_Implementation.html"><span class="li-id">D7.3</span>EMPr Implementation</a>
+          <a class="lp-item" href="L3_Sub_Processes/D7_Compliance_Regulatory/D74/SP_OHS_Plan_File.html"><span class="li-id">D7.4</span>OHS Plan &amp; Safety File</a>
+          <a class="lp-item" href="L3_Sub_Processes/D7_Compliance_Regulatory/D74/SP_Safety_Audit_Reporting.html"><span class="li-id">D7.4</span>Safety Audit &amp; Reporting</a>
+          <a class="lp-item" href="L3_Sub_Processes/D7_Compliance_Regulatory/D75/SP_BBBEE_Verification.html"><span class="li-id">D7.5</span>B-BBEE Verification &amp; Scorecard</a>
+          <a class="lp-item" href="L3_Sub_Processes/D7_Compliance_Regulatory/D75/SP_Enterprise_Skills_Dev.html"><span class="li-id">D7.5</span>Enterprise &amp; Skills Development</a>
+          <a class="lp-item" href="L3_Sub_Processes/D7_Compliance_Regulatory/D76/SP_Service_Connections.html"><span class="li-id">D7.6</span>Municipal Service Connections</a>
+          <a class="lp-item" href="L3_Sub_Processes/D7_Compliance_Regulatory/D76/SP_Occupancy_Certificate.html"><span class="li-id">D7.6</span>Occupancy Certificate</a>
+          <a class="lp-item" href="L3_Sub_Processes/D7_Compliance_Regulatory/D77/SP_SANS10400_Review.html"><span class="li-id">D7.7</span>SANS 10400 Compliance Review</a>
+          <a class="lp-item" href="L3_Sub_Processes/D7_Compliance_Regulatory/D77/SP_Rational_Design_Process.html"><span class="li-id">D7.7</span>Rational Design Process</a>
+        </div>
+      </div>
+      <div class="lp-group">
+        <div class="lp-group-lbl">D8 · Procurement &amp; Supply Chain</div>
+        <div class="lp-grid cols-4">
+          <a class="lp-item" href="L3_Sub_Processes/D8_Procurement_Supply_Chain/D81/SP_Procurement_Strategy_Plan.html"><span class="li-id">D8.1</span>Procurement Strategy &amp; Plan</a>
+          <a class="lp-item" href="L3_Sub_Processes/D8_Procurement_Supply_Chain/D81/SP_Market_Analysis.html"><span class="li-id">D8.1</span>Market Analysis &amp; Benchmarking</a>
+          <a class="lp-item" href="L3_Sub_Processes/D8_Procurement_Supply_Chain/D82/SP_Vendor_Database_Registration.html"><span class="li-id">D8.2</span>Vendor Database &amp; Registration</a>
+          <a class="lp-item" href="L3_Sub_Processes/D8_Procurement_Supply_Chain/D82/SP_CIDB_BBBEE_Verification.html"><span class="li-id">D8.2</span>CIDB &amp; B-BBEE Verification</a>
+          <a class="lp-item" href="L3_Sub_Processes/D8_Procurement_Supply_Chain/D83/SP_RFQ_RFP_Issue.html"><span class="li-id">D8.3</span>RFQ &amp; RFP Issue &amp; Management</a>
+          <a class="lp-item" href="L3_Sub_Processes/D8_Procurement_Supply_Chain/D83/SP_Bid_Evaluation_Award.html"><span class="li-id">D8.3</span>Bid Evaluation &amp; Award</a>
+          <a class="lp-item" href="L3_Sub_Processes/D8_Procurement_Supply_Chain/D84/SP_Purchase_Orders_Delivery.html"><span class="li-id">D8.4</span>Purchase Orders &amp; Delivery</a>
+          <a class="lp-item" href="L3_Sub_Processes/D8_Procurement_Supply_Chain/D84/SP_Site_Receiving_Warehousing.html"><span class="li-id">D8.4</span>Site Receiving &amp; Warehousing</a>
+          <a class="lp-item" href="L3_Sub_Processes/D8_Procurement_Supply_Chain/D85/SP_Specialist_Sourcing.html"><span class="li-id">D8.5</span>Specialist Subcontractor Sourcing</a>
+          <a class="lp-item" href="L3_Sub_Processes/D8_Procurement_Supply_Chain/D85/SP_Subcontractor_Performance_Mgmt.html"><span class="li-id">D8.5</span>Subcontractor Performance Mgmt</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- L4 -->
+  <div class="lp l4">
+    <div class="lp-hdr" onclick="this.closest('.lp').classList.toggle('open')">
+      <span class="lp-badge">L4</span>
+      <div class="lp-meta">
+        <div class="lp-title">Tasks</div>
+        <div class="lp-desc">109 granular task-level breakdowns, one per sub-process</div>
+      </div>
+      <span class="lp-count">109 Documents</span>
+      <span class="lp-arr">&#9658;</span>
+    </div>
+    <div class="lp-body">
+      <div class="lp-group">
+        <div class="lp-group-lbl">D1 · QS &amp; Cost Management</div>
+        <div class="lp-grid cols-4">
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.1_Cost_Planning_Estimation/L4_T_Feasibility_Cost_Estimate.html"><span class="li-id">D1.1</span>Feasibility Cost Estimate</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.1_Cost_Planning_Estimation/L4_T_Elemental_Cost_Plan.html"><span class="li-id">D1.1</span>Elemental Cost Plan</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.1_Cost_Planning_Estimation/L4_T_Cost_Plan_Revision.html"><span class="li-id">D1.1</span>Cost Plan Revision</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.2_BoQ_Production/L4_T_BoQ_Compilation.html"><span class="li-id">D1.2</span>BoQ Compilation</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.2_BoQ_Production/L4_T_Measurement_Takeoff.html"><span class="li-id">D1.2</span>Measurement Takeoff</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.2_BoQ_Production/L4_T_Preambles_Preliminaries.html"><span class="li-id">D1.2</span>Preambles &amp; Prelims</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.3_Tender_Documentation_Evaluation/L4_T_Tender_Document_Compilation.html"><span class="li-id">D1.3</span>Tender Document Compilation</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.3_Tender_Documentation_Evaluation/L4_T_Arithmetic_Check_Qualification.html"><span class="li-id">D1.3</span>Arithmetic Check</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.3_Tender_Documentation_Evaluation/L4_T_Comparative_Analysis.html"><span class="li-id">D1.3</span>Comparative Analysis</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.4_Contract_Financial_Administration/L4_T_Contract_Price_Schedule.html"><span class="li-id">D1.4</span>Contract Price Schedule</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.4_Contract_Financial_Administration/L4_T_CPA_Adjustments.html"><span class="li-id">D1.4</span>CPA Adjustments</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.4_Contract_Financial_Administration/L4_T_Provisional_Sum_Admin.html"><span class="li-id">D1.4</span>Provisional Sum Admin</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.4_Contract_Financial_Administration/L4_T_Retention_Management.html"><span class="li-id">D1.4</span>Retention Management</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.5_Monthly_Valuations_Payment/L4_T_Site_Measurement.html"><span class="li-id">D1.5</span>Site Measurement</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.5_Monthly_Valuations_Payment/L4_T_Valuation_Payment_Certificate.html"><span class="li-id">D1.5</span>Valuation &amp; Payment Certificate</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.6_Variation_Assessment_Management/L4_T_Variation_Registration_Cost_Assessment.html"><span class="li-id">D1.6</span>Variation Registration</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.7_Budget_Tracking_Cost_Control/L4_T_Budget_Monitoring_PFC.html"><span class="li-id">D1.7</span>Budget Monitoring &amp; PFC</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.7_Budget_Tracking_Cost_Control/L4_T_Contingency_Cash_Flow.html"><span class="li-id">D1.7</span>Contingency &amp; Cash Flow</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.8_Final_Account_Closeout/L4_T_Final_Measurement_Account.html"><span class="li-id">D1.8</span>Final Measurement &amp; Account</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.8_Final_Account_Closeout/L4_T_Defects_Liability_Closeout.html"><span class="li-id">D1.8</span>Defects Liability Close-out</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.9_Funder_Reporting_Drawdowns/L4_T_Drawdown_Request.html"><span class="li-id">D1.9</span>Drawdown Request</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.9_Funder_Reporting_Drawdowns/L4_T_Monthly_Cost_Report.html"><span class="li-id">D1.9</span>Monthly Cost Report</a>
+          <a class="lp-item" href="L4_Tasks/D1_QS_Cost_Management/D1.9_Funder_Reporting_Drawdowns/L4_T_Subsidy_Claim_Documentation.html"><span class="li-id">D1.9</span>Subsidy Claim Documentation</a>
+        </div>
+      </div>
+      <div class="lp-group">
+        <div class="lp-group-lbl">D2 · Project Management</div>
+        <div class="lp-grid cols-4">
+          <a class="lp-item" href="L4_Tasks/D2_Project_Management/D21/L4_T_SP_Project_Charter.html"><span class="li-id">D2.1</span>Project Charter Development</a>
+          <a class="lp-item" href="L4_Tasks/D2_Project_Management/D21/L4_T_SP_Execution_Strategy.html"><span class="li-id">D2.1</span>Project Execution Strategy</a>
+          <a class="lp-item" href="L4_Tasks/D2_Project_Management/D22/L4_T_SP_Stakeholder_Register.html"><span class="li-id">D2.2</span>Stakeholder Register</a>
+          <a class="lp-item" href="L4_Tasks/D2_Project_Management/D22/L4_T_SP_Communication_Plan.html"><span class="li-id">D2.2</span>Communication Plan</a>
+          <a class="lp-item" href="L4_Tasks/D2_Project_Management/D23/L4_T_SP_Master_Programme.html"><span class="li-id">D2.3</span>Master Programme</a>
+          <a class="lp-item" href="L4_Tasks/D2_Project_Management/D23/L4_T_SP_Critical_Path_Monitoring.html"><span class="li-id">D2.3</span>Critical Path Monitoring</a>
+          <a class="lp-item" href="L4_Tasks/D2_Project_Management/D24/L4_T_SP_Risk_Register_Assessment.html"><span class="li-id">D2.4</span>Risk Register &amp; Assessment</a>
+          <a class="lp-item" href="L4_Tasks/D2_Project_Management/D24/L4_T_SP_Risk_Mitigation_Monitoring.html"><span class="li-id">D2.4</span>Risk Mitigation &amp; Monitoring</a>
+          <a class="lp-item" href="L4_Tasks/D2_Project_Management/D25/L4_T_SP_QA_QC_Plan.html"><span class="li-id">D2.5</span>QA/QC Plan Development</a>
+          <a class="lp-item" href="L4_Tasks/D2_Project_Management/D25/L4_T_SP_Inspection_Non_Conformance.html"><span class="li-id">D2.5</span>Inspection &amp; Non-Conformance</a>
+          <a class="lp-item" href="L4_Tasks/D2_Project_Management/D26/L4_T_SP_Progress_Reporting.html"><span class="li-id">D2.6</span>Progress Report Production</a>
+          <a class="lp-item" href="L4_Tasks/D2_Project_Management/D26/L4_T_SP_Meeting_Management.html"><span class="li-id">D2.6</span>Meeting Management &amp; Minutes</a>
+          <a class="lp-item" href="L4_Tasks/D2_Project_Management/D27/L4_T_SP_Closeout_Report.html"><span class="li-id">D2.7</span>Project Close-out Report</a>
+          <a class="lp-item" href="L4_Tasks/D2_Project_Management/D27/L4_T_SP_Lessons_Learned.html"><span class="li-id">D2.7</span>Lessons Learned &amp; Archive</a>
+        </div>
+      </div>
+      <div class="lp-group">
+        <div class="lp-group-lbl">D3 · Architecture &amp; Design</div>
+        <div class="lp-grid cols-4">
+          <a class="lp-item" href="L4_Tasks/D3_Architecture_Design/D31/L4_T_SP_Client_Brief_Capture.html"><span class="li-id">D3.1</span>Client Brief Capture</a>
+          <a class="lp-item" href="L4_Tasks/D3_Architecture_Design/D31/L4_T_SP_Site_Analysis_Zoning.html"><span class="li-id">D3.1</span>Site Analysis &amp; Zoning</a>
+          <a class="lp-item" href="L4_Tasks/D3_Architecture_Design/D32/L4_T_SP_Concept_Generation.html"><span class="li-id">D3.2</span>Concept Design Generation</a>
+          <a class="lp-item" href="L4_Tasks/D3_Architecture_Design/D32/L4_T_SP_Scheme_Design_Approval.html"><span class="li-id">D3.2</span>Scheme Design &amp; Approval</a>
+          <a class="lp-item" href="L4_Tasks/D3_Architecture_Design/D33/L4_T_SP_Design_Development_Drawings.html"><span class="li-id">D3.3</span>Design Development Drawings</a>
+          <a class="lp-item" href="L4_Tasks/D3_Architecture_Design/D33/L4_T_SP_Material_Specifications.html"><span class="li-id">D3.3</span>Material &amp; Specifications</a>
+          <a class="lp-item" href="L4_Tasks/D3_Architecture_Design/D34/L4_T_SP_Working_Drawings_Production.html"><span class="li-id">D3.4</span>Working Drawings Production</a>
+          <a class="lp-item" href="L4_Tasks/D3_Architecture_Design/D34/L4_T_SP_Tender_Drawings.html"><span class="li-id">D3.4</span>Tender Drawings &amp; Specification</a>
+          <a class="lp-item" href="L4_Tasks/D3_Architecture_Design/D35/L4_T_SP_Municipal_Submission.html"><span class="li-id">D3.5</span>Municipal Plan Submission</a>
+          <a class="lp-item" href="L4_Tasks/D3_Architecture_Design/D35/L4_T_SP_Plan_Approval_Response.html"><span class="li-id">D3.5</span>Plan Approval Response</a>
+          <a class="lp-item" href="L4_Tasks/D3_Architecture_Design/D36/L4_T_SP_Site_Inspection_RFI.html"><span class="li-id">D3.6</span>Site Inspections &amp; RFI</a>
+          <a class="lp-item" href="L4_Tasks/D3_Architecture_Design/D36/L4_T_SP_Design_Change_Control.html"><span class="li-id">D3.6</span>Design Change Control</a>
+        </div>
+      </div>
+      <div class="lp-group">
+        <div class="lp-group-lbl">D4 · Engineering</div>
+        <div class="lp-grid cols-4">
+          <a class="lp-item" href="L4_Tasks/D4_Engineering/D41/L4_T_SP_Site_Investigation.html"><span class="li-id">D4.1</span>Site Investigation &amp; Testing</a>
+          <a class="lp-item" href="L4_Tasks/D4_Engineering/D41/L4_T_SP_Foundation_Recommendation.html"><span class="li-id">D4.1</span>Foundation Recommendation</a>
+          <a class="lp-item" href="L4_Tasks/D4_Engineering/D42/L4_T_SP_Structural_Analysis_Design.html"><span class="li-id">D4.2</span>Structural Analysis &amp; Design</a>
+          <a class="lp-item" href="L4_Tasks/D4_Engineering/D42/L4_T_SP_Structural_Drawing_Production.html"><span class="li-id">D4.2</span>Structural Drawing Production</a>
+          <a class="lp-item" href="L4_Tasks/D4_Engineering/D43/L4_T_SP_Stormwater_Road_Design.html"><span class="li-id">D4.3</span>Stormwater &amp; Road Design</a>
+          <a class="lp-item" href="L4_Tasks/D4_Engineering/D43/L4_T_SP_Services_Reticulation.html"><span class="li-id">D4.3</span>Services Reticulation</a>
+          <a class="lp-item" href="L4_Tasks/D4_Engineering/D44/L4_T_SP_HVAC_Fire_Design.html"><span class="li-id">D4.4</span>HVAC &amp; Fire Suppression</a>
+          <a class="lp-item" href="L4_Tasks/D4_Engineering/D44/L4_T_SP_Mechanical_Specification.html"><span class="li-id">D4.4</span>Mechanical Specification</a>
+          <a class="lp-item" href="L4_Tasks/D4_Engineering/D45/L4_T_SP_Electrical_Design_Distrib.html"><span class="li-id">D4.5</span>Electrical Design &amp; Distribution</a>
+          <a class="lp-item" href="L4_Tasks/D4_Engineering/D45/L4_T_SP_Plumbing_Solar_Design.html"><span class="li-id">D4.5</span>Plumbing &amp; Solar Design</a>
+          <a class="lp-item" href="L4_Tasks/D4_Engineering/D46/L4_T_SP_Site_Inspection_Testing.html"><span class="li-id">D4.6</span>Site Inspection &amp; Testing</a>
+          <a class="lp-item" href="L4_Tasks/D4_Engineering/D46/L4_T_SP_MEP_Commissioning.html"><span class="li-id">D4.6</span>MEP Commissioning</a>
+        </div>
+      </div>
+      <div class="lp-group">
+        <div class="lp-group-lbl">D5 · Construction Management</div>
+        <div class="lp-grid cols-4">
+          <a class="lp-item" href="L4_Tasks/D5_Construction_Management/D51/L4_T_SP_Site_Setup_Camp.html"><span class="li-id">D5.1</span>Site Setup &amp; Camp Establishment</a>
+          <a class="lp-item" href="L4_Tasks/D5_Construction_Management/D51/L4_T_SP_Plant_Mobilisation.html"><span class="li-id">D5.1</span>Plant &amp; Enabling Works Mobilisation</a>
+          <a class="lp-item" href="L4_Tasks/D5_Construction_Management/D52/L4_T_SP_Activity_Scheduling.html"><span class="li-id">D5.2</span>Activity Scheduling &amp; Sequencing</a>
+          <a class="lp-item" href="L4_Tasks/D5_Construction_Management/D52/L4_T_SP_Look_Ahead_Planning.html"><span class="li-id">D5.2</span>Look-Ahead Planning</a>
+          <a class="lp-item" href="L4_Tasks/D5_Construction_Management/D53/L4_T_SP_Inspection_Test_Plan.html"><span class="li-id">D5.3</span>Inspection &amp; Test Plan</a>
+          <a class="lp-item" href="L4_Tasks/D5_Construction_Management/D53/L4_T_SP_Non_Conformance_Management.html"><span class="li-id">D5.3</span>Non-Conformance Management</a>
+          <a class="lp-item" href="L4_Tasks/D5_Construction_Management/D54/L4_T_SP_HS_Plan_File.html"><span class="li-id">D5.4</span>H&amp;S Plan &amp; Safety File</a>
+          <a class="lp-item" href="L4_Tasks/D5_Construction_Management/D54/L4_T_SP_Incident_Management.html"><span class="li-id">D5.4</span>Incident Management &amp; Reporting</a>
+          <a class="lp-item" href="L4_Tasks/D5_Construction_Management/D55/L4_T_SP_Subcontract_Administration.html"><span class="li-id">D5.5</span>Subcontract Administration</a>
+          <a class="lp-item" href="L4_Tasks/D5_Construction_Management/D55/L4_T_SP_Subcontractor_Performance.html"><span class="li-id">D5.5</span>Subcontractor Performance</a>
+          <a class="lp-item" href="L4_Tasks/D5_Construction_Management/D56/L4_T_SP_Labour_Allocation.html"><span class="li-id">D5.6</span>Labour Allocation &amp; Tracking</a>
+          <a class="lp-item" href="L4_Tasks/D5_Construction_Management/D56/L4_T_SP_Plant_Material_Logistics.html"><span class="li-id">D5.6</span>Plant &amp; Material Logistics</a>
+          <a class="lp-item" href="L4_Tasks/D5_Construction_Management/D57/L4_T_SP_Snag_List_Resolution.html"><span class="li-id">D5.7</span>Snag List Resolution</a>
+          <a class="lp-item" href="L4_Tasks/D5_Construction_Management/D57/L4_T_SP_OM_Manual_Handover.html"><span class="li-id">D5.7</span>O&amp;M Manual &amp; Handover Package</a>
+        </div>
+      </div>
+      <div class="lp-group">
+        <div class="lp-group-lbl">D6 · Contract Administration</div>
+        <div class="lp-grid cols-4">
+          <a class="lp-item" href="L4_Tasks/D6_Contract_Administration/D61/L4_T_SP_Contract_Selection_Formation.html"><span class="li-id">D6.1</span>Contract Selection &amp; Formation</a>
+          <a class="lp-item" href="L4_Tasks/D6_Contract_Administration/D61/L4_T_SP_Contract_Execution.html"><span class="li-id">D6.1</span>Contract Execution &amp; Commencement</a>
+          <a class="lp-item" href="L4_Tasks/D6_Contract_Administration/D62/L4_T_SP_PA_Site_Instructions.html"><span class="li-id">D6.2</span>PA Site Instructions</a>
+          <a class="lp-item" href="L4_Tasks/D6_Contract_Administration/D62/L4_T_SP_RFI_Correspondence.html"><span class="li-id">D6.2</span>RFI &amp; Official Correspondence</a>
+          <a class="lp-item" href="L4_Tasks/D6_Contract_Administration/D63/L4_T_SP_EOT_Delay_Analysis.html"><span class="li-id">D6.3</span>EOT &amp; Delay Analysis</a>
+          <a class="lp-item" href="L4_Tasks/D6_Contract_Administration/D63/L4_T_SP_Penalty_Management.html"><span class="li-id">D6.3</span>Penalty &amp; Bonus Management</a>
+          <a class="lp-item" href="L4_Tasks/D6_Contract_Administration/D64/L4_T_SP_Dispute_Notice_Register.html"><span class="li-id">D6.4</span>Dispute Notice &amp; Register</a>
+          <a class="lp-item" href="L4_Tasks/D6_Contract_Administration/D64/L4_T_SP_Mediation_Adjudication.html"><span class="li-id">D6.4</span>Mediation &amp; Adjudication</a>
+          <a class="lp-item" href="L4_Tasks/D6_Contract_Administration/D65/L4_T_SP_Practical_Completion_Cert.html"><span class="li-id">D6.5</span>Practical Completion Certificate</a>
+          <a class="lp-item" href="L4_Tasks/D6_Contract_Administration/D65/L4_T_SP_Final_Completion_Cert.html"><span class="li-id">D6.5</span>Final Completion Certificate</a>
+        </div>
+      </div>
+      <div class="lp-group">
+        <div class="lp-group-lbl">D7 · Compliance &amp; Regulatory</div>
+        <div class="lp-grid cols-4">
+          <a class="lp-item" href="L4_Tasks/D7_Compliance_Regulatory/D71/L4_T_SP_Plan_Submission_Process.html"><span class="li-id">D7.1</span>Building Plan Submission</a>
+          <a class="lp-item" href="L4_Tasks/D7_Compliance_Regulatory/D71/L4_T_SP_Zoning_Land_Use.html"><span class="li-id">D7.1</span>Zoning &amp; Land-Use Rights</a>
+          <a class="lp-item" href="L4_Tasks/D7_Compliance_Regulatory/D72/L4_T_SP_Project_Enrolment.html"><span class="li-id">D7.2</span>NHBRC Project Enrolment</a>
+          <a class="lp-item" href="L4_Tasks/D7_Compliance_Regulatory/D72/L4_T_SP_Stage_Inspections.html"><span class="li-id">D7.2</span>NHBRC Stage Inspections</a>
+          <a class="lp-item" href="L4_Tasks/D7_Compliance_Regulatory/D73/L4_T_SP_EIA_Screening.html"><span class="li-id">D7.3</span>EIA Screening &amp; Scoping</a>
+          <a class="lp-item" href="L4_Tasks/D7_Compliance_Regulatory/D73/L4_T_SP_EMPr_Implementation.html"><span class="li-id">D7.3</span>EMPr Implementation</a>
+          <a class="lp-item" href="L4_Tasks/D7_Compliance_Regulatory/D74/L4_T_SP_OHS_Plan_File.html"><span class="li-id">D7.4</span>OHS Plan &amp; Safety File</a>
+          <a class="lp-item" href="L4_Tasks/D7_Compliance_Regulatory/D74/L4_T_SP_Safety_Audit_Reporting.html"><span class="li-id">D7.4</span>Safety Audit &amp; Reporting</a>
+          <a class="lp-item" href="L4_Tasks/D7_Compliance_Regulatory/D75/L4_T_SP_BBBEE_Verification.html"><span class="li-id">D7.5</span>B-BBEE Verification &amp; Scorecard</a>
+          <a class="lp-item" href="L4_Tasks/D7_Compliance_Regulatory/D75/L4_T_SP_Enterprise_Skills_Dev.html"><span class="li-id">D7.5</span>Enterprise &amp; Skills Development</a>
+          <a class="lp-item" href="L4_Tasks/D7_Compliance_Regulatory/D76/L4_T_SP_Service_Connections.html"><span class="li-id">D7.6</span>Municipal Service Connections</a>
+          <a class="lp-item" href="L4_Tasks/D7_Compliance_Regulatory/D76/L4_T_SP_Occupancy_Certificate.html"><span class="li-id">D7.6</span>Occupancy Certificate</a>
+          <a class="lp-item" href="L4_Tasks/D7_Compliance_Regulatory/D77/L4_T_SP_SANS10400_Review.html"><span class="li-id">D7.7</span>SANS 10400 Compliance Review</a>
+          <a class="lp-item" href="L4_Tasks/D7_Compliance_Regulatory/D77/L4_T_SP_Rational_Design_Process.html"><span class="li-id">D7.7</span>Rational Design Process</a>
+        </div>
+      </div>
+      <div class="lp-group">
+        <div class="lp-group-lbl">D8 · Procurement &amp; Supply Chain</div>
+        <div class="lp-grid cols-4">
+          <a class="lp-item" href="L4_Tasks/D8_Procurement_Supply_Chain/D81/L4_T_SP_Procurement_Strategy_Plan.html"><span class="li-id">D8.1</span>Procurement Strategy &amp; Plan</a>
+          <a class="lp-item" href="L4_Tasks/D8_Procurement_Supply_Chain/D81/L4_T_SP_Market_Analysis.html"><span class="li-id">D8.1</span>Market Analysis &amp; Benchmarking</a>
+          <a class="lp-item" href="L4_Tasks/D8_Procurement_Supply_Chain/D82/L4_T_SP_Vendor_Database_Registration.html"><span class="li-id">D8.2</span>Vendor Database &amp; Registration</a>
+          <a class="lp-item" href="L4_Tasks/D8_Procurement_Supply_Chain/D82/L4_T_SP_CIDB_BBBEE_Verification.html"><span class="li-id">D8.2</span>CIDB &amp; B-BBEE Verification</a>
+          <a class="lp-item" href="L4_Tasks/D8_Procurement_Supply_Chain/D83/L4_T_SP_RFQ_RFP_Issue.html"><span class="li-id">D8.3</span>RFQ &amp; RFP Issue &amp; Management</a>
+          <a class="lp-item" href="L4_Tasks/D8_Procurement_Supply_Chain/D83/L4_T_SP_Bid_Evaluation_Award.html"><span class="li-id">D8.3</span>Bid Evaluation &amp; Award</a>
+          <a class="lp-item" href="L4_Tasks/D8_Procurement_Supply_Chain/D84/L4_T_SP_Purchase_Orders_Delivery.html"><span class="li-id">D8.4</span>Purchase Orders &amp; Delivery</a>
+          <a class="lp-item" href="L4_Tasks/D8_Procurement_Supply_Chain/D84/L4_T_SP_Site_Receiving_Warehousing.html"><span class="li-id">D8.4</span>Site Receiving &amp; Warehousing</a>
+          <a class="lp-item" href="L4_Tasks/D8_Procurement_Supply_Chain/D85/L4_T_SP_Specialist_Sourcing.html"><span class="li-id">D8.5</span>Specialist Subcontractor Sourcing</a>
+          <a class="lp-item" href="L4_Tasks/D8_Procurement_Supply_Chain/D85/L4_T_SP_Subcontractor_Performance_Mgmt.html"><span class="li-id">D8.5</span>Subcontractor Performance Mgmt</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="tools-section">
+  <div class="section-lbl">AI Tools</div>
+  <div class="tools-grid">
+    <a class="tool-card" href="tools/feasibility/">
+      <div class="tool-card-icon">&#9881;</div>
+      <div class="tool-card-body">
+        <div class="tool-card-title">Feasibility Cost Estimator</div>
+        <div class="tool-card-meta">D1.1-SP-001 &middot; ASAQS Class 4/5 &middot; &plusmn;15&ndash;25% accuracy</div>
+        <div class="tool-card-tags">
+          <span class="tool-tag live">Live</span>
+          <span class="tool-tag">Pydantic AI</span>
+          <span class="tool-tag">QS &amp; Cost</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<div class="domain-strip">
+  <h2>Professional Domains</h2>
+  <div class="domain-row">
+    <a class="domain-tag" href="L1_Professional_Domains/L1_D1_QS_Cost_Management.html">D1 &mdash; QS &amp; Cost Management</a>
+    <a class="domain-tag" href="L1_Professional_Domains/L1_D2_Project_Management.html">D2 &mdash; Project Management</a>
+    <a class="domain-tag" href="L1_Professional_Domains/L1_D3_Architecture_Design.html">D3 &mdash; Architecture &amp; Design</a>
+    <a class="domain-tag" href="L1_Professional_Domains/L1_D4_Engineering.html">D4 &mdash; Engineering</a>
+    <a class="domain-tag" href="L1_Professional_Domains/L1_D5_Construction_Management.html">D5 &mdash; Construction Management</a>
+    <a class="domain-tag" href="L1_Professional_Domains/L1_D6_Contract_Administration.html">D6 &mdash; Contract Administration</a>
+    <a class="domain-tag" href="L1_Professional_Domains/L1_D7_Compliance_Regulatory.html">D7 &mdash; Compliance &amp; Regulatory</a>
+    <a class="domain-tag" href="L1_Professional_Domains/L1_D8_Procurement_Supply_Chain.html">D8 &mdash; Procurement &amp; Supply Chain</a>
+  </div>
+</div>
+
+<div class="map-section">
+  <a class="map-btn" href="domain-interaction-map.html">
+    Interactive Domain Interaction Map
+    <span class="sub">Explore how changes cascade across professional domains in real-time</span>
+  </a>
+</div>
+
+<div class="footer">
+  <span>Swift Designz</span> &middot; Construction Platform Process Docs &middot; Version 2.0 &middot; April 2026
+</div>
+
+</div><!-- /main -->
+
+    <script src="nav.js"></script>
+</body>
+</html>

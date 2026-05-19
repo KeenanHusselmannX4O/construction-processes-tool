@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>L2 — D1.7: Budget Tracking &amp; Cost Control</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root{--navy-950:#0a0f1e;--navy-900:#0f172a;--navy-800:#1e293b;--navy-700:#334155;--navy-600:#475569;--slate-400:#94a3b8;--slate-300:#cbd5e1;--white:#f8fafc;--accent:#3b82f6;--accent-light:#60a5fa}
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:var(--navy-950);color:var(--slate-300);line-height:1.7;font-size:12px}
+        @page{size:A4;margin:15mm}.page{max-width:210mm;margin:0 auto;padding:32px 40px;background:var(--navy-900)}
+        .doc-header{border-bottom:3px solid var(--accent);padding-bottom:18px;margin-bottom:24px}
+        .doc-header .level-badge{display:inline-block;padding:3px 12px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:rgba(59,130,246,.15);color:var(--accent-light);margin-bottom:6px}
+        .doc-header h1{font-size:22px;font-weight:800;color:var(--white);margin-bottom:4px}
+        .doc-header .subtitle{font-size:13px;color:var(--slate-400)}
+        .doc-header .meta{display:flex;gap:20px;margin-top:10px;font-size:10px;color:var(--slate-400)}
+        h2{font-size:16px;font-weight:700;color:var(--white);margin:24px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--navy-700)}
+        p{margin-bottom:10px}
+        .nav-bar{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
+        .nav-link{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:6px;font-size:10px;font-weight:600;text-decoration:none;border:1px solid var(--navy-700);color:var(--slate-300);background:var(--navy-800);transition:all .2s}
+        .nav-link:hover{border-color:var(--accent);color:var(--accent-light)}
+        .nav-link.active{border-color:var(--accent);color:var(--accent-light);background:rgba(59,130,246,.1)}
+        .nav-link .arrow{font-size:12px}
+        table{width:100%;border-collapse:collapse;margin:10px 0;font-size:11px}
+        thead th{background:var(--navy-800);color:var(--accent-light);font-weight:600;text-align:left;padding:7px 10px;border-bottom:2px solid var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+        tbody td{padding:7px 10px;border-bottom:1px solid var(--navy-700);vertical-align:top}
+        .sp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:14px 0}
+        .sp-card{background:var(--navy-800);border:1px solid var(--navy-700);border-left:3px solid var(--accent);border-radius:8px;padding:12px;text-decoration:none;color:inherit;transition:all .2s}
+        .sp-card:hover{border-color:var(--accent);transform:translateY(-1px)}
+        .sp-card .sp-id{font-size:9px;font-weight:700;color:var(--accent-light);letter-spacing:1px;margin-bottom:3px}
+        .sp-card h4{font-size:11px;font-weight:700;color:var(--white);margin-bottom:4px}
+        .sp-card p{font-size:10px;color:var(--slate-400);margin:0}
+        .io-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:10px 0}
+        .io-box{background:var(--navy-800);border-radius:8px;padding:12px;border:1px solid var(--navy-700)}
+        .io-box h4{font-size:10px;font-weight:700;color:var(--accent-light);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px}
+        .io-box ul{margin:0;padding-left:14px;font-size:10px;color:var(--slate-300)}
+        .io-box li{margin-bottom:3px}
+        .mermaid{background:transparent!important;margin:14px 0}
+        .doc-footer{margin-top:28px;padding-top:10px;border-top:1px solid var(--navy-700);font-size:9px;color:var(--navy-600);display:flex;justify-content:space-between}
+    </style>
+    <style id="pro-override">
+        :root{
+            --navy-950:#f0f0f0;--navy-900:#ffffff;--navy-800:#f5f5f5;
+            --navy-700:#d4d4d4;--navy-600:#888;
+            --slate-400:#666;--slate-300:#333;--white:#1c1c1c;
+            --blue-500:#555;--blue-400:#555;
+            --accent:#555;--accent-light:#555;
+            --amber-500:#888;--amber-400:#aaa;
+            --green-500:#666;--green-400:#888;
+            --cyan-500:#777;--cyan-400:#999;
+            --purple-500:#666;--purple-400:#888;
+            --rose-500:#777;--rose-400:#999;
+            --teal-500:#666;--teal-400:#888;
+            --red-500:#666;--orange-500:#777;--orange-400:#999;
+            --violet-500:#666;--violet-400:#888
+        }
+        body{font-family:'Segoe UI',Arial,sans-serif!important;background:#f0f0f0!important;color:#333!important}
+        .page{background:#fff!important;border:1px solid #d4d4d4;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+        .doc-header{border-bottom:1px solid #d4d4d4!important}
+        .level-badge{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc}
+        .doc-header h1{color:#1c1c1c!important;font-weight:700!important}
+        .doc-header .subtitle{color:#555!important}
+        .doc-header .meta{color:#888!important}
+        h2{color:#1c1c1c!important;border-bottom:1px solid #d4d4d4!important;font-weight:700!important}
+        h3{color:#444!important}
+        h4{color:#333!important}
+        p{color:#444}
+        .nav-bar{gap:6px}
+        .nav-link{background:#f5f5f5!important;border:1px solid #d0d0d0!important;color:#444!important;border-radius:3px!important}
+        .nav-link:hover{border-color:#888!important;color:#1c1c1c!important;background:#ebebeb!important}
+        .nav-link.active{border-color:#888!important;color:#1c1c1c!important;background:#e4e4e4!important;font-weight:600!important}
+        table{border:1px solid #e0e0e0}
+        thead th{background:#f0f0f0!important;color:#333!important;border-bottom:2px solid #d4d4d4!important;font-weight:700!important}
+        tbody td{border-bottom:1px solid #ebebeb!important;color:#444!important}
+        tbody tr:hover td{background:#fafafa}
+        .card,.phase-card,.domain-card,.info-card,.process-card,.step-card,.task-card{background:#f8f8f8!important;border:1px solid #d4d4d4!important}
+        .card h4{color:#333!important;text-transform:none!important}
+        .phase-card .phase-num{color:#666!important}
+        .phase-card h4{color:#1c1c1c!important}
+        .phase-card p{color:#555!important}
+        .phase-card.p1,.phase-card.p2,.phase-card.p3,.phase-card.p4,.phase-card.p5,.phase-card.p6,.phase-card.p7{border-top:2px solid #bbb!important}
+        .domain-card .domain-icon,.d1,.d2,.d3,.d4,.d5,.d6,.d7,.d8{background:#e8e8e8!important;color:#444!important}
+        .domain-card .domain-info h4{color:#1c1c1c!important}
+        .domain-card .domain-info .pa-count{color:#666!important}
+        .domain-card .domain-info .link{color:#444!important}
+        .domain-card:hover{border-color:#888!important}
+        .callout{background:#f5f5f5!important;border-left:3px solid #888!important;color:#444!important}
+        .callout strong{color:#333!important}
+        .doc-footer{border-top:1px solid #e4e4e4!important;color:#aaa!important}
+        .mermaid{background:#fff!important}
+        a{color:#333}
+        a:hover{color:#000}
+        code{background:#efefef!important;color:#333!important;border:1px solid #ddd}
+        li{color:#444}
+        .pa-card,.process-area-card{background:#f8f8f8!important;border-color:#d4d4d4!important}
+        .badge,.tag,.label{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc!important}
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="doc-header">
+        <div class="level-badge">Level 2 — Process Area</div>
+        <h1>D1.7: Budget Tracking &amp; Cost Control</h1>
+        <div class="subtitle">L0 → L1: QS &amp; Cost Management → <strong>L2: Budget Tracking &amp; Cost Control</strong></div>
+        <div class="meta"><span>PA ID: D1.7</span><span>BPMN Level: 2</span><span>2 Sub-Processes</span><span>Version 2.0</span><span>April 2026</span></div>
+    </div>
+
+    <div class="nav-bar">
+        <a class="nav-link" href="../../L1_Professional_Domains/L1_D1_QS_Cost_Management.html"><span class="arrow">↑</span> L1 D1: QS &amp; Cost</a>
+        <span class="nav-link active"><span class="arrow">●</span> L2 D1.7: Budget Control</span>
+        <a class="nav-link" href="L2_D1.6_Variation_Assessment_Management.html"><span class="arrow">←</span> D1.6 Variations</a>
+        <a class="nav-link" href="L2_D1.8_Final_Account_Closeout.html"><span class="arrow">→</span> D1.8 Final Account</a>
+        <a class="nav-link" href="../../L3_Sub_Processes/D1_QS_Cost_Management/D1.7_Budget_Tracking_Cost_Control/SP_Budget_Monitoring_PFC.html"><span class="arrow">↓</span> L3 Sub-Processes</a>
+    </div>
+
+    <h2>1. Process Area Purpose</h2>
+    <p>Budget Tracking &amp; Cost Control provides ongoing financial monitoring throughout the construction phase. The QS maintains the Projected Final Cost (PFC) — the living forecast of what the project will ultimately cost — incorporating approved variations, CPA adjustments, provisional sum movements, and contingency drawdown. Cash flow forecasting ensures the client's funding schedule aligns with actual expenditure.</p>
+    <p><strong>Standards:</strong> SACQSP Practice Standards · RICS NRM3 (reference) · JBCC Series 2000 · Earned Value Management (PMBOK)</p>
+
+    <h2>2. Scope &amp; Boundaries</h2>
+    <table>
+        <thead><tr><th>In Scope</th><th>Out of Scope</th></tr></thead>
+        <tbody>
+            <tr><td>Monthly PFC / cost-to-complete reporting</td><td>Monthly payment valuations (← D1.5)</td></tr>
+            <tr><td>Contingency monitoring &amp; drawdown tracking</td><td>Variation cost assessment (← D1.6)</td></tr>
+            <tr><td>Cash flow forecasting &amp; S-curve analysis</td><td>Final account preparation (→ D1.8)</td></tr>
+            <tr><td>Cost overrun alerts &amp; value engineering</td><td>Funder reporting format (→ D1.9)</td></tr>
+        </tbody>
+    </table>
+
+    <h2>3. Inputs &amp; Outputs</h2>
+    <div class="io-grid">
+        <div class="io-box">
+            <h4>Inputs</h4>
+            <ul>
+                <li>Monthly payment certificates (from D1.5)</li>
+                <li>VO register (from D1.6)</li>
+                <li>CPA adjustments (from D1.4)</li>
+                <li>Original approved budget</li>
+                <li>Construction programme milestones (from D2)</li>
+                <li>Contingency register</li>
+            </ul>
+        </div>
+        <div class="io-box">
+            <h4>Outputs</h4>
+            <ul>
+                <li>Monthly PFC / Projected Final Cost report</li>
+                <li>Cash flow forecast (projected vs actual)</li>
+                <li>Contingency drawdown status</li>
+                <li>Cost variance analysis</li>
+                <li>Value engineering recommendations</li>
+                <li>Input to funder reporting (→ D1.9)</li>
+            </ul>
+        </div>
+    </div>
+
+    <h2>4. Sub-Processes (→ L3)</h2>
+    <div class="sp-grid">
+        <a class="sp-card" href="../../L3_Sub_Processes/D1_QS_Cost_Management/D1.7_Budget_Tracking_Cost_Control/SP_Budget_Monitoring_PFC.html">
+            <div class="sp-id">SP 1.7.1</div>
+            <h4>Budget Monitoring &amp; PFC</h4>
+            <p>Projected final cost calculation, variance analysis, cost-to-complete</p>
+        </a>
+        <a class="sp-card" href="../../L3_Sub_Processes/D1_QS_Cost_Management/D1.7_Budget_Tracking_Cost_Control/SP_Contingency_Cash_Flow.html">
+            <div class="sp-id">SP 1.7.2</div>
+            <h4>Contingency &amp; Cash Flow</h4>
+            <p>Contingency tracking, cash flow forecasting, S-curve analysis</p>
+        </a>
+    </div>
+
+    <h2>5. Process Flow</h2>
+    <div class="mermaid">
+    flowchart LR
+        A["Payment Certs<br/>(D1.5)"] --> B["SP 1.7.1<br/>Budget<br/>Monitoring"]
+        C["VO Register<br/>(D1.6)"] --> B
+        D["CPA Values<br/>(D1.4)"] --> B
+        B --> E["SP 1.7.2<br/>Contingency<br/>& Cash Flow"]
+        E --> F{"On<br/>Budget?"}
+        F -->|Yes| G["Report to<br/>PM & Client"]
+        F -->|No| H["Value Engineering<br/>/ Escalate"]
+        G --> I["→ D1.9 Funder<br/>Reporting"]
+        style B fill:#1e293b,stroke:#60a5fa,color:#f8fafc
+        style E fill:#1e293b,stroke:#60a5fa,color:#f8fafc
+    </div>
+
+    <h2>6. RACI Matrix</h2>
+    <table>
+        <thead><tr><th>Activity</th><th>QS</th><th>PM</th><th>Architect</th><th>Client/Funder</th></tr></thead>
+        <tbody>
+            <tr><td>PFC calculation</td><td>R/A</td><td>C</td><td>I</td><td>I</td></tr>
+            <tr><td>Cash flow forecasting</td><td>R/A</td><td>C</td><td>I</td><td>I</td></tr>
+            <tr><td>Contingency monitoring</td><td>R</td><td>C</td><td>I</td><td>A</td></tr>
+            <tr><td>Cost report to client</td><td>R</td><td>C</td><td>I</td><td>A</td></tr>
+            <tr><td>Value engineering</td><td>R</td><td>A</td><td>C</td><td>I</td></tr>
+        </tbody>
+    </table>
+
+    <div class="doc-footer"><span>L2-D1.7 Budget Tracking &amp; Cost Control v2.0</span><span>Confidential — Swift Designz</span></div>
+</div>
+<script>mermaid.initialize({startOnLoad:true,theme:'dark',themeVariables:{primaryColor:'#1e3a5f',primaryTextColor:'#f8fafc',primaryBorderColor:'#3b82f6',lineColor:'#60a5fa',fontFamily:'Inter, sans-serif',fontSize:'11px'},flowchart:{useMaxWidth:true,htmlLabels:true,curve:'basis'}});</script>
+    <script src="../../nav.js"></script>
+</body>
+</html>

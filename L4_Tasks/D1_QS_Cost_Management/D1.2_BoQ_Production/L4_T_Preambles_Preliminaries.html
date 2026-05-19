@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>L4 — Tasks: Preambles &amp; Preliminaries Drafting</title>
+    <style>
+        :root{--navy-950:#0a0f1e;--navy-900:#0f172a;--navy-800:#1e293b;--navy-700:#334155;--navy-600:#475569;--slate-400:#94a3b8;--slate-300:#cbd5e1;--white:#f8fafc;--accent:#3b82f6;--accent-light:#60a5fa}
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:var(--navy-950);color:var(--slate-300);line-height:1.7;font-size:12px}
+        @page{size:A4;margin:15mm}.page{max-width:210mm;margin:0 auto;padding:32px 40px;background:var(--navy-900)}
+        .doc-header{border-bottom:3px solid var(--accent);padding-bottom:18px;margin-bottom:24px}
+        .doc-header .level-badge{display:inline-block;padding:3px 12px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:rgba(59,130,246,.15);color:var(--accent-light);margin-bottom:6px}
+        .doc-header h1{font-size:22px;font-weight:800;color:var(--white);margin-bottom:4px}
+        .doc-header .subtitle{font-size:13px;color:var(--slate-400)}
+        .doc-header .meta{display:flex;gap:20px;margin-top:10px;font-size:10px;color:var(--slate-400)}
+        h2{font-size:16px;font-weight:700;color:var(--white);margin:24px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--navy-700)}
+        h3{font-size:13px;font-weight:600;color:var(--accent-light);margin:16px 0 6px}
+        p{margin-bottom:10px}
+        .nav-bar{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
+        .nav-link{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:6px;font-size:10px;font-weight:600;text-decoration:none;border:1px solid var(--navy-700);color:var(--slate-300);background:var(--navy-800);transition:all .2s}
+        .nav-link:hover{border-color:var(--accent);color:var(--accent-light)}
+        .nav-link.active{border-color:var(--accent);color:var(--accent-light);background:rgba(59,130,246,.1)}
+        .nav-link .arrow{font-size:12px}
+        table{width:100%;border-collapse:collapse;margin:10px 0;font-size:11px}
+        thead th{background:var(--navy-800);color:var(--accent-light);font-weight:600;text-align:left;padding:7px 10px;border-bottom:2px solid var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+        tbody td{padding:7px 10px;border-bottom:1px solid var(--navy-700);vertical-align:top}
+        ul{margin:4px 0 8px 14px;font-size:11px}li{margin-bottom:3px}
+        .task-block{background:var(--navy-800);border:1px solid var(--navy-700);border-left:3px solid var(--accent);border-radius:8px;padding:14px;margin:10px 0}
+        .task-block .task-id{font-size:9px;font-weight:700;color:var(--accent-light);letter-spacing:1px;margin-bottom:3px}
+        .task-block h4{font-size:12px;font-weight:700;color:var(--white);margin-bottom:6px}
+        .task-block .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10px}
+        .task-block .detail-label{font-weight:600;color:var(--accent-light);font-size:9px;text-transform:uppercase;letter-spacing:.5px}
+        .task-block .detail-value{color:var(--slate-300)}
+        .check{color:#34d399;font-weight:600}
+        .doc-footer{margin-top:28px;padding-top:10px;border-top:1px solid var(--navy-700);font-size:9px;color:var(--navy-600);display:flex;justify-content:space-between}
+    </style>
+    <style id="pro-override">
+        :root{
+            --navy-950:#f0f0f0;--navy-900:#ffffff;--navy-800:#f5f5f5;
+            --navy-700:#d4d4d4;--navy-600:#888;
+            --slate-400:#666;--slate-300:#333;--white:#1c1c1c;
+            --blue-500:#555;--blue-400:#555;
+            --accent:#555;--accent-light:#555;
+            --amber-500:#888;--amber-400:#aaa;
+            --green-500:#666;--green-400:#888;
+            --cyan-500:#777;--cyan-400:#999;
+            --purple-500:#666;--purple-400:#888;
+            --rose-500:#777;--rose-400:#999;
+            --teal-500:#666;--teal-400:#888;
+            --red-500:#666;--orange-500:#777;--orange-400:#999;
+            --violet-500:#666;--violet-400:#888
+        }
+        body{font-family:'Segoe UI',Arial,sans-serif!important;background:#f0f0f0!important;color:#333!important}
+        .page{background:#fff!important;border:1px solid #d4d4d4;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+        .doc-header{border-bottom:1px solid #d4d4d4!important}
+        .level-badge{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc}
+        .doc-header h1{color:#1c1c1c!important;font-weight:700!important}
+        .doc-header .subtitle{color:#555!important}
+        .doc-header .meta{color:#888!important}
+        h2{color:#1c1c1c!important;border-bottom:1px solid #d4d4d4!important;font-weight:700!important}
+        h3{color:#444!important}
+        h4{color:#333!important}
+        p{color:#444}
+        .nav-bar{gap:6px}
+        .nav-link{background:#f5f5f5!important;border:1px solid #d0d0d0!important;color:#444!important;border-radius:3px!important}
+        .nav-link:hover{border-color:#888!important;color:#1c1c1c!important;background:#ebebeb!important}
+        .nav-link.active{border-color:#888!important;color:#1c1c1c!important;background:#e4e4e4!important;font-weight:600!important}
+        table{border:1px solid #e0e0e0}
+        thead th{background:#f0f0f0!important;color:#333!important;border-bottom:2px solid #d4d4d4!important;font-weight:700!important}
+        tbody td{border-bottom:1px solid #ebebeb!important;color:#444!important}
+        tbody tr:hover td{background:#fafafa}
+        .card,.phase-card,.domain-card,.info-card,.process-card,.step-card,.task-card{background:#f8f8f8!important;border:1px solid #d4d4d4!important}
+        .card h4{color:#333!important;text-transform:none!important}
+        .phase-card .phase-num{color:#666!important}
+        .phase-card h4{color:#1c1c1c!important}
+        .phase-card p{color:#555!important}
+        .phase-card.p1,.phase-card.p2,.phase-card.p3,.phase-card.p4,.phase-card.p5,.phase-card.p6,.phase-card.p7{border-top:2px solid #bbb!important}
+        .domain-card .domain-icon,.d1,.d2,.d3,.d4,.d5,.d6,.d7,.d8{background:#e8e8e8!important;color:#444!important}
+        .domain-card .domain-info h4{color:#1c1c1c!important}
+        .domain-card .domain-info .pa-count{color:#666!important}
+        .domain-card .domain-info .link{color:#444!important}
+        .domain-card:hover{border-color:#888!important}
+        .callout{background:#f5f5f5!important;border-left:3px solid #888!important;color:#444!important}
+        .callout strong{color:#333!important}
+        .doc-footer{border-top:1px solid #e4e4e4!important;color:#aaa!important}
+        .mermaid{background:#fff!important}
+        a{color:#333}
+        a:hover{color:#000}
+        code{background:#efefef!important;color:#333!important;border:1px solid #ddd}
+        li{color:#444}
+        .pa-card,.process-area-card{background:#f8f8f8!important;border-color:#d4d4d4!important}
+        .badge,.tag,.label{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc!important}
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="doc-header">
+        <div class="level-badge">Level 4 — Tasks</div>
+        <h1>Tasks: Preambles &amp; Preliminaries Drafting</h1>
+        <div class="subtitle">L0 → L1: D1 QS → L2: D1.2 BoQ Production → L3: Preambles &amp; Preliminaries → <strong>L4: Tasks</strong></div>
+        <div class="meta"><span>Task Set: D1.2-SP-003-T</span><span>BPMN Level: 4</span><span>7 Tasks</span><span>Version 2.0</span><span>April 2026</span></div>
+    </div>
+
+    <div class="nav-bar">
+        <a class="nav-link" href="../../../L3_Sub_Processes/D1_QS_Cost_Management/D1.2_BoQ_Production/SP_Preambles_Preliminaries.html"><span class="arrow">↑</span> L3 Preambles &amp; Preliminaries</a>
+        <span class="nav-link active"><span class="arrow">●</span> L4 Tasks</span>
+    </div>
+
+    <h2>1. Task Overview</h2>
+    <p>This task set expands the Preambles &amp; Preliminaries Drafting sub-process (D1.2-SP-003) into granular work instructions. Preliminaries define the contractor's non-measurable obligations (site establishment, management, insurance, H&amp;S), while Preambles set trade-specific measurement rules and material specifications. These sections are critical pricing components under JBCC Series 2000, NEC4, or GCC 2015 contracts and must comply with SA regulatory requirements including the OHS Act, Construction Regulations 2014, NHBRC enrolment (housing), and SANS 10400.</p>
+
+    <h2>2. Detailed Task Breakdown</h2>
+
+    <!-- TASK 1 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.2.3-01</div>
+        <h4>Review Project Scope, Contract Form &amp; Employer's Agent Agreements</h4>
+        <p>Review all project inception documents to establish the framework for Preliminaries and Preambles. Confirm: contract form selected (JBCC PBA / NEC4 ECC / GCC 2015), employer's agent appointments (Principal Agent, Principal Consultant), project scope and description, site location and access conditions, contract period and key programme milestones, and any special employer requirements (e.g., NHBRC enrolment for housing projects, subsidy compliance for government-funded work). Produce a scope checklist that will drive the content of both Preliminaries and Preambles sections.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">0.5 day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Contract agreements; employer's brief; agent appointment letters; project scope document; site information</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Preliminaries scope checklist; contract form confirmation note</div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">Preliminaries Scope Checklist Template; contract form comparison matrix (JBCC vs NEC4 vs GCC 2015)</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">If contract form is not yet confirmed → flag to Principal Agent immediately; do not draft Preliminaries until contract form is agreed</div></div>
+        </div>
+        <p class="check" style="margin-top:8px">✓ Quality Check: Contract form confirmed in writing; scope checklist covers all JBCC/NEC4/GCC 2015 mandatory sections; agent appointments verified</p>
+    </div>
+
+    <!-- TASK 2 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.2.3-02</div>
+        <h4>Draft General Preliminaries from Standard Template</h4>
+        <p>Using the confirmed contract form, populate the General Preliminaries from the firm's standard template. JBCC Preliminaries structure includes: Employer's Requirements, Management &amp; Administration, Contractor's Obligations, Site Facilities, Temporary Works, and Insurances &amp; Guarantees. For NEC4: Works Information sections. For GCC 2015: Particular Conditions. Key clauses to address:</p>
+        <ul>
+            <li>Site description and access (include physical address, boundaries, access routes)</li>
+            <li>Contract period and programme submission requirements</li>
+            <li>Site establishment: offices, stores, ablution, fencing, signage, temporary services (water, electricity)</li>
+            <li>Insurance: Contractor's All Risk (CAR) policy, public liability minimum R 10 million, professional indemnity where applicable</li>
+            <li>Performance guarantee: typically 10% of contract value (JBCC) or as specified</li>
+            <li>Retention: 5% to practical completion, 2.5% to final completion (JBCC standard)</li>
+            <li>Payment terms: monthly valuations per contract form provisions</li>
+        </ul>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1–2 days</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Scope checklist (TASK 1.2.3-01); firm's standard Preliminaries template for selected contract form; JBCC/NEC4/GCC 2015 reference</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">General Preliminaries draft (all standard clauses populated)</div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">Standard Preliminaries Template (JBCC / NEC4 / GCC 2015 version); Word/PDF editor</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">Use JBCC template as default for private-sector projects; NEC4 for public-sector; GCC 2015 for government civil works</div></div>
+        </div>
+        <p class="check" style="margin-top:8px">✓ Quality Check: All mandatory contract form sections addressed; insurance values confirmed with employer; guarantee percentages align with contract</p>
+    </div>
+
+    <!-- TASK 3 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.2.3-03</div>
+        <h4>Draft Project-Specific Preliminaries</h4>
+        <p>Add project-specific clauses that are not covered by the standard template. These are driven by unique site conditions, employer requirements, and regulatory context. Typical project-specific items include:</p>
+        <ul>
+            <li>Geotechnical conditions: reference geotech report; special founding requirements; dewatering obligations</li>
+            <li>Existing services and infrastructure: protection of existing buildings, roads, services during construction</li>
+            <li>Environmental requirements: Environmental Impact Assessment (EIA) conditions, waste management plan</li>
+            <li>Community liaison: local labour content requirements (commonly 30% for government projects), community liaison officer</li>
+            <li>NHBRC enrolment and inspection requirements (for all housing projects per Housing Consumers Protection Measures Act)</li>
+            <li>Subsidy compliance reporting (for government-funded affordable housing)</li>
+            <li>Site-specific H&amp;S requirements beyond Construction Regulations 2014 baseline</li>
+        </ul>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1–2 days</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Geotechnical report; EIA conditions; employer's special requirements; local authority conditions of approval</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Project-specific Preliminaries sections appended to General Prelims</div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">Project-Specific Prelims Checklist; EIA / geotech report extracts; local authority approval conditions</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">If geotech report is not available → include provisional allowance for abnormal founding and note assumption; if local labour clause is mandatory → include specific percentage and compliance mechanism</div></div>
+        </div>
+        <p class="check" style="margin-top:8px">✓ Quality Check: All site-specific risks addressed; NHBRC clause included for housing; EIA conditions referenced; local authority requirements incorporated</p>
+    </div>
+
+    <!-- TASK 4 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.2.3-04</div>
+        <h4>Review Preliminaries with Principal Agent &amp; Adjust Scope Allocation</h4>
+        <p>Submit the combined General and Project-Specific Preliminaries draft to the Principal Agent (PA) / Principal Consultant for review. Meeting agenda: confirm risk allocation between employer and contractor, verify scope boundaries (what is in Preliminaries vs what is in Measured Works), agree on insurance and guarantee levels, and confirm programme and payment provisions. Incorporate PA feedback and issue revised draft. Where PA and QS disagree on risk allocation, record the disagreement and escalate to employer for decision.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS + Principal Agent</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">2–3 days (including meeting scheduling and feedback turnaround)</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Combined Preliminaries draft; PA comments; employer risk preferences</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Reviewed and amended Preliminaries; meeting minutes documenting agreed changes</div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">Tracked-changes document; meeting minutes template; risk allocation matrix</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">All PA comments must be addressed (accepted or rejected with reason); unresolved items escalated to employer within 2 working days</div></div>
+        </div>
+        <p class="check" style="margin-top:8px">✓ Quality Check: PA sign-off on Preliminaries; meeting minutes filed; all comments resolved or escalated; risk allocation agreed in writing</p>
+    </div>
+
+    <!-- TASK 5 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.2.3-05</div>
+        <h4>Draft Trade Preambles per ASAQS Standard &amp; Model Preambles</h4>
+        <p>Draft the Preambles section for each trade using the ASAQS Model Preambles for Trades as the baseline. Preambles define: measurement conventions for each trade (referencing ASAQS Standard System 7th Edition), material quality and standards (SANS references), workmanship standards, and what is deemed included in item rates. For each trade section measured in D1.2-SP-001, draft corresponding preambles covering:</p>
+        <ul>
+            <li>Earthworks: classification of materials (soil types, rock definition per geotech), compaction standards</li>
+            <li>Concrete: mix designs per structural engineer, curing requirements, testing regime (cube tests per SANS 5863)</li>
+            <li>Masonry: brick/block types and classes, mortar strength per SANS 10164, bond patterns</li>
+            <li>Waterproofing: membrane types, guarantee requirements (minimum 10-year per ASAQS convention)</li>
+            <li>Roof Covering: material specifications, fixing details, minimum pitches</li>
+            <li>Plumbing: pipe materials per SANS standards, sanitary ware quality grades</li>
+            <li>Electrical: cable types per SANS 10142, DB specifications, circuit descriptions</li>
+        </ul>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">2–3 days</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">ASAQS Model Preambles for Trades; ASAQS Standard System 7th Ed; project specifications from architect/engineers</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Complete trade preamble sections for all measured trades</div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">ASAQS Model Preambles library (firm's customised version); SANS standards reference; specification cross-reference table</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">Where project spec deviates from ASAQS model → amend preamble to match project spec and highlight deviation; where spec is silent → use ASAQS model default</div></div>
+        </div>
+        <p class="check" style="margin-top:8px">✓ Quality Check: Every measured trade has a corresponding preamble; SANS references are current editions; preambles align with project specifications; no contradictions between preamble and item descriptions</p>
+    </div>
+
+    <!-- TASK 6 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.2.3-06</div>
+        <h4>Incorporate Design Team Specifications into Preamble Clauses</h4>
+        <p>Cross-reference the architect's and engineers' specification documents against the trade preambles to ensure alignment. For each trade: verify that material specifications in preambles match the design specification exactly (e.g., concrete mix design must match structural engineer's spec, not generic ASAQS default). Where design specifications are more onerous than ASAQS standard → amend preamble to reflect. Where design specifications are silent → retain ASAQS model preamble wording and note. Coordinate with design team to resolve any ambiguities or conflicts between trades.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1–2 days</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Architectural specification; structural specification; mechanical specification; electrical specification; draft trade preambles</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Specification-aligned preambles; specification cross-reference log documenting deviations</div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">Specification Cross-Reference Template; tracked-changes preamble document</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">Conflicts between architect spec and engineer spec → raise with PA for resolution before finalising preamble; do not default to one over the other</div></div>
+        </div>
+        <p class="check" style="margin-top:8px">✓ Quality Check: Cross-reference log complete for all trades; all deviations documented; design team conflicts resolved; no contradictions between preamble and specification</p>
+    </div>
+
+    <!-- TASK 7 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.2.3-07</div>
+        <h4>Quality Review Against Contract Form Requirements &amp; SA Regulations</h4>
+        <p>Senior QS performs final quality review of the complete Preliminaries and Preambles package. Review against: (1) contract form mandatory provisions — ensure all JBCC/NEC4/GCC 2015 required clauses are addressed, (2) SA regulatory compliance — OHS Act and Construction Regulations 2014 (H&amp;S plan clause, H&amp;S officer threshold R 130 million), NHBRC requirements (housing), BBBEE compliance provisions, CIDB contractor grading requirements, (3) internal firm QA standards — consistent formatting, correct clause numbering, no conflicting provisions. Sign off the package for insertion into the BoQ document.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Senior QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Complete Preliminaries + Preambles package; contract form reference; SA regulatory checklist (OHS Act, NHBRC, CIDB, BBBEE)</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">QA sign-off; finalised Preliminaries &amp; Preambles ready for insertion into BoQ (D1.2-SP-002)</div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">Prelims/Preambles QA Checklist; SA Regulatory Compliance Matrix; contract form clause index</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">Missing mandatory clause → must add before sign-off; formatting inconsistency → correct in same pass; regulatory non-compliance → escalate to Principal immediately</div></div>
+        </div>
+        <p class="check" style="margin-top:8px">✓ Quality Check: Senior QS sign-off obtained; all contract form mandatory clauses present; SA regulatory requirements addressed; package released to BoQ Compilation (D1.2-SP-002)</p>
+    </div>
+
+    <h2>3. Task Summary</h2>
+    <table>
+        <thead><tr><th>Task ID</th><th>Task Name</th><th>Role</th><th>SLA</th><th>Output</th></tr></thead>
+        <tbody>
+            <tr><td>1.2.3-01</td><td>Review Project Scope, Contract Form &amp; Employer's Agent Agreements</td><td>QS</td><td>0.5 day</td><td>Scope checklist; contract form confirmation</td></tr>
+            <tr><td>1.2.3-02</td><td>Draft General Preliminaries from Standard Template</td><td>QS</td><td>1–2 days</td><td>General Preliminaries draft</td></tr>
+            <tr><td>1.2.3-03</td><td>Draft Project-Specific Preliminaries</td><td>QS</td><td>1–2 days</td><td>Project-specific Prelims sections</td></tr>
+            <tr><td>1.2.3-04</td><td>Review Preliminaries with Principal Agent</td><td>QS + PA</td><td>2–3 days</td><td>Reviewed &amp; amended Prelims</td></tr>
+            <tr><td>1.2.3-05</td><td>Draft Trade Preambles per ASAQS Standard</td><td>QS</td><td>2–3 days</td><td>All trade preamble sections</td></tr>
+            <tr><td>1.2.3-06</td><td>Incorporate Design Team Specifications</td><td>QS</td><td>1–2 days</td><td>Specification-aligned preambles</td></tr>
+            <tr><td>1.2.3-07</td><td>Quality Review Against Contract Form &amp; SA Regulations</td><td>Senior QS</td><td>1 day</td><td>QA sign-off; finalised package</td></tr>
+        </tbody>
+    </table>
+
+    <div class="doc-footer"><span>L4 Tasks — D1.2-SP-003 Preambles &amp; Preliminaries v2.0</span><span>Confidential — Swift Designz</span></div>
+</div>
+    <script src="../../../nav.js"></script>
+</body>
+</html>

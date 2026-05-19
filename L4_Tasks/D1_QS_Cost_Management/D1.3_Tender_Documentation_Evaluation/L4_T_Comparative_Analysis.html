@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>L4 — Tasks: Comparative Analysis &amp; Tender Report</title>
+    <style>
+        :root{--navy-950:#0a0f1e;--navy-900:#0f172a;--navy-800:#1e293b;--navy-700:#334155;--navy-600:#475569;--slate-400:#94a3b8;--slate-300:#cbd5e1;--white:#f8fafc;--accent:#3b82f6;--accent-light:#60a5fa}
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:var(--navy-950);color:var(--slate-300);line-height:1.7;font-size:12px}
+        @page{size:A4;margin:15mm}.page{max-width:210mm;margin:0 auto;padding:32px 40px;background:var(--navy-900)}
+        .doc-header{border-bottom:3px solid var(--accent);padding-bottom:18px;margin-bottom:24px}
+        .doc-header .level-badge{display:inline-block;padding:3px 12px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:rgba(59,130,246,.15);color:var(--accent-light);margin-bottom:6px}
+        .doc-header h1{font-size:22px;font-weight:800;color:var(--white);margin-bottom:4px}
+        .doc-header .subtitle{font-size:13px;color:var(--slate-400)}
+        .doc-header .meta{display:flex;gap:20px;margin-top:10px;font-size:10px;color:var(--slate-400)}
+        h2{font-size:16px;font-weight:700;color:var(--white);margin:24px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--navy-700)}
+        h3{font-size:13px;font-weight:600;color:var(--accent-light);margin:16px 0 6px}
+        p{margin-bottom:10px}
+        .nav-bar{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
+        .nav-link{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:6px;font-size:10px;font-weight:600;text-decoration:none;border:1px solid var(--navy-700);color:var(--slate-300);background:var(--navy-800);transition:all .2s}
+        .nav-link:hover{border-color:var(--accent);color:var(--accent-light)}
+        .nav-link.active{border-color:var(--accent);color:var(--accent-light);background:rgba(59,130,246,.1)}
+        .nav-link .arrow{font-size:12px}
+        table{width:100%;border-collapse:collapse;margin:10px 0;font-size:11px}
+        thead th{background:var(--navy-800);color:var(--accent-light);font-weight:600;text-align:left;padding:7px 10px;border-bottom:2px solid var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+        tbody td{padding:7px 10px;border-bottom:1px solid var(--navy-700);vertical-align:top}
+        ul{margin:4px 0 8px 14px;font-size:11px}li{margin-bottom:3px}
+        .task-block{background:var(--navy-800);border:1px solid var(--navy-700);border-left:3px solid var(--accent);border-radius:8px;padding:14px;margin:10px 0}
+        .task-block .task-id{font-size:9px;font-weight:700;color:var(--accent-light);letter-spacing:1px;margin-bottom:3px}
+        .task-block h4{font-size:12px;font-weight:700;color:var(--white);margin-bottom:6px}
+        .task-block .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10px}
+        .task-block .detail-label{font-weight:600;color:var(--accent-light);font-size:9px;text-transform:uppercase;letter-spacing:.5px}
+        .task-block .detail-value{color:var(--slate-300)}
+        .check{color:#34d399;font-weight:600}
+        .doc-footer{margin-top:28px;padding-top:10px;border-top:1px solid var(--navy-700);font-size:9px;color:var(--navy-600);display:flex;justify-content:space-between}
+    </style>
+    <style id="pro-override">
+        :root{
+            --navy-950:#f0f0f0;--navy-900:#ffffff;--navy-800:#f5f5f5;
+            --navy-700:#d4d4d4;--navy-600:#888;
+            --slate-400:#666;--slate-300:#333;--white:#1c1c1c;
+            --blue-500:#555;--blue-400:#555;
+            --accent:#555;--accent-light:#555;
+            --amber-500:#888;--amber-400:#aaa;
+            --green-500:#666;--green-400:#888;
+            --cyan-500:#777;--cyan-400:#999;
+            --purple-500:#666;--purple-400:#888;
+            --rose-500:#777;--rose-400:#999;
+            --teal-500:#666;--teal-400:#888;
+            --red-500:#666;--orange-500:#777;--orange-400:#999;
+            --violet-500:#666;--violet-400:#888
+        }
+        body{font-family:'Segoe UI',Arial,sans-serif!important;background:#f0f0f0!important;color:#333!important}
+        .page{background:#fff!important;border:1px solid #d4d4d4;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+        .doc-header{border-bottom:1px solid #d4d4d4!important}
+        .level-badge{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc}
+        .doc-header h1{color:#1c1c1c!important;font-weight:700!important}
+        .doc-header .subtitle{color:#555!important}
+        .doc-header .meta{color:#888!important}
+        h2{color:#1c1c1c!important;border-bottom:1px solid #d4d4d4!important;font-weight:700!important}
+        h3{color:#444!important}
+        h4{color:#333!important}
+        p{color:#444}
+        .nav-bar{gap:6px}
+        .nav-link{background:#f5f5f5!important;border:1px solid #d0d0d0!important;color:#444!important;border-radius:3px!important}
+        .nav-link:hover{border-color:#888!important;color:#1c1c1c!important;background:#ebebeb!important}
+        .nav-link.active{border-color:#888!important;color:#1c1c1c!important;background:#e4e4e4!important;font-weight:600!important}
+        table{border:1px solid #e0e0e0}
+        thead th{background:#f0f0f0!important;color:#333!important;border-bottom:2px solid #d4d4d4!important;font-weight:700!important}
+        tbody td{border-bottom:1px solid #ebebeb!important;color:#444!important}
+        tbody tr:hover td{background:#fafafa}
+        .card,.phase-card,.domain-card,.info-card,.process-card,.step-card,.task-card{background:#f8f8f8!important;border:1px solid #d4d4d4!important}
+        .card h4{color:#333!important;text-transform:none!important}
+        .phase-card .phase-num{color:#666!important}
+        .phase-card h4{color:#1c1c1c!important}
+        .phase-card p{color:#555!important}
+        .phase-card.p1,.phase-card.p2,.phase-card.p3,.phase-card.p4,.phase-card.p5,.phase-card.p6,.phase-card.p7{border-top:2px solid #bbb!important}
+        .domain-card .domain-icon,.d1,.d2,.d3,.d4,.d5,.d6,.d7,.d8{background:#e8e8e8!important;color:#444!important}
+        .domain-card .domain-info h4{color:#1c1c1c!important}
+        .domain-card .domain-info .pa-count{color:#666!important}
+        .domain-card .domain-info .link{color:#444!important}
+        .domain-card:hover{border-color:#888!important}
+        .callout{background:#f5f5f5!important;border-left:3px solid #888!important;color:#444!important}
+        .callout strong{color:#333!important}
+        .doc-footer{border-top:1px solid #e4e4e4!important;color:#aaa!important}
+        .mermaid{background:#fff!important}
+        a{color:#333}
+        a:hover{color:#000}
+        code{background:#efefef!important;color:#333!important;border:1px solid #ddd}
+        li{color:#444}
+        .pa-card,.process-area-card{background:#f8f8f8!important;border-color:#d4d4d4!important}
+        .badge,.tag,.label{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc!important}
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="doc-header">
+        <div class="level-badge">Level 4 — Tasks</div>
+        <h1>Tasks: Comparative Analysis &amp; Tender Report</h1>
+        <div class="subtitle">L0 → L1: D1 QS → L2: D1.3 Tender Documentation → L3: Comparative Analysis &amp; Tender Report → <strong>L4: Tasks</strong></div>
+        <div class="meta"><span>Task Set: D1.3-SP-003-T</span><span>BPMN Level: 4</span><span>7 Tasks</span><span>Version 2.0</span><span>April 2026</span></div>
+    </div>
+    <div class="nav-bar">
+        <a class="nav-link" href="../../../L3_Sub_Processes/D1_QS_Cost_Management/D1.3_Tender_Documentation_Evaluation/SP_Comparative_Analysis.html"><span class="arrow">↑</span> L3 Comparative Analysis &amp; Tender Report</a>
+        <span class="nav-link active"><span class="arrow">●</span> L4 Tasks</span>
+    </div>
+
+    <h2>1. Task Overview</h2>
+    <p>This task set decomposes the Comparative Analysis &amp; Tender Report sub-process (D1.3-SP-003) into seven granular work instructions. The tasks cover the full evaluation-to-recommendation workflow: preparing section-by-section price comparisons, analysing rate reasonableness, identifying front-loading risks, applying the PPPFA preference point formula (where applicable), compiling the formal tender evaluation report, obtaining Senior QS sign-off, and presenting the recommendation at the tender award meeting. All tasks comply with PPPFA 2017, SACPCMP Practice Notes, CIDB evaluation frameworks, and SACQSP professional guidelines.</p>
+
+    <h2>2. Detailed Task Breakdown</h2>
+
+    <!-- TASK 1 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.3.3-01</div>
+        <h4>Prepare Section-by-Section Price Comparison Schedule</h4>
+        <div class="detail-grid">
+            <div><div class="detail-label">Description</div><div class="detail-value">Import corrected priced BoQs from all qualified tenderers and prepare a structured comparative schedule. For each trade section (Prelims, Preambles, Earthworks, Concrete, Masonry, etc.), tabulate each tenderer's section total side by side, calculate the mean section price, identify percentage variance from mean per tenderer per section, and highlight sections where any tenderer exceeds ±15% variance from the mean. Include a summary row showing corrected tender total, percentage of QS estimate, and rank position.</div></div>
+            <div><div class="detail-label">Role</div><div class="detail-value">QS</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">
+                <ul>
+                    <li>Corrected priced BoQs (all qualified tenderers)</li>
+                    <li>QS elemental estimate / pre-tender estimate</li>
+                    <li>Corrected tender ranking schedule (D1.3-SP-002)</li>
+                </ul>
+            </div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">
+                <ul>
+                    <li>Section-by-section comparative schedule</li>
+                    <li>Variance analysis per trade per tenderer</li>
+                    <li>Summary comparison chart</li>
+                </ul>
+            </div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">Comparative Schedule Template (Excel); QS software (CostX / QSPlus); Variance highlighting rules (conditional formatting)</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">2–3 working days</div></div>
+        </div>
+        <p class="check">✔ Quality Check: All qualified tenderers included, all trade sections represented, corrected totals used (not original), variance percentages calculated correctly, QS estimate comparison included</p>
+    </div>
+
+    <!-- TASK 2 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.3.3-02</div>
+        <h4>Analyse Rate Reasonableness Across Tenderers</h4>
+        <div class="detail-grid">
+            <div><div class="detail-label">Description</div><div class="detail-value">For each significant measured item (top 80% by value — Pareto principle), compare the unit rate across all tenderers and against the QS estimate rate. Calculate the mean rate and standard deviation. Flag any rate that deviates more than ±25% from the mean as a statistical outlier. For flagged items, assess whether the rate is commercially reasonable considering: current market conditions, material cost indices, labour rates per Master Builders Association schedules, and geographical location factors. Prepare a rate analysis narrative for each flagged item explaining the risk assessment.</div></div>
+            <div><div class="detail-label">Role</div><div class="detail-value">QS</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">
+                <ul>
+                    <li>Comparative schedule (TASK 1.3.3-01)</li>
+                    <li>QS elemental estimate with unit rates</li>
+                    <li>Current construction cost indices (AECOM / Rode / StatsSA)</li>
+                    <li>Master Builders Association labour rate schedules</li>
+                </ul>
+            </div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">
+                <ul>
+                    <li>Rate analysis report with outlier flags</li>
+                    <li>Risk narrative per flagged item</li>
+                    <li>Rate comparison matrix (item-level)</li>
+                </ul>
+            </div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">Rate Analysis Template; Construction cost index databases; Statistical outlier calculation (Excel); Historical project rate database</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">2–3 working days</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">Rate deviation > ±25% from mean = flagged for review; abnormally low rates may indicate tenderer error or intent to claim variations; abnormally high rates may indicate front-loading or specification misunderstanding</div></div>
+        </div>
+        <p class="check">✔ Quality Check: Top 80% value items analysed, outlier threshold consistently applied, risk narratives provided for all flagged items, market data sources cited</p>
+    </div>
+
+    <!-- TASK 3 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.3.3-03</div>
+        <h4>Identify Front-Loading &amp; Pricing Distribution Assessment</h4>
+        <div class="detail-grid">
+            <div><div class="detail-label">Description</div><div class="detail-value">Analyse the pricing distribution across project stages to identify front-loading patterns. Calculate the value-weighted percentage of the tender total allocated to early-stage (Months 1–3) vs mid-stage and late-stage activities for each tenderer. Compare distributions across all tenderers. Front-loading indicators include: disproportionately high Prelims percentage (>15% of contract value), elevated earthworks/substructure rates relative to superstructure, high Day Works provisions, and inflated early-trade pricing. Assess the financial risk of front-loading to the Employer (excess early payment exposure).</div></div>
+            <div><div class="detail-label">Role</div><div class="detail-value">Senior QS</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">
+                <ul>
+                    <li>Item-level pricing data (all tenderers)</li>
+                    <li>Indicative construction programme</li>
+                    <li>Comparative schedule (TASK 1.3.3-01)</li>
+                    <li>Industry benchmarks for trade percentage distributions</li>
+                </ul>
+            </div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">
+                <ul>
+                    <li>Front-loading assessment per tenderer</li>
+                    <li>Pricing distribution analysis (by project stage)</li>
+                    <li>Financial risk assessment for Employer</li>
+                </ul>
+            </div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">Front-Loading Assessment Template; Value distribution chart (Excel); Industry benchmark data (ASAQS / AECOM); Cash flow projection model</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 working day</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">Prelims > 15% of contract value = investigate; early-stage pricing > 40% of total within first 25% of programme = potential front-loading flag; material front-loading may warrant recommendation for revised payment schedule or increased retention</div></div>
+        </div>
+        <p class="check">✔ Quality Check: Distribution analysis completed for all tenderers, front-loading flags substantiated with quantitative evidence, risk mitigation recommendations provided where applicable</p>
+    </div>
+
+    <!-- TASK 4 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.3.3-04</div>
+        <h4>Apply PPPFA Preference Point Formula</h4>
+        <div class="detail-grid">
+            <div><div class="detail-label">Description</div><div class="detail-value">For government-funded projects where PPPFA 2017 applies, calculate preference points for each qualified tenderer. Determine the applicable formula: 80/20 for contracts ≤ R50 million or 90/10 for contracts > R50 million. Calculate price points: Ps = X(1 – (Pt – Pmin)/Pmin) where X = 80 or 90, Pt = tenderer's corrected total, Pmin = lowest corrected total. Calculate B-BBEE preference points based on verified B-BBEE level per the PPPFA Regulation Schedule. Sum price points + preference points = total score. Rank tenderers by total score (highest to lowest). For private-sector projects where PPPFA does not apply, rank on price and agreed qualitative criteria.</div></div>
+            <div><div class="detail-label">Role</div><div class="detail-value">QS</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">
+                <ul>
+                    <li>Corrected tender totals (all qualified tenderers)</li>
+                    <li>Verified B-BBEE levels per tenderer</li>
+                    <li>PPPFA 2017 Regulation Schedules</li>
+                    <li>Contract value threshold determination</li>
+                </ul>
+            </div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">
+                <ul>
+                    <li>PPPFA preference point scorecard</li>
+                    <li>Price point calculation per tenderer</li>
+                    <li>B-BBEE preference point allocation</li>
+                    <li>Final scored ranking (highest total score first)</li>
+                </ul>
+            </div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">PPPFA Scorecard Template; B-BBEE points allocation table (per PPPFA Schedule); Preference point calculator (Excel)</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">0.5 working day</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">80/20 applies when contract value ≤ R50m; 90/10 when > R50m; B-BBEE Level 1 = maximum preference points (20 or 10); non-compliant = 0 preference points; formula must yield non-negative price points</div></div>
+        </div>
+        <p class="check">✔ Quality Check: Correct formula applied per contract value, B-BBEE points match verified certificates, calculations independently verified, scorecard compliant with PPPFA Regulation format</p>
+    </div>
+
+    <!-- TASK 5 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.3.3-05</div>
+        <h4>Compile Formal Tender Evaluation Report</h4>
+        <div class="detail-grid">
+            <div><div class="detail-label">Description</div><div class="detail-value">Compile the comprehensive tender evaluation report incorporating all analysis outputs. Report structure: (1) Executive Summary with recommendation; (2) Tender Process Summary (dates, tenderers invited, submissions received); (3) Qualification Results (compliance matrix summary); (4) Arithmetic Check Summary (error percentages, corrections applied); (5) Price Comparison Analysis (section-by-section with variances); (6) Rate Reasonableness Assessment (outlier flags and risk narratives); (7) Front-Loading Assessment; (8) PPPFA Scoring (if applicable); (9) Comparison to QS Estimate; (10) Award Recommendation with justification; (11) Appendices (all supporting schedules). The recommendation must clearly state the recommended tenderer, key reasons, and any conditions or caveats.</div></div>
+            <div><div class="detail-label">Role</div><div class="detail-value">QS</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">
+                <ul>
+                    <li>Comparative schedule (TASK 1.3.3-01)</li>
+                    <li>Rate analysis report (TASK 1.3.3-02)</li>
+                    <li>Front-loading assessment (TASK 1.3.3-03)</li>
+                    <li>PPPFA scorecard (TASK 1.3.3-04)</li>
+                    <li>Arithmetic check summaries (D1.3-SP-002)</li>
+                    <li>Qualification matrix (D1.3-SP-002)</li>
+                </ul>
+            </div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">
+                <ul>
+                    <li>Draft tender evaluation report (complete)</li>
+                    <li>Supporting appendices package</li>
+                    <li>Award recommendation summary</li>
+                </ul>
+            </div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">Tender Evaluation Report Template; SACQSP professional report format; Award Recommendation Template</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">2 working days</div></div>
+        </div>
+        <p class="check">✔ Quality Check: All 11 report sections complete, recommendation clearly stated with justification, all appendices attached, report formatted per SACQSP professional standards</p>
+    </div>
+
+    <!-- TASK 6 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.3.3-06</div>
+        <h4>Senior QS Review &amp; Sign-Off</h4>
+        <div class="detail-grid">
+            <div><div class="detail-label">Description</div><div class="detail-value">Independent Senior QS / Director reviews the draft tender evaluation report for accuracy, completeness, and professional quality. Verify: (1) arithmetic in all schedules is correct; (2) PPPFA calculations comply with regulations; (3) rate analysis conclusions are defensible; (4) front-loading assessment is adequately substantiated; (5) recommendation is supported by the evidence presented; (6) report language is objective and appropriate for professional submission; (7) no conflicts of interest or procedural irregularities. Provide sign-off or return with markup for revision.</div></div>
+            <div><div class="detail-label">Role</div><div class="detail-value">Senior QS / Director (SACQSP registered)</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">
+                <ul>
+                    <li>Draft tender evaluation report (TASK 1.3.3-05)</li>
+                    <li>All supporting schedules and appendices</li>
+                    <li>SACQSP Code of Professional Conduct</li>
+                </ul>
+            </div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">
+                <ul>
+                    <li>Approved tender evaluation report (signed)</li>
+                    <li>Review comments / markup (if revisions required)</li>
+                </ul>
+            </div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">Report Review Checklist; SACQSP professional sign-off cover sheet; Document markup tools</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1–2 working days</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">Report must be reviewed by SACQSP-registered Professional QS; reviewer must not have been involved in the arithmetic check or comparative analysis to ensure independence; any material revisions require re-review</div></div>
+        </div>
+        <p class="check">✔ Quality Check: Senior QS sign-off obtained, all review comments addressed and closed out, report carries SACQSP registration number of signing professional</p>
+    </div>
+
+    <!-- TASK 7 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.3.3-07</div>
+        <h4>Present to PA / Employer at Tender Award Meeting</h4>
+        <div class="detail-grid">
+            <div><div class="detail-label">Description</div><div class="detail-value">Present the approved tender evaluation report at the formal tender award meeting convened by the PA. Attendees typically include: Employer / Client representative, PA, QS, and relevant design team members. Walk through: (1) tender process overview; (2) qualification results; (3) price comparison highlights; (4) rate anomalies and risks identified; (5) front-loading concerns; (6) PPPFA scores (if applicable); (7) QS estimate comparison; (8) formal award recommendation. Answer questions from the Employer. Record the Employer's award decision and any conditions. Issue the formal letter of acceptance to the successful tenderer and notification letters to unsuccessful tenderers per the agreed process.</div></div>
+            <div><div class="detail-label">Role</div><div class="detail-value">QS (presenter) / PA (chair) / Employer (decision maker)</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">
+                <ul>
+                    <li>Approved tender evaluation report (TASK 1.3.3-06)</li>
+                    <li>Presentation summary / slides</li>
+                    <li>Tender award meeting agenda</li>
+                </ul>
+            </div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">
+                <ul>
+                    <li>Award decision (recorded in minutes)</li>
+                    <li>Tender award meeting minutes (signed)</li>
+                    <li>Letter of acceptance (to successful tenderer)</li>
+                    <li>Notification letters (to unsuccessful tenderers)</li>
+                </ul>
+            </div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">Tender Award Meeting Agenda Template; Meeting Minutes Template; Letter of Acceptance Template; Unsuccessful Tenderer Notification Template</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">Meeting (typically 1–2 hours); letters issued within 2 working days of decision</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">Employer makes final award decision; QS recommendation is advisory; for PPPFA projects, award must go to highest-scoring tenderer unless objective grounds for exclusion exist; award letters must reference tender validity period</div></div>
+        </div>
+        <p class="check">✔ Quality Check: Meeting minutes signed by all attendees, award decision formally recorded, acceptance letter issued within tender validity period, unsuccessful tenderer notifications dispatched</p>
+    </div>
+
+    <h2>3. Task Summary</h2>
+    <table>
+        <thead><tr><th>Task ID</th><th>Task Name</th><th>Role</th><th>SLA</th><th>Output</th></tr></thead>
+        <tbody>
+            <tr><td>TASK 1.3.3-01</td><td>Section-by-Section Price Comparison Schedule</td><td>QS</td><td>2–3 days</td><td>Comparative schedule</td></tr>
+            <tr><td>TASK 1.3.3-02</td><td>Rate Reasonableness Analysis</td><td>QS</td><td>2–3 days</td><td>Rate analysis report</td></tr>
+            <tr><td>TASK 1.3.3-03</td><td>Front-Loading &amp; Pricing Distribution Assessment</td><td>Senior QS</td><td>1 day</td><td>Front-loading assessment</td></tr>
+            <tr><td>TASK 1.3.3-04</td><td>Apply PPPFA Preference Point Formula</td><td>QS</td><td>0.5 day</td><td>PPPFA scorecard</td></tr>
+            <tr><td>TASK 1.3.3-05</td><td>Compile Tender Evaluation Report</td><td>QS</td><td>2 days</td><td>Draft evaluation report</td></tr>
+            <tr><td>TASK 1.3.3-06</td><td>Senior QS Review &amp; Sign-Off</td><td>Senior QS / Director</td><td>1–2 days</td><td>Approved report</td></tr>
+            <tr><td>TASK 1.3.3-07</td><td>Present at Tender Award Meeting</td><td>QS / PA / Employer</td><td>Meeting + 2 days</td><td>Award decision + letters</td></tr>
+        </tbody>
+    </table>
+
+    <div class="doc-footer"><span>L4 Tasks — D1.3-SP-003 Comparative Analysis &amp; Tender Report v2.0</span><span>Confidential — Swift Designz</span></div>
+</div>
+    <script src="../../../nav.js"></script>
+</body>
+</html>

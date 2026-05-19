@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>L4 — Tasks: Site Measurement &amp; Progress Assessment</title>
+    <style>
+        :root{--navy-950:#0a0f1e;--navy-900:#0f172a;--navy-800:#1e293b;--navy-700:#334155;--navy-600:#475569;--slate-400:#94a3b8;--slate-300:#cbd5e1;--white:#f8fafc;--accent:#3b82f6;--accent-light:#60a5fa}
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:var(--navy-950);color:var(--slate-300);line-height:1.7;font-size:12px}
+        @page{size:A4;margin:15mm}.page{max-width:210mm;margin:0 auto;padding:32px 40px;background:var(--navy-900)}
+        .doc-header{border-bottom:3px solid var(--accent);padding-bottom:18px;margin-bottom:24px}
+        .doc-header .level-badge{display:inline-block;padding:3px 12px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:rgba(59,130,246,.15);color:var(--accent-light);margin-bottom:6px}
+        .doc-header h1{font-size:22px;font-weight:800;color:var(--white);margin-bottom:4px}
+        .doc-header .subtitle{font-size:13px;color:var(--slate-400)}
+        .doc-header .meta{display:flex;gap:20px;margin-top:10px;font-size:10px;color:var(--slate-400)}
+        h2{font-size:16px;font-weight:700;color:var(--white);margin:24px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--navy-700)}
+        h3{font-size:13px;font-weight:600;color:var(--accent-light);margin:16px 0 6px}
+        p{margin-bottom:10px}
+        .nav-bar{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
+        .nav-link{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:6px;font-size:10px;font-weight:600;text-decoration:none;border:1px solid var(--navy-700);color:var(--slate-300);background:var(--navy-800);transition:all .2s}
+        .nav-link:hover{border-color:var(--accent);color:var(--accent-light)}
+        .nav-link.active{border-color:var(--accent);color:var(--accent-light);background:rgba(59,130,246,.1)}
+        .nav-link .arrow{font-size:12px}
+        table{width:100%;border-collapse:collapse;margin:10px 0;font-size:11px}
+        thead th{background:var(--navy-800);color:var(--accent-light);font-weight:600;text-align:left;padding:7px 10px;border-bottom:2px solid var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+        tbody td{padding:7px 10px;border-bottom:1px solid var(--navy-700);vertical-align:top}
+        ul{margin:4px 0 8px 14px;font-size:11px}li{margin-bottom:3px}
+        .task-block{background:var(--navy-800);border:1px solid var(--navy-700);border-left:3px solid var(--accent);border-radius:8px;padding:14px;margin:10px 0}
+        .task-block .task-id{font-size:9px;font-weight:700;color:var(--accent-light);letter-spacing:1px;margin-bottom:3px}
+        .task-block h4{font-size:12px;font-weight:700;color:var(--white);margin-bottom:6px}
+        .task-block .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10px}
+        .task-block .detail-label{font-weight:600;color:var(--accent-light);font-size:9px;text-transform:uppercase;letter-spacing:.5px}
+        .task-block .detail-value{color:var(--slate-300)}
+        .check{color:#34d399;font-weight:600}
+        .doc-footer{margin-top:28px;padding-top:10px;border-top:1px solid var(--navy-700);font-size:9px;color:var(--navy-600);display:flex;justify-content:space-between}
+    </style>
+    <style id="pro-override">
+        :root{
+            --navy-950:#f0f0f0;--navy-900:#ffffff;--navy-800:#f5f5f5;
+            --navy-700:#d4d4d4;--navy-600:#888;
+            --slate-400:#666;--slate-300:#333;--white:#1c1c1c;
+            --blue-500:#555;--blue-400:#555;
+            --accent:#555;--accent-light:#555;
+            --amber-500:#888;--amber-400:#aaa;
+            --green-500:#666;--green-400:#888;
+            --cyan-500:#777;--cyan-400:#999;
+            --purple-500:#666;--purple-400:#888;
+            --rose-500:#777;--rose-400:#999;
+            --teal-500:#666;--teal-400:#888;
+            --red-500:#666;--orange-500:#777;--orange-400:#999;
+            --violet-500:#666;--violet-400:#888
+        }
+        body{font-family:'Segoe UI',Arial,sans-serif!important;background:#f0f0f0!important;color:#333!important}
+        .page{background:#fff!important;border:1px solid #d4d4d4;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+        .doc-header{border-bottom:1px solid #d4d4d4!important}
+        .level-badge{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc}
+        .doc-header h1{color:#1c1c1c!important;font-weight:700!important}
+        .doc-header .subtitle{color:#555!important}
+        .doc-header .meta{color:#888!important}
+        h2{color:#1c1c1c!important;border-bottom:1px solid #d4d4d4!important;font-weight:700!important}
+        h3{color:#444!important}
+        h4{color:#333!important}
+        p{color:#444}
+        .nav-bar{gap:6px}
+        .nav-link{background:#f5f5f5!important;border:1px solid #d0d0d0!important;color:#444!important;border-radius:3px!important}
+        .nav-link:hover{border-color:#888!important;color:#1c1c1c!important;background:#ebebeb!important}
+        .nav-link.active{border-color:#888!important;color:#1c1c1c!important;background:#e4e4e4!important;font-weight:600!important}
+        table{border:1px solid #e0e0e0}
+        thead th{background:#f0f0f0!important;color:#333!important;border-bottom:2px solid #d4d4d4!important;font-weight:700!important}
+        tbody td{border-bottom:1px solid #ebebeb!important;color:#444!important}
+        tbody tr:hover td{background:#fafafa}
+        .card,.phase-card,.domain-card,.info-card,.process-card,.step-card,.task-card{background:#f8f8f8!important;border:1px solid #d4d4d4!important}
+        .card h4{color:#333!important;text-transform:none!important}
+        .phase-card .phase-num{color:#666!important}
+        .phase-card h4{color:#1c1c1c!important}
+        .phase-card p{color:#555!important}
+        .phase-card.p1,.phase-card.p2,.phase-card.p3,.phase-card.p4,.phase-card.p5,.phase-card.p6,.phase-card.p7{border-top:2px solid #bbb!important}
+        .domain-card .domain-icon,.d1,.d2,.d3,.d4,.d5,.d6,.d7,.d8{background:#e8e8e8!important;color:#444!important}
+        .domain-card .domain-info h4{color:#1c1c1c!important}
+        .domain-card .domain-info .pa-count{color:#666!important}
+        .domain-card .domain-info .link{color:#444!important}
+        .domain-card:hover{border-color:#888!important}
+        .callout{background:#f5f5f5!important;border-left:3px solid #888!important;color:#444!important}
+        .callout strong{color:#333!important}
+        .doc-footer{border-top:1px solid #e4e4e4!important;color:#aaa!important}
+        .mermaid{background:#fff!important}
+        a{color:#333}
+        a:hover{color:#000}
+        code{background:#efefef!important;color:#333!important;border:1px solid #ddd}
+        li{color:#444}
+        .pa-card,.process-area-card{background:#f8f8f8!important;border-color:#d4d4d4!important}
+        .badge,.tag,.label{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc!important}
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="doc-header">
+        <div class="level-badge">Level 4 — Tasks</div>
+        <h1>Tasks: Site Measurement &amp; Progress Assessment</h1>
+        <div class="subtitle">L0 → L1: D1 QS → L2: D1.5 Monthly Valuations &amp; Payment → L3: Site Measurement &amp; Progress → <strong>L4: Tasks</strong></div>
+        <div class="meta"><span>Task Set: D1.5-SP-001-T</span><span>BPMN Level: 4</span><span>6 Tasks</span><span>Version 2.0</span><span>April 2026</span></div>
+    </div>
+
+    <div class="nav-bar">
+        <a class="nav-link" href="../../../L3_Sub_Processes/D1_QS_Cost_Management/D1.5_Monthly_Valuations_Payment/SP_Site_Measurement.html"><span class="arrow">↑</span> L3 Site Measurement</a>
+        <span class="nav-link active"><span class="arrow">●</span> L4 Tasks</span>
+    </div>
+
+    <h2>1. Task Overview</h2>
+    <p>This task set expands the Site Measurement &amp; Progress Assessment sub-process into granular work instructions. Each task covers a critical step in the monthly site measurement cycle: reviewing the contractor's claim before the visit, conducting the physical site walk with trade-specific measurement, photographing evidence, performing joint measurements on disputed items, calculating progress percentages per BoQ item, and compiling the measurement records for the valuation calculation. Accurate site measurement per JBCC PBA clause 33 and NEC4 clause 50 is the foundation for fair interim payments.</p>
+
+    <h2>2. Detailed Task Breakdown</h2>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.5.1-01</div>
+        <h4>Review Contractor's Monthly Claim Submission</h4>
+        <p>Before the site visit, review the contractor's progress claim submission for the current valuation period. Compare claimed quantities and percentages against the previous month's valuation to identify new claims, significant increases, and potential anomalies requiring focused attention during the site walk.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 working day before site visit</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Contractor's claim schedule; previous valuation certificate; BoQ with cumulative quantities</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Pre-visit assessment; flagged items requiring site verification; measurement focus list</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Valuation spreadsheet; platform valuation module; previous certificate data</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC PBA clause 33 (interim payments); monthly cut-off date per contract</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Obtain the contractor's claim schedule — ensure it was submitted by the contractual cut-off date (typically 25th of the month)</li>
+            <li>Compare each BoQ line item: contractor's claimed cumulative quantity vs previous month's certified cumulative quantity</li>
+            <li>Calculate the movement (new work claimed) for each item: current claim − previous certified = new claim for this period</li>
+            <li>Flag items where the contractor's claimed progress exceeds 10% increase month-on-month or where new trade sections appear</li>
+            <li>Prepare a measurement focus list prioritising flagged items, high-value trades, and items with historical claim discrepancies</li>
+            <li class="check">✓ Quality Check: Every BoQ section reviewed; focus list prepared; anomalies documented with specific item references</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.5.1-02</div>
+        <h4>Conduct Site Walk &amp; Measure Completed Work per Trade</h4>
+        <p>Physically walk the site and measure work completed for each trade section against the BoQ. Apply trade-specific measurement methods: volume calculations for earthworks, dimensional measurement for concrete, wall area measurement for brickwork, roof area from plan, and room-by-room registers for finishes.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS / Cost Technician</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1–2 working days on site</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">BoQ; previous valuation data; measurement focus list from Task 1.5.1-01; tape measure / laser measure</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Site measurement notes per trade; field sketches; raw quantity records</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Laser distance meter; measurement book / tablet; site drawings; unit progress tracker</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">ASAQS Standard System of Measuring; ±3% accuracy tolerance</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Begin with high-value trades first — earthworks (survey data + truck counts), then concrete/structural elements (dimensional measurement vs drawings)</li>
+            <li>For brickwork/blockwork: measure completed wall areas, count completed walls per unit or section</li>
+            <li>For roofing: count completed roofs using plan reference and verify with visual inspection or drone photography</li>
+            <li>For finishes (plaster, paint, tiles): use room-by-room progress register — record percentage complete per room/unit</li>
+            <li>For plumbing/electrical: count installed units against the installation register; verify compliance certificates where applicable</li>
+            <li>Record all measurements with BoQ item references so data maps directly to the valuation schedule</li>
+            <li class="check">✓ Quality Check: All flagged items from Task 1.5.1-01 physically verified; measurements within ±3% tolerance; field notes legible and referenced</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.5.1-03</div>
+        <h4>Photograph Key Evidence per BoQ Section</h4>
+        <p>Systematically photograph completed work as visual evidence supporting the measurement records. Photographs must be dated, geo-tagged where possible, and referenced to specific BoQ sections. This evidence supports dispute resolution and audit trail requirements.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS / Cost Technician</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">During site walk (concurrent with Task 1.5.1-02)</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Camera / smartphone; BoQ section references; site drawing with photo location markers</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Dated, geo-tagged photographs; photo register linked to BoQ items</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Smartphone with GPS; photo management app; drone (for roofing/large sites)</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">SACQSP documentation requirements; project-specific photo protocol</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Photograph each major trade section showing the current state of completion — wide shot for context and close-up for detail</li>
+            <li>Ensure photographs are date-stamped and GPS-tagged (enable location services on device)</li>
+            <li>For housing projects: photograph at least one representative unit per block/row showing each stage of completion</li>
+            <li>Include tape measures or scale references in photos of measured items for dimensional verification</li>
+            <li>Label each photograph with the BoQ section reference and brief description immediately after capture</li>
+            <li>Upload photographs to the project document management system within 24 hours of the site visit</li>
+            <li class="check">✓ Quality Check: Photo register complete with BoQ cross-references; all high-value and disputed items photographed; files uploaded and backed up</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.5.1-04</div>
+        <h4>Conduct Joint Measurement with Contractor QS on Disputed Items</h4>
+        <p>For BoQ items where the QS assessment differs significantly from the contractor's claim (typically &gt;5% variance), conduct a joint site measurement with the contractor's QS. Both parties measure together and agree on the quantity, which is then binding for the valuation.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS + Contractor QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">0.5–1 working day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">QS measurement (Task 1.5.1-02); contractor's claim; list of items with &gt;5% variance</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Signed joint measurement records; agreed quantities for disputed items</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Joint measurement template; tape/laser measure; site drawings</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC PBA clause 33; joint measurement best practice per SACQSP</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Identify all BoQ items where QS assessment differs from contractor claim by more than 5% — schedule joint measurement</li>
+            <li>Meet the contractor QS on site with both sets of measurement records for comparison</li>
+            <li>Re-measure each disputed item together — both parties use the same measurement points and methodology</li>
+            <li>Record the jointly agreed quantity on the joint measurement template — both parties sign each item</li>
+            <li>Where agreement cannot be reached, record both parties' positions and escalate to the Principal Agent for determination</li>
+            <li class="check">✓ Quality Check: All disputed items jointly measured; signed by both QS parties; escalated items formally recorded with both positions</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.5.1-05</div>
+        <h4>Calculate Progress Percentages per BoQ Item</h4>
+        <p>Convert the raw measurement data into progress percentages for each BoQ item and section. Calculate cumulative progress to date, progress for the current period, and compare against the contractor's claimed percentages. This forms the basis for the valuation calculation in D1.5-SP-002.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 working day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Site measurement data (Tasks 1.5.1-02 to 1.5.1-04); BoQ total quantities; previous valuation</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Progress schedule per BoQ item; section summary; variance analysis vs contractor claim</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Valuation spreadsheet; progress calculation template; platform valuation module</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">ASAQS measurement rules; cumulative methodology per JBCC</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: For each BoQ item, calculate: measured quantity to date ÷ total BoQ quantity × 100 = cumulative progress %</li>
+            <li>Calculate this period's progress: current cumulative % − previous month's cumulative % = progress this month</li>
+            <li>Compare QS-assessed progress against contractor's claimed progress for each item — highlight variances &gt;5%</li>
+            <li>For lump-sum items (e.g., prelims time-based), assess progress as a percentage of the activity duration or milestone completion</li>
+            <li>Aggregate item percentages into BoQ section summaries: Substructure %, Superstructure %, Finishes %, etc.</li>
+            <li>Prepare a progress summary table ready for input to the valuation calculation (D1.5-SP-002)</li>
+            <li class="check">✓ Quality Check: Progress percentages reconcile to measurement data; all BoQ items accounted for; variance analysis complete</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.5.1-06</div>
+        <h4>Compile Measurement Records for Valuation Input</h4>
+        <p>Consolidate all measurement records, photographs, joint measurement agreements, and progress schedules into a complete valuation input package. This package is the formal hand-off to the valuation calculation sub-process (D1.5-SP-002) and must be audit-ready.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 working day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">All outputs from Tasks 1.5.1-01 to 1.5.1-05</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Valuation input package; filed measurement records; hand-off to D1.5-SP-002</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Document management system; valuation file template; platform document store</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">SACQSP record-keeping requirements; project audit trail standards</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Compile the valuation input package with the following sections: (1) Pre-visit assessment, (2) Site measurement notes, (3) Photographic evidence, (4) Joint measurement records, (5) Progress schedule</li>
+            <li>Ensure all measurement notes are legible, dated, and reference the correct BoQ item numbers</li>
+            <li>Verify that the progress schedule in the package matches the detailed measurement records — no orphan items</li>
+            <li>File the complete package in the project document management system under the current valuation period</li>
+            <li>Formally hand off the progress schedule to the valuation calculation (D1.5-SP-002) with a brief cover note highlighting any unusual items or disputes</li>
+            <li class="check">✓ Quality Check: Package complete with all 5 sections; cross-references verified; filed and accessible; D1.5-SP-002 notified</li>
+        </ul>
+    </div>
+
+    <h2>3. Task Summary</h2>
+    <table>
+        <thead><tr><th>Task ID</th><th>Task Name</th><th>Role</th><th>SLA</th><th>Output</th></tr></thead>
+        <tbody>
+            <tr><td>1.5.1-01</td><td>Review Contractor's Monthly Claim Submission</td><td>QS</td><td>1 day before visit</td><td>Pre-visit assessment &amp; focus list</td></tr>
+            <tr><td>1.5.1-02</td><td>Conduct Site Walk &amp; Measure per Trade</td><td>QS / Cost Tech</td><td>1–2 days on site</td><td>Site measurement notes per trade</td></tr>
+            <tr><td>1.5.1-03</td><td>Photograph Key Evidence per BoQ Section</td><td>QS / Cost Tech</td><td>During site walk</td><td>Dated, geo-tagged photo register</td></tr>
+            <tr><td>1.5.1-04</td><td>Joint Measurement on Disputed Items</td><td>QS + Contractor QS</td><td>0.5–1 day</td><td>Signed joint measurement records</td></tr>
+            <tr><td>1.5.1-05</td><td>Calculate Progress Percentages per BoQ Item</td><td>QS</td><td>1 day</td><td>Progress schedule &amp; variance analysis</td></tr>
+            <tr><td>1.5.1-06</td><td>Compile Measurement Records for Valuation</td><td>QS</td><td>1 day</td><td>Valuation input package to D1.5-SP-002</td></tr>
+        </tbody>
+    </table>
+
+    <div class="doc-footer"><span>L4 Tasks — D1.5-SP-001 Site Measurement &amp; Progress v2.0</span><span>Confidential — Swift Designz</span></div>
+</div>
+    <script src="../../../nav.js"></script>
+</body>
+</html>

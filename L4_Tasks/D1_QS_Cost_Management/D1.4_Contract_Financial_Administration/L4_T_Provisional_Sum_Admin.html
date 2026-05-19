@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>L4 — Tasks: Provisional Sum Administration</title>
+    <style>
+        :root{--navy-950:#0a0f1e;--navy-900:#0f172a;--navy-800:#1e293b;--navy-700:#334155;--navy-600:#475569;--slate-400:#94a3b8;--slate-300:#cbd5e1;--white:#f8fafc;--accent:#3b82f6;--accent-light:#60a5fa}
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:var(--navy-950);color:var(--slate-300);line-height:1.7;font-size:12px}
+        @page{size:A4;margin:15mm}.page{max-width:210mm;margin:0 auto;padding:32px 40px;background:var(--navy-900)}
+        .doc-header{border-bottom:3px solid var(--accent);padding-bottom:18px;margin-bottom:24px}
+        .doc-header .level-badge{display:inline-block;padding:3px 12px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:rgba(59,130,246,.15);color:var(--accent-light);margin-bottom:6px}
+        .doc-header h1{font-size:22px;font-weight:800;color:var(--white);margin-bottom:4px}
+        .doc-header .subtitle{font-size:13px;color:var(--slate-400)}
+        .doc-header .meta{display:flex;gap:20px;margin-top:10px;font-size:10px;color:var(--slate-400)}
+        h2{font-size:16px;font-weight:700;color:var(--white);margin:24px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--navy-700)}
+        h3{font-size:13px;font-weight:600;color:var(--accent-light);margin:16px 0 6px}
+        p{margin-bottom:10px}
+        .nav-bar{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
+        .nav-link{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:6px;font-size:10px;font-weight:600;text-decoration:none;border:1px solid var(--navy-700);color:var(--slate-300);background:var(--navy-800);transition:all .2s}
+        .nav-link:hover{border-color:var(--accent);color:var(--accent-light)}
+        .nav-link.active{border-color:var(--accent);color:var(--accent-light);background:rgba(59,130,246,.1)}
+        .nav-link .arrow{font-size:12px}
+        table{width:100%;border-collapse:collapse;margin:10px 0;font-size:11px}
+        thead th{background:var(--navy-800);color:var(--accent-light);font-weight:600;text-align:left;padding:7px 10px;border-bottom:2px solid var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+        tbody td{padding:7px 10px;border-bottom:1px solid var(--navy-700);vertical-align:top}
+        ul{margin:4px 0 8px 14px;font-size:11px}li{margin-bottom:3px}
+        .task-block{background:var(--navy-800);border:1px solid var(--navy-700);border-left:3px solid var(--accent);border-radius:8px;padding:14px;margin:10px 0}
+        .task-block .task-id{font-size:9px;font-weight:700;color:var(--accent-light);letter-spacing:1px;margin-bottom:3px}
+        .task-block h4{font-size:12px;font-weight:700;color:var(--white);margin-bottom:6px}
+        .task-block .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10px}
+        .task-block .detail-label{font-weight:600;color:var(--accent-light);font-size:9px;text-transform:uppercase;letter-spacing:.5px}
+        .task-block .detail-value{color:var(--slate-300)}
+        .check{color:#34d399;font-weight:600}
+        .doc-footer{margin-top:28px;padding-top:10px;border-top:1px solid var(--navy-700);font-size:9px;color:var(--navy-600);display:flex;justify-content:space-between}
+    </style>
+    <style id="pro-override">
+        :root{
+            --navy-950:#f0f0f0;--navy-900:#ffffff;--navy-800:#f5f5f5;
+            --navy-700:#d4d4d4;--navy-600:#888;
+            --slate-400:#666;--slate-300:#333;--white:#1c1c1c;
+            --blue-500:#555;--blue-400:#555;
+            --accent:#555;--accent-light:#555;
+            --amber-500:#888;--amber-400:#aaa;
+            --green-500:#666;--green-400:#888;
+            --cyan-500:#777;--cyan-400:#999;
+            --purple-500:#666;--purple-400:#888;
+            --rose-500:#777;--rose-400:#999;
+            --teal-500:#666;--teal-400:#888;
+            --red-500:#666;--orange-500:#777;--orange-400:#999;
+            --violet-500:#666;--violet-400:#888
+        }
+        body{font-family:'Segoe UI',Arial,sans-serif!important;background:#f0f0f0!important;color:#333!important}
+        .page{background:#fff!important;border:1px solid #d4d4d4;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+        .doc-header{border-bottom:1px solid #d4d4d4!important}
+        .level-badge{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc}
+        .doc-header h1{color:#1c1c1c!important;font-weight:700!important}
+        .doc-header .subtitle{color:#555!important}
+        .doc-header .meta{color:#888!important}
+        h2{color:#1c1c1c!important;border-bottom:1px solid #d4d4d4!important;font-weight:700!important}
+        h3{color:#444!important}
+        h4{color:#333!important}
+        p{color:#444}
+        .nav-bar{gap:6px}
+        .nav-link{background:#f5f5f5!important;border:1px solid #d0d0d0!important;color:#444!important;border-radius:3px!important}
+        .nav-link:hover{border-color:#888!important;color:#1c1c1c!important;background:#ebebeb!important}
+        .nav-link.active{border-color:#888!important;color:#1c1c1c!important;background:#e4e4e4!important;font-weight:600!important}
+        table{border:1px solid #e0e0e0}
+        thead th{background:#f0f0f0!important;color:#333!important;border-bottom:2px solid #d4d4d4!important;font-weight:700!important}
+        tbody td{border-bottom:1px solid #ebebeb!important;color:#444!important}
+        tbody tr:hover td{background:#fafafa}
+        .card,.phase-card,.domain-card,.info-card,.process-card,.step-card,.task-card{background:#f8f8f8!important;border:1px solid #d4d4d4!important}
+        .card h4{color:#333!important;text-transform:none!important}
+        .phase-card .phase-num{color:#666!important}
+        .phase-card h4{color:#1c1c1c!important}
+        .phase-card p{color:#555!important}
+        .phase-card.p1,.phase-card.p2,.phase-card.p3,.phase-card.p4,.phase-card.p5,.phase-card.p6,.phase-card.p7{border-top:2px solid #bbb!important}
+        .domain-card .domain-icon,.d1,.d2,.d3,.d4,.d5,.d6,.d7,.d8{background:#e8e8e8!important;color:#444!important}
+        .domain-card .domain-info h4{color:#1c1c1c!important}
+        .domain-card .domain-info .pa-count{color:#666!important}
+        .domain-card .domain-info .link{color:#444!important}
+        .domain-card:hover{border-color:#888!important}
+        .callout{background:#f5f5f5!important;border-left:3px solid #888!important;color:#444!important}
+        .callout strong{color:#333!important}
+        .doc-footer{border-top:1px solid #e4e4e4!important;color:#aaa!important}
+        .mermaid{background:#fff!important}
+        a{color:#333}
+        a:hover{color:#000}
+        code{background:#efefef!important;color:#333!important;border:1px solid #ddd}
+        li{color:#444}
+        .pa-card,.process-area-card{background:#f8f8f8!important;border-color:#d4d4d4!important}
+        .badge,.tag,.label{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc!important}
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="doc-header">
+        <div class="level-badge">Level 4 — Tasks</div>
+        <h1>Tasks: Provisional Sum Administration</h1>
+        <div class="subtitle">L0 → L1: D1 QS → L2: D1.4 Contract Financial Admin → L3: Provisional Sum Admin → <strong>L4: Tasks</strong></div>
+        <div class="meta"><span>Task Set: D1.4-SP-003-T</span><span>BPMN Level: 4</span><span>8 Tasks</span><span>Version 2.0</span><span>April 2026</span></div>
+    </div>
+
+    <div class="nav-bar">
+        <a class="nav-link" href="../../../L3_Sub_Processes/D1_QS_Cost_Management/D1.4_Contract_Financial_Administration/SP_Provisional_Sum_Admin.html"><span class="arrow">↑</span> L3 Provisional Sum Admin</a>
+        <span class="nav-link active"><span class="arrow">●</span> L4 Tasks</span>
+    </div>
+
+    <h2>1. Task Overview</h2>
+    <p>This task set details the full lifecycle of provisional sum administration — from receiving the PA instruction to expend, through classification, quotation assessment, negotiation, contract sum adjustment, and register update. Provisional sums represent work not fully defined at tender and carry significant financial risk. Correct classification (Defined vs Undefined) directly impacts the contractor's entitlement to mark-ups, programme relief, and the overall contract sum. These tasks apply to each PS item as it is instructed during construction.</p>
+
+    <h2>2. Detailed Task Breakdown</h2>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.3-01</div>
+        <h4>Receive &amp; Register PA Instruction to Expend Provisional Sum</h4>
+        <p>Receive and formally register the Principal Agent's instruction to expend a provisional sum. The PA issues instructions when design information becomes available or when a decision is made to proceed with provisionally allowed work. Each instruction must be logged with its date, reference, and associated PS item.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 working day from receipt of PA instruction</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">PA written instruction (JBCC contract instruction form); PS/PC register</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Instruction registered; PS item status updated to "Instructed"</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Contract instruction register; PS/PC register; document management system</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC clause on contract instructions; GCC 2015 clause 49</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Verify the PA instruction is in writing and references a specific provisional sum item from the BoQ</li>
+            <li>Log the instruction in the contract instruction register with: date received, instruction reference number, PS item reference, description of work instructed</li>
+            <li>Cross-reference the instruction against the PS/PC register to identify the BoQ line item and original allowance amount</li>
+            <li>Update the PS register status for this item from "Not Instructed" to "Instructed" with the instruction date</li>
+            <li>Acknowledge receipt of the instruction to the PA within one working day</li>
+            <li class="check">✓ Quality Check: Instruction is in writing; PS item correctly identified; register updated; acknowledgement issued</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.3-02</div>
+        <h4>Classify Provisional Sum Type (Defined vs Undefined)</h4>
+        <p>Classify the provisional sum as Defined or Undefined per the JBCC definitions and BoQ description. This classification determines the contractor's entitlement to mark-ups and programme relief and must be agreed at the outset to avoid disputes.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">0.5 working day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">BoQ PS item description; contract conditions; design information available at tender</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Classification record: Defined PS or Undefined PS with justification</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">PS classification checklist; contract conditions reference</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">Defined = work described sufficiently at tender for contractor to price preliminaries; Undefined = scope was unknown at tender</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Review the BoQ description for the PS item — was the work described in sufficient detail at tender stage?</li>
+            <li>Apply the JBCC test: Could the contractor have reasonably allowed for the work in their programme and preliminaries at tender?</li>
+            <li>Defined PS criteria: nature, scope, and location of work stated; quantity ranges provided; design intent clear</li>
+            <li>Undefined PS criteria: no meaningful description; scope entirely unknown; "to be determined" language used</li>
+            <li>Record the classification with written justification referencing the BoQ description and contract clause</li>
+            <li>Notify the contractor of the classification — if they disagree, document the dispute and escalate to PA for determination</li>
+            <li class="check">✓ Quality Check: Classification is justified against BoQ description; contractor notified; any dispute documented</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.3-03</div>
+        <h4>Request &amp; Receive Contractor Quotation</h4>
+        <p>Request a detailed quotation from the contractor for the actual work to be carried out under the provisional sum instruction. The quotation must be broken down sufficiently to allow assessment against the original PS allowance and current market rates.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS → Contractor QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">Issue request within 2 days; contractor response within 10 working days</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">PA instruction; design drawings and specifications; scope of work description</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Contractor quotation received and logged</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Quotation request template; document management system</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC valuation provisions; fair and reasonable pricing principles</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Prepare a quotation request to the contractor including: PA instruction reference, full design drawings and specifications, scope of work, bill format required for pricing</li>
+            <li>Specify the response deadline: 10 working days for standard items, 15 working days for complex specialist work</li>
+            <li>Request the quotation in a format that separates: labour, materials, plant, subcontractor costs, overheads, profit</li>
+            <li>For Undefined PS items, request the contractor to include: preliminary costs, programme impact assessment, attendance requirements</li>
+            <li>Log the quotation request date and chase if no response within the SLA period</li>
+            <li>On receipt, log the quotation with date received and circulate to the design team for technical review if required</li>
+            <li class="check">✓ Quality Check: Quotation request is complete with all design info; response received within SLA; quotation breakdown is sufficient for assessment</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.3-04</div>
+        <h4>Assess Contractor Quotation Against PS Allowance</h4>
+        <p>Perform a detailed assessment of the contractor's quotation by comparing rates and quantities against the original PS allowance, current market rates, and historical project data. Identify any items that appear inflated, missing, or unreasonable.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">3–5 working days</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Contractor quotation; original PS allowance; market rate benchmarks; historical data</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Quotation assessment report with recommendations</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Rate comparison workbook; ASAQS cost data; platform cost database</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">SACQSP professional practice; fair and reasonable rate assessment</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Build an item-by-item comparison schedule: contractor rate vs QS assessment rate vs BoQ rate (if available) vs market benchmark</li>
+            <li>Check quantities against the design drawings — verify the contractor has measured correctly</li>
+            <li>Assess labour rates against current SAFCEC / Master Builders rates for the region</li>
+            <li>Assess material prices against current supplier quotations or published price lists</li>
+            <li>Flag items where the contractor's rate exceeds the QS assessment by more than 15% for negotiation</li>
+            <li>Prepare an overall assessment: total quoted vs total QS assessment vs original PS allowance — highlight the variance</li>
+            <li class="check">✓ Quality Check: Every item assessed; rates benchmarked against at least two sources; overspend against PS allowance quantified</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.3-05</div>
+        <h4>Negotiate &amp; Agree Final Value with Contractor</h4>
+        <p>Negotiate with the contractor QS to agree a fair and reasonable final value for the provisional sum expenditure. Where quotations cannot be agreed, consider obtaining competitive quotations or resorting to fair rates per the contract provisions.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS + Contractor QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">3–5 working days</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Quotation assessment (Task 1.4.3-04); market rate data; contract rate basis</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Agreed PS expenditure value; signed agreement</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Negotiation record template; rate comparison schedule</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">Agreed value is fair, reasonable, and defensible; within 10% of QS assessment; alternatives explored if impasse</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Schedule a negotiation meeting with the contractor QS — share the assessment summary in advance to enable productive discussion</li>
+            <li>Negotiate item by item on flagged items (those exceeding QS assessment by &gt;15%)</li>
+            <li>Where rates cannot be agreed, consider: using BoQ rates as a basis for similar work, obtaining competitive quotations from alternative suppliers, applying contract escalation clauses to tender rates</li>
+            <li>Document every agreed rate adjustment in a negotiation record signed by both parties</li>
+            <li>If negotiation reaches impasse, the PA may determine the value per the contract dispute provisions</li>
+            <li>Update the PS register status to "Agreed" with the final agreed value</li>
+            <li class="check">✓ Quality Check: Both parties have signed the agreement; rates are fair and benchmarked; negotiation record is complete</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.3-06</div>
+        <h4>Calculate Contractor Entitlement per PS Classification</h4>
+        <p>Calculate the contractor's full entitlement based on the PS classification. For Defined PS, the contractor receives profit only on the difference. For Undefined PS, the contractor receives the full mark-up including profit, attendance, and preliminaries adjustment.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 working day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">PS classification (Task 1.4.3-02); agreed value (Task 1.4.3-05); contract mark-up provisions</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Contractor entitlement calculation; contract sum adjustment amount</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Entitlement calculation template; contract data</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC PS entitlements; GCC 2015 clause 49; NEC compensation events</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction — Defined PS: Contractor entitlement = Profit only on (Agreed value − Original PS allowance)</li>
+            <li>The profit percentage is typically stated in the contract data or can be derived from the tender pricing</li>
+            <li>Work Instruction — Undefined PS: Contractor entitlement = Full mark-up on agreed value, comprising: profit (typically 5–10%), attendance/overheads (per contract), preliminaries adjustment for any programme extension</li>
+            <li>Calculate the contract sum adjustment: Deduct original PS allowance; Add agreed value + entitlements = Nett adjustment (increase or decrease)</li>
+            <li>If the agreed value is less than the PS allowance, the balance returns to the employer (savings)</li>
+            <li>Document the entitlement calculation transparently with references to the relevant contract clauses</li>
+            <li class="check">✓ Quality Check: Correct entitlement applied per PS type; calculation references contract clauses; contractor agrees with entitlement basis</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.3-07</div>
+        <h4>Adjust Contract Sum &amp; Update PS Register</h4>
+        <p>Process the formal contract sum adjustment by deducting the original PS allowance and adding the agreed expenditure value plus entitlements. Update the PS/PC register and the master financial tracking register to reflect the change.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 working day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Entitlement calculation (Task 1.4.3-06); PS/PC register; financial register</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Adjusted contract sum; updated PS register; updated financial register</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">PS/PC register; master financial register; contract adjustment log</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC contract sum adjustment provisions; SACQSP practice guidelines</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Record the contract sum adjustment in the adjustment log: PS item ref, original allowance, agreed value, entitlement, nett adjustment</li>
+            <li>Update the PS register: change status to "Expended," record the final agreed value and nett adjustment amount</li>
+            <li>Update the master financial register — the adjusted contract sum should reflect: Original sum + Variations + PS adjustments + CPA</li>
+            <li>Recalculate the remaining PS exposure: total remaining unexpended PS items and their allowances</li>
+            <li>Update the anticipated final account to reflect the new contract sum baseline</li>
+            <li class="check">✓ Quality Check: PS register totals reconcile; contract sum adjustment is correctly reflected in financial register; anticipated final account updated</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.3-08</div>
+        <h4>Include PS Adjustment in Next Payment Certificate</h4>
+        <p>Ensure the agreed provisional sum adjustment is included in the next monthly payment certificate. The certificate should show the PS deduction and addition as separate line items for transparency and audit purposes.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">Next monthly valuation cycle</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">PS adjustment calculation; payment certificate template; valuation data</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Payment certificate with PS adjustment line items; supporting schedule</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Payment certificate system; PS adjustment schedule</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC payment certificate requirements; SACQSP valuation practice</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: In the payment certificate, include separate line items: "Less: Provisional Sum Allowance (deduction)" and "Add: Agreed PS Expenditure (addition)"</li>
+            <li>Show the nett PS adjustment clearly — this may be a nett addition (actual &gt; allowance) or nett deduction (actual &lt; allowance)</li>
+            <li>For work in progress under the PS, value the proportion completed to date and include in the certificate</li>
+            <li>Attach the PS adjustment schedule as supporting documentation to the payment certificate</li>
+            <li>Confirm with the contractor QS that the PS adjustment is correctly reflected before issuing the certificate to the PA</li>
+            <li class="check">✓ Quality Check: PS adjustment clearly shown as separate line items; nett amount agrees with Task 1.4.3-07; contractor has verified</li>
+        </ul>
+    </div>
+
+    <h2>3. Task Summary</h2>
+    <table>
+        <thead><tr><th>Task ID</th><th>Task Name</th><th>Role</th><th>SLA</th><th>Key Output</th></tr></thead>
+        <tbody>
+            <tr><td>1.4.3-01</td><td>Receive &amp; Register PA Instruction</td><td>QS</td><td>1 day</td><td>Instruction registered</td></tr>
+            <tr><td>1.4.3-02</td><td>Classify PS Type</td><td>QS</td><td>0.5 day</td><td>Classification record</td></tr>
+            <tr><td>1.4.3-03</td><td>Request Contractor Quotation</td><td>QS</td><td>2 + 10 days</td><td>Quotation received</td></tr>
+            <tr><td>1.4.3-04</td><td>Assess Quotation</td><td>QS</td><td>3–5 days</td><td>Assessment report</td></tr>
+            <tr><td>1.4.3-05</td><td>Negotiate Final Value</td><td>QS + Contractor</td><td>3–5 days</td><td>Agreed PS value</td></tr>
+            <tr><td>1.4.3-06</td><td>Calculate Entitlement</td><td>QS</td><td>1 day</td><td>Entitlement calculation</td></tr>
+            <tr><td>1.4.3-07</td><td>Adjust Contract Sum</td><td>QS</td><td>1 day</td><td>Updated registers</td></tr>
+            <tr><td>1.4.3-08</td><td>Include in Payment Certificate</td><td>QS</td><td>Next cycle</td><td>Certificate with PS adjustment</td></tr>
+        </tbody>
+    </table>
+
+    <div class="doc-footer"><span>L4 Tasks — D1.4-SP-003 Provisional Sum Admin v2.0</span><span>Confidential — Swift Designz</span></div>
+</div>
+    <script src="../../../nav.js"></script>
+</body>
+</html>

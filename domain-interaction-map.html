@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Domain Interaction Map — Interactive Swimlane</title>
+    <style>
+        /* ─── DOMAIN COLORS (keep distinct for readability) ─── */
+        :root{
+            --blue-500:#2563eb;--blue-400:#3b82f6;
+            --green-500:#16a34a;--green-400:#22c55e;
+            --purple-500:#7c3aed;--purple-400:#a855f7;
+            --orange-500:#ea580c;--orange-400:#f97316;
+            --teal-500:#0d9488;--teal-400:#14b8a6;
+            --emerald-600:#059669;
+            --amber-500:#d97706;--amber-400:#f59e0b;
+            --cyan-500:#0284c7;--cyan-400:#38bdf8;
+            --rose-500:#dc2626;
+            /* ─── IMPACT SIGNAL COLORS (keep) ─── */
+            --impact-src:#2563eb;
+            --impact-low:#16a34a;
+            --impact-med:#d97706;
+            --impact-high:#dc2626;
+            /* ─── STRUCTURAL: white / gray / black ─── */
+            --bg:#f0f0f0;
+            --surface:#ffffff;
+            --surface2:#f7f7f7;
+            --surface3:#f0f0f0;
+            --border:#d4d4d4;
+            --border2:#e4e4e4;
+            --text:#1c1c1c;
+            --text2:#444;
+            --text3:#777;
+            --text4:#aaa;
+            --label-w:160px;
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text2);min-height:100vh;padding:20px}
+
+        /* HEADER */
+        .hdr{max-width:1200px;margin:0 auto 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px 16px;background:#1e1e1e;border-radius:3px}
+        .back{color:#ccc;text-decoration:none;font-size:12px;padding:5px 11px;border:1px solid #444;border-radius:3px;transition:all .2s}
+        .back:hover{border-color:#888;color:#fff}
+        .hdr h1{font-size:18px;font-weight:700;color:#fff}
+        .badge{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:2px 8px;border-radius:2px;background:rgba(255,255,255,.12);color:#ccc;border:1px solid #444}
+        .hdr p{font-size:11px;color:#888;margin-left:auto}
+
+        /* CONTROLS */
+        .ctrl{max-width:1200px;margin:0 auto 14px;display:flex;align-items:flex-end;gap:14px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:3px;flex-wrap:wrap}
+        .cg{display:flex;flex-direction:column;gap:3px}
+        .cg label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3)}
+        .cg select,.cg input[type="number"]{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 9px;border-radius:3px;font-size:11px;font-family:inherit;outline:none;min-width:160px}
+        .cg select:focus,.cg input:focus{border-color:#888;outline:none}
+        .cg input[type="range"]{width:140px;accent-color:#555}
+        .sev-val{font-size:15px;font-weight:700;color:var(--text);min-width:40px;text-align:right}
+        .unit{font-size:11px;color:var(--text3);margin-left:4px}
+        .btn{padding:6px 15px;border-radius:3px;font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;border:none;transition:all .2s}
+        .btn-p{background:#1e1e1e;color:#fff;border:1px solid #1e1e1e}.btn-p:hover{background:#333}
+        .btn-g{background:transparent;color:var(--text3);border:1px solid var(--border)}.btn-g:hover{border-color:#888;color:var(--text)}
+        .hint{font-size:10px;color:var(--text4);margin-left:auto}
+
+        /* QUICK SCENARIOS */
+        .scenarios{max-width:1200px;margin:0 auto 14px;display:flex;gap:8px;flex-wrap:wrap}
+        .scenarios span{font-size:10px;color:var(--text3);font-weight:600;margin-right:4px;line-height:28px}
+        .sc-btn{padding:4px 11px;border-radius:3px;font-size:11px;font-weight:500;background:var(--surface);border:1px solid var(--border);color:var(--text2);cursor:pointer;transition:all .2s}
+        .sc-btn:hover{border-color:#888;color:var(--text)}
+
+        /* LEGEND */
+        .legend{max-width:1200px;margin:0 auto 10px;display:flex;gap:18px;justify-content:center;flex-wrap:wrap;padding:8px 12px;background:var(--surface);border:1px solid var(--border2);border-radius:3px}
+        .lg-i{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3)}
+        .lg-d{width:9px;height:9px;border-radius:50%}
+        .lg-l{width:20px;height:2px;border-radius:1px}
+
+        /* L0 BANNER */
+        .l0-bar{display:flex;align-items:center;gap:12px;padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);flex-wrap:wrap}
+        .l0-tag{font-size:9px;font-weight:700;padding:2px 7px;background:#1e1e1e;color:#fff;border-radius:2px;letter-spacing:1px}
+        .l0-title{font-size:11px;font-weight:700;color:var(--text)}
+        .l0-phases{display:flex;gap:4px;font-size:10px;color:var(--text3);flex-wrap:wrap}
+        .l0-phases .ph{padding:2px 6px;background:var(--surface);border:1px solid var(--border2);border-radius:2px;font-size:9px;color:var(--text2)}
+        .l0-phases .arr{color:var(--text4)}
+
+        /* SWIMLANE WRAP */
+        .sw-wrap{max-width:1200px;margin:0 auto 18px;background:var(--surface);border:1px solid var(--border);border-radius:3px;overflow:hidden}
+        .sw-container{position:relative}
+        .lanes{display:flex;flex-direction:column}
+        .lane{display:flex;border-bottom:1px solid var(--border2);min-height:82px;transition:background .2s}
+        .lane:last-child{border-bottom:none}
+        .lane:nth-child(odd){background:#fafafa}
+        .lane:nth-child(even){background:#fff}
+        .lane:hover{background:#f4f4f4}
+        .lane-lbl{width:var(--label-w);min-width:var(--label-w);padding:10px 12px;display:flex;flex-direction:column;justify-content:center;border-right:1px solid var(--border2);background:#f7f7f7}
+        .lane-lbl .did{font-size:9px;font-weight:700;letter-spacing:1px}
+        .lane-lbl .dn{font-size:12px;font-weight:600;color:var(--text);margin-top:2px}
+        .lane-lbl .dp{font-size:9px;color:var(--text3);margin-top:1px}
+        .lane-lbl .dr{font-size:8px;color:var(--text4);margin-top:2px;font-style:italic}
+        .lane-track{flex:1;position:relative;min-height:82px}
+
+        /* NODES — white cards, domain-colored border */
+        .node{position:absolute;top:50%;transform:translate(-50%,-50%);padding:8px 13px;border-radius:4px;background:#fff;border:2px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.08);cursor:pointer;transition:all .25s;z-index:2;text-align:center;min-width:90px;user-select:none}
+        .node:hover{transform:translate(-50%,-50%) scale(1.05);box-shadow:0 3px 10px rgba(0,0,0,.14);z-index:5}
+        .node .nid{font-size:10px;font-weight:700;letter-spacing:1px}
+        .node .nn{font-size:11px;font-weight:600;color:var(--text);white-space:nowrap}
+        .node .np{font-size:9px;color:var(--text3);margin-top:1px}
+        .node.selected{box-shadow:0 0 0 3px var(--impact-src),0 2px 10px rgba(0,0,0,.15)}
+        .ibadge{position:absolute;top:-10px;right:-10px;padding:2px 7px;border-radius:8px;font-size:9px;font-weight:700;color:#fff;display:none;z-index:6;white-space:nowrap}
+        .ibadge.show{display:block}
+
+        /* IMPACT STATES */
+        .node.imp-src{border-color:var(--impact-src);box-shadow:0 0 0 3px rgba(37,99,235,.25),0 2px 12px rgba(37,99,235,.15);animation:pulse 1.5s ease-in-out infinite}
+        .node.imp-low{border-color:var(--impact-low);box-shadow:0 0 0 2px rgba(22,163,74,.2),0 2px 8px rgba(22,163,74,.12)}
+        .node.imp-med{border-color:var(--impact-med);box-shadow:0 0 0 2px rgba(217,119,6,.2),0 2px 8px rgba(217,119,6,.12)}
+        .node.imp-high{border-color:var(--impact-high);box-shadow:0 0 0 2px rgba(220,38,38,.2),0 2px 8px rgba(220,38,38,.12)}
+        @keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(37,99,235,.25),0 2px 12px rgba(37,99,235,.15)}50%{box-shadow:0 0 0 6px rgba(37,99,235,.18),0 2px 18px rgba(37,99,235,.2)}}
+        @keyframes pop-in{from{opacity:0;transform:translate(-50%,-50%) scale(.85)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+        .node.pop{animation:pop-in .3s ease-out forwards}
+
+        /* IDLE STATE */
+        @keyframes idle-glow{0%,100%{box-shadow:0 1px 4px rgba(0,0,0,.08)}60%{box-shadow:0 2px 10px rgba(0,0,0,.14)}}
+        .node.idle{animation:idle-glow 2.8s ease-in-out infinite}
+        .node.idle:hover{box-shadow:0 0 0 3px rgba(37,99,235,.2),0 3px 10px rgba(0,0,0,.12) !important;transform:translate(-50%,-50%) scale(1.06)}
+        .node.idle::after{content:'click to simulate';position:absolute;bottom:-19px;left:50%;transform:translateX(-50%);font-size:8px;font-weight:600;color:#555;white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none;letter-spacing:.3px}
+        .node.idle:hover::after{opacity:1}
+
+        /* SWIMLANE CTA BANNER */
+        .sw-cta{display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 14px;background:var(--surface2);border-bottom:1px solid var(--border);flex-wrap:wrap;text-align:center}
+        .sw-cta.hide{display:none}
+        @keyframes cta-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+        .sw-cta-arrow{font-size:16px;display:inline-block;animation:cta-bounce 1.2s ease-in-out infinite}
+        .sw-cta-main{font-size:11px;font-weight:700;color:var(--text)}
+        .sw-cta-sep{font-size:11px;color:var(--text4)}
+        .sw-cta-sub{font-size:11px;color:var(--text3)}
+        .sw-cta-key{display:inline-block;background:#e8e8e8;border:1px solid var(--border);border-radius:3px;padding:1px 7px;font-size:10px;font-weight:600;color:var(--text2)}
+
+        /* SVG ARROWS */
+        #arrows-svg{position:absolute;top:0;z-index:3;overflow:visible}
+        .fp{fill:none;stroke:#c0c0c0;stroke-width:1.5;transition:stroke .25s,stroke-width .25s,opacity .25s;cursor:pointer;pointer-events:stroke}
+        .fp:hover{stroke-width:3;opacity:1;stroke:#888}
+        .fp.hl{stroke:#2563eb;stroke-width:2.5;opacity:1}
+        .fp.dim{opacity:.15}
+        .fp.active{stroke-width:2.5;stroke-dasharray:8 4;animation:dash .8s linear infinite}
+        .fp.fl{stroke:var(--impact-low)}.fp.fm{stroke:var(--impact-med)}.fp.fh{stroke:var(--impact-high)}
+        @keyframes dash{to{stroke-dashoffset:-12}}
+        .ft{font-family:Segoe UI,Arial,sans-serif;font-size:9px;font-weight:600;fill:#bbb;pointer-events:none;transition:fill .25s}
+        .ft.hl{fill:#2563eb}.ft.dim{opacity:.15}
+
+        /* IMPACT PANEL */
+        .imp{max-width:1200px;margin:0 auto 18px;background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:16px 20px;display:none}
+        .imp.show{display:block}
+        .imp h3{font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+        .imp h3::before{content:'';width:3px;height:14px;background:#555;border-radius:2px}
+        .imp-sum{display:flex;gap:14px;margin-bottom:12px;font-size:11px;flex-wrap:wrap}
+        .imp-sum .m{padding:4px 10px;background:var(--surface2);border:1px solid var(--border2);border-radius:3px;color:var(--text3)}.imp-sum .m strong{color:var(--text)}
+        .imp-tbl{width:100%;border-collapse:collapse}
+        .imp-tbl th{text-align:left;padding:7px 10px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);border-bottom:1px solid var(--border)}
+        .imp-tbl td{padding:7px 10px;font-size:11px;border-bottom:1px solid var(--border2);color:var(--text2)}
+        .imp-tbl tr:last-child td{border-bottom:none}
+        .idot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px}
+        .ibar{height:5px;border-radius:3px;background:var(--surface3);width:80px;display:inline-block;vertical-align:middle;border:1px solid var(--border2)}
+        .ibar-f{height:100%;border-radius:3px;transition:width .5s ease-out}
+
+        /* FOOTER */
+        .ftr{text-align:center;font-size:10px;color:var(--text4);padding:14px}.ftr span{color:var(--text3)}
+
+        /* POPUP OVERLAY */
+        .popup-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;pointer-events:none;opacity:0;transition:opacity .2s}
+        .popup-overlay.show{opacity:1;pointer-events:all}
+        .popup-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(2px)}
+        .popup{position:relative;z-index:1;background:var(--surface);border:1px solid var(--border);border-radius:6px;width:100%;max-width:500px;box-shadow:0 16px 48px rgba(0,0,0,.18);transform:scale(.95) translateY(8px);transition:transform .22s ease,opacity .2s}
+        .popup-overlay.show .popup{transform:scale(1) translateY(0)}
+        .popup-hdr{padding:16px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:12px}
+        .popup-icon{width:38px;height:38px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;border:2px solid transparent;background:var(--surface2)}
+        .popup-meta{flex:1;min-width:0}
+        .popup-did{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.6;margin-bottom:3px;color:var(--text3)}
+        .popup-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px}
+        .popup-sub{font-size:11px;color:var(--text3)}
+        .popup-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:17px;line-height:1;padding:2px 6px;border-radius:3px;transition:color .2s;flex-shrink:0}
+        .popup-close:hover{color:var(--text);background:var(--surface3)}
+        .popup-body{padding:14px 18px 18px;display:flex;flex-direction:column;gap:12px}
+        .popup-section-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);margin-bottom:5px}
+        .popup-desc{font-size:12px;color:var(--text2);line-height:1.7}
+        .popup-tags{display:flex;flex-wrap:wrap;gap:5px}
+        .popup-tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;background:var(--surface2);border:1px solid var(--border);color:var(--text2)}
+        .popup-impact-box{background:var(--surface2);border-radius:4px;padding:10px 12px;border-left:3px solid #888}
+        .popup-impact-box.low{border-color:var(--impact-low)}
+        .popup-impact-box.med{border-color:var(--impact-med)}
+        .popup-impact-box.high{border-color:var(--impact-high)}
+        .popup-impact-box.src{border-color:var(--impact-src)}
+        .popup-impact-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;color:var(--text3)}
+        .popup-impact-label.low{color:var(--impact-low)}
+        .popup-impact-label.med{color:var(--impact-med)}
+        .popup-impact-label.high{color:var(--impact-high)}
+        .popup-impact-label.src{color:var(--impact-src)}
+        .popup-impact-text{font-size:12px;color:var(--text2);line-height:1.65}
+        .popup-flow-arrow{display:flex;align-items:center;gap:8px;padding:8px 0}
+        .popup-flow-from,.popup-flow-to{font-size:11px;font-weight:700;padding:4px 10px;border-radius:3px;background:var(--surface2);border:1px solid var(--border);color:var(--text)}
+        .popup-flow-line{flex:1;height:2px;background:linear-gradient(90deg,#888,#bbb);border-radius:2px;position:relative}
+        .popup-flow-line::after{content:'▶';position:absolute;right:-6px;top:-7px;font-size:10px;color:#888}
+
+        /* RESPONSIVE */
+        @media(max-width:900px){.ctrl{flex-direction:column;align-items:stretch}.cg select,.cg input[type="range"]{width:100%;min-width:unset}:root{--label-w:110px}.node{min-width:74px;padding:6px 10px}.node .nn{font-size:10px}.hdr p{display:none}}
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+    <a class="back" href="index.html">← Home</a>
+    <h1>Domain Interaction Map</h1>
+    <span class="badge">Interactive Swimlane</span>
+    <p>Click a domain to simulate how changes cascade across the construction platform</p>
+</div>
+
+<!-- CONTROLS -->
+<div class="ctrl">
+    <div class="cg">
+        <label>Impact Source</label>
+        <select id="sel-src">
+            <option value="">Click node or select…</option>
+            <option value="D3">D3 · Architecture</option>
+            <option value="D6">D6 · Contract Admin</option>
+            <option value="D4">D4 · Engineering</option>
+            <option value="D1">D1 · QS &amp; Cost</option>
+            <option value="D2">D2 · Project Mgmt</option>
+            <option value="D7">D7 · Compliance</option>
+            <option value="D8">D8 · Procurement</option>
+            <option value="D5">D5 · Construction</option>
+        </select>
+    </div>
+    <div class="cg">
+        <label>Change Type</label>
+        <select id="sel-type">
+            <option value="delay">Schedule Delay</option>
+            <option value="cost">Cost Overrun</option>
+            <option value="scope">Scope Change</option>
+            <option value="resource">Resource Reduction</option>
+        </select>
+    </div>
+    <div class="cg">
+        <label>Magnitude</label>
+        <div style="display:flex;align-items:center">
+            <input type="number" id="inp-mag" value="30" min="1" max="365" style="width:80px"/>
+            <span class="unit" id="mag-unit">days</span>
+        </div>
+    </div>
+    <div class="cg">
+        <label>Severity</label>
+        <div style="display:flex;align-items:center;gap:6px">
+            <input type="range" id="rng-sev" min="10" max="100" value="50"/>
+            <span class="sev-val" id="sev-val">50%</span>
+        </div>
+    </div>
+    <button class="btn btn-g" id="btn-reset">↺ Reset</button>
+    <span class="hint" id="ctrl-hint" style="color:var(--slate-400)">Adjust settings and watch the cascade update live</span>
+</div>
+
+<!-- QUICK SCENARIOS -->
+<div class="scenarios">
+    <span>Quick:</span>
+    <button class="sc-btn" data-src="D3" data-type="delay" data-mag="30" data-sev="60">D3 Architecture Delay (30d)</button>
+    <button class="sc-btn" data-src="D1" data-type="cost" data-mag="25" data-sev="70">D1 QS Cost Overrun (25%)</button>
+    <button class="sc-btn" data-src="D8" data-type="resource" data-mag="40" data-sev="55">D8 Procurement Bottleneck (40%)</button>
+    <button class="sc-btn" data-src="D6" data-type="scope" data-mag="20" data-sev="65">D6 Contract Scope Change (20%)</button>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+    <div class="lg-i"><div class="lg-d" style="background:var(--impact-src)"></div>Impact Source</div>
+    <div class="lg-i"><div class="lg-d" style="background:var(--impact-low)"></div>Low (&lt;30%)</div>
+    <div class="lg-i"><div class="lg-d" style="background:var(--impact-med)"></div>Medium (30–60%)</div>
+    <div class="lg-i"><div class="lg-d" style="background:var(--impact-high)"></div>High (&gt;60%)</div>
+    <div class="lg-i"><div class="lg-l" style="background:#aaa"></div>Data Flow <span style="font-size:9px;color:#888;margin-left:3px">(click for detail)</span></div>
+    <div class="lg-i"><div class="lg-l" style="background:#2563eb;height:3px"></div>Active Flow</div>
+    <div class="lg-i" style="color:#888;font-size:9px;font-style:italic">Click any node or arrow for details</div>
+</div>
+
+<!-- SWIMLANE -->
+<div class="sw-wrap">
+    <!-- Swimlane CTA Banner -->
+    <div class="sw-cta" id="sw-cta">
+        <span class="sw-cta-arrow">&#x261D;</span>
+        <span class="sw-cta-main">Click any domain node below to simulate how a change cascades across the project</span>
+        <span class="sw-cta-sep">·</span>
+        <span class="sw-cta-sub">Or try a <span class="sw-cta-key">Quick Scenario</span> button above for an instant example</span>
+    </div>
+    <!-- L0 Banner -->
+    <div class="l0-bar">
+        <span class="l0-tag">L0</span>
+        <span class="l0-title">Construction Value Chain</span>
+        <div class="l0-phases">
+            <span class="ph">Feasibility</span><span class="arr">→</span>
+            <span class="ph">Concept</span><span class="arr">→</span>
+            <span class="ph">Design</span><span class="arr">→</span>
+            <span class="ph">Procurement</span><span class="arr">→</span>
+            <span class="ph">Construction</span><span class="arr">→</span>
+            <span class="ph">Handover</span><span class="arr">→</span>
+            <span class="ph">Warranty</span>
+        </div>
+    </div>
+
+    <!-- Swimlane -->
+    <div class="sw-container" id="sw">
+        <div class="lanes" id="lanes">
+            <!-- D3 Architecture -->
+            <div class="lane" data-d="D3">
+                <div class="lane-lbl"><span class="did" style="color:var(--purple-500)">D3</span><span class="dn">Architecture</span><span class="dp">6 Process Areas</span><span class="dr">Architect</span></div>
+                <div class="lane-track">
+                    <div class="node" id="n-D3" style="left:12%;border-color:var(--purple-500)">
+                        <span class="nid" style="color:var(--purple-400)">D3</span>
+                        <div class="nn">Architecture</div>
+                        <div class="np">6 PAs</div>
+                        <div class="ibadge" id="b-D3"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- D6 Contract Admin -->
+            <div class="lane" data-d="D6">
+                <div class="lane-lbl"><span class="did" style="color:var(--amber-500)">D6</span><span class="dn">Contract Admin</span><span class="dp">5 Process Areas</span><span class="dr">Contract Administrator</span></div>
+                <div class="lane-track">
+                    <div class="node" id="n-D6" style="left:12%;border-color:var(--amber-500)">
+                        <span class="nid" style="color:var(--amber-400)">D6</span>
+                        <div class="nn">Contract Admin</div>
+                        <div class="np">5 PAs</div>
+                        <div class="ibadge" id="b-D6"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- D4 Engineering -->
+            <div class="lane" data-d="D4">
+                <div class="lane-lbl"><span class="did" style="color:var(--orange-500)">D4</span><span class="dn">Engineering</span><span class="dp">6 Process Areas</span><span class="dr">Civil / Structural / MEP</span></div>
+                <div class="lane-track">
+                    <div class="node" id="n-D4" style="left:32%;border-color:var(--orange-500)">
+                        <span class="nid" style="color:var(--orange-500)">D4</span>
+                        <div class="nn">Engineering</div>
+                        <div class="np">6 PAs</div>
+                        <div class="ibadge" id="b-D4"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- D1 QS & Cost -->
+            <div class="lane" data-d="D1">
+                <div class="lane-lbl"><span class="did" style="color:var(--blue-500)">D1</span><span class="dn">QS &amp; Cost</span><span class="dp">9 PAs · 23 SPs</span><span class="dr">Quantity Surveyor</span></div>
+                <div class="lane-track">
+                    <div class="node" id="n-D1" style="left:50%;border-color:var(--blue-500)">
+                        <span class="nid" style="color:var(--blue-400)">D1</span>
+                        <div class="nn">QS &amp; Cost</div>
+                        <div class="np">9 PAs · 23 SPs</div>
+                        <div class="ibadge" id="b-D1"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- D2 Project Mgmt -->
+            <div class="lane" data-d="D2">
+                <div class="lane-lbl"><span class="did" style="color:var(--green-500)">D2</span><span class="dn">Project Mgmt</span><span class="dp">7 Process Areas</span><span class="dr">Project Manager</span></div>
+                <div class="lane-track">
+                    <div class="node" id="n-D2" style="left:70%;border-color:var(--green-500)">
+                        <span class="nid" style="color:var(--green-400)">D2</span>
+                        <div class="nn">Project Mgmt</div>
+                        <div class="np">7 PAs</div>
+                        <div class="ibadge" id="b-D2"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- D7 Compliance -->
+            <div class="lane" data-d="D7">
+                <div class="lane-lbl"><span class="did" style="color:var(--teal-500)">D7</span><span class="dn">Compliance</span><span class="dp">7 Process Areas</span><span class="dr">Compliance Officer</span></div>
+                <div class="lane-track">
+                    <div class="node" id="n-D7" style="left:70%;border-color:var(--teal-500)">
+                        <span class="nid" style="color:var(--teal-400)">D7</span>
+                        <div class="nn">Compliance</div>
+                        <div class="np">7 PAs</div>
+                        <div class="ibadge" id="b-D7"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- D8 Procurement -->
+            <div class="lane" data-d="D8">
+                <div class="lane-lbl"><span class="did" style="color:var(--cyan-500)">D8</span><span class="dn">Procurement</span><span class="dp">5 Process Areas</span><span class="dr">Procurement Manager</span></div>
+                <div class="lane-track">
+                    <div class="node" id="n-D8" style="left:70%;border-color:var(--cyan-500)">
+                        <span class="nid" style="color:var(--cyan-500)">D8</span>
+                        <div class="nn">Procurement</div>
+                        <div class="np">5 PAs</div>
+                        <div class="ibadge" id="b-D8"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- D5 Construction -->
+            <div class="lane" data-d="D5">
+                <div class="lane-lbl"><span class="did" style="color:var(--emerald-600)">D5</span><span class="dn">Construction</span><span class="dp">7 Process Areas</span><span class="dr">Contractor / Site Manager</span></div>
+                <div class="lane-track">
+                    <div class="node" id="n-D5" style="left:90%;border-color:var(--emerald-600)">
+                        <span class="nid" style="color:var(--teal-400)">D5</span>
+                        <div class="nn">Construction</div>
+                        <div class="np">7 PAs</div>
+                        <div class="ibadge" id="b-D5"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- SVG overlay -->
+        <svg id="arrows-svg">
+            <defs>
+                <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+                <marker id="arr-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#60a5fa"/></marker>
+                <marker id="arr-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#10b981"/></marker>
+                <marker id="arr-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker>
+                <marker id="arr-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#f43f5e"/></marker>
+            </defs>
+        </svg>
+    </div>
+</div>
+
+<!-- IMPACT PANEL -->
+<div class="imp" id="imp">
+    <h3>Impact Analysis</h3>
+    <div class="imp-sum" id="imp-sum"></div>
+    <table class="imp-tbl"><thead><tr>
+        <th>Domain</th><th>Impact</th><th>Cascade</th><th>Effect</th><th>Severity</th>
+    </tr></thead><tbody id="imp-tb"></tbody></table>
+</div>
+
+<!-- POPUP OVERLAY -->
+<div class="popup-overlay" id="popup-overlay">
+    <div class="popup-backdrop" id="popup-backdrop"></div>
+    <div class="popup" id="popup">
+        <div class="popup-hdr">
+            <div class="popup-icon" id="popup-icon"></div>
+            <div class="popup-meta">
+                <div class="popup-did" id="popup-did"></div>
+                <div class="popup-title" id="popup-title"></div>
+                <div class="popup-sub" id="popup-sub"></div>
+            </div>
+            <button class="popup-close" id="popup-close">✕</button>
+        </div>
+        <div class="popup-body" id="popup-body"></div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div class="ftr"><span>Swift Designz</span> · Domain Interaction Map · Construction Platform · April 2026</div>
+
+<script>
+/* ═══ DATA MODEL ═══ */
+const DOMAINS = {
+    D3:{id:'D3',name:'Architecture',full:'Architecture & Design',pas:6,color:'#a855f7'},
+    D6:{id:'D6',name:'Contract Admin',full:'Contract Administration',pas:5,color:'#f59e0b'},
+    D4:{id:'D4',name:'Engineering',full:'Engineering',pas:6,color:'#f97316'},
+    D1:{id:'D1',name:'QS & Cost',full:'QS & Cost Management',pas:9,color:'#3b82f6'},
+    D2:{id:'D2',name:'Project Mgmt',full:'Project Management',pas:7,color:'#10b981'},
+    D7:{id:'D7',name:'Compliance',full:'Compliance & Regulatory',pas:7,color:'#14b8a6'},
+    D8:{id:'D8',name:'Procurement',full:'Procurement & Supply Chain',pas:5,color:'#06b6d4'},
+    D5:{id:'D5',name:'Construction',full:'Construction Management',pas:7,color:'#059669'}
+};
+const FLOWS = [
+    {from:'D3',to:'D4',label:'drawings',type:'design'},
+    {from:'D4',to:'D1',label:'tech specs',type:'technical'},
+    {from:'D6',to:'D1',label:'instructions',type:'contractual'},
+    {from:'D1',to:'D2',label:'cost data',type:'financial'},
+    {from:'D1',to:'D7',label:'cost data',type:'financial'},
+    {from:'D1',to:'D8',label:'cost data',type:'financial'},
+    {from:'D2',to:'D5',label:'programme',type:'programme'},
+    {from:'D7',to:'D5',label:'compliance',type:'regulatory'},
+    {from:'D8',to:'D5',label:'procurement',type:'supply'}
+];
+const TYPES = {
+    delay:{label:'Schedule Delay',unit:'days',verb:'delayed',fx:'schedule impact',max:365},
+    cost:{label:'Cost Overrun',unit:'%',verb:'over budget',fx:'budget impact',max:100},
+    scope:{label:'Scope Change',unit:'%',verb:'scope change',fx:'rework required',max:100},
+    resource:{label:'Resource Reduction',unit:'%',verb:'capacity cut',fx:'capacity impact',max:100}
+};
+const DEFAULTS = {delay:30,cost:20,scope:15,resource:25};
+
+// Adjacency
+const adj = {};
+FLOWS.forEach(f => { if(!adj[f.from]) adj[f.from]=[]; adj[f.from].push(f); });
+
+/* ═══ STATE ═══ */
+let source = null, impacts = null, pending = [];
+
+/* ═══ RICH DOMAIN DESCRIPTIONS ═══ */
+const DOMAIN_INFO = {
+    D1:{
+        emoji:'💰',
+        role:'Quantity Surveyor',
+        what:'Manages all financial aspects of the project — from initial cost planning and Bills of Quantities to monthly payment valuations and final account.',
+        processes:['Cost Planning & Estimation','BoQ Production','Tender Documentation','Contract Financial Admin','Monthly Valuations & Payments','Cost Reporting','Cash Flow Forecasting','Variation Pricing','Final Account'],
+        asSource:{
+            delay:'A cost reporting delay holds up payment to contractors, stalls cash flow, and prevents the Project Manager from making informed programme decisions.',
+            cost:'A cost overrun in QS triggers a client funding review, forces redesign, and impacts procurement budgets and contract sums across all domains.',
+            scope:'A scope change found in QS requires revised BoQ, re-tendering or re-pricing, and delays the programme cascade into construction.',
+            resource:'Reduced QS capacity means slower valuations and payment certificates — contractors may suspend work, directly halting construction.'
+        }
+    },
+    D2:{
+        emoji:'📋',
+        role:'Project Manager',
+        what:'Coordinates all stakeholders and disciplines, owns the master programme, manages risk, and is responsible for delivering the project on time and within budget.',
+        processes:['Project Initiation','Programme Management','Risk Management','Stakeholder Communication','Progress Reporting','Change Control','Closeout & Handover'],
+        asSource:{
+            delay:'A programme delay cascades to all domains — contractors re-sequence work, costs escalate through prolongation, and the client receives the project late.',
+            cost:'Budget overruns force the PM to issue change control notices, pause scope, and renegotiate with funders — impacting every team waiting on approvals.',
+            scope:'A scope increase requires updated drawings, specifications, BoQ revisions, new procurement orders, and re-sequencing of site works.',
+            resource:'Reduced project management capacity means slow decisions, late approvals, and a lack of coordination — every domain begins to drift.'
+        }
+    },
+    D3:{
+        emoji:'🏛',
+        role:'Architect',
+        what:'Leads the concept, design development and construction documentation. Produces the drawings that all other disciplines work from.',
+        processes:['Concept Design','Design Development','Construction Documentation','Specification Writing','Design Coordination','Site Observations','As-Built Record'],
+        asSource:{
+            delay:'Late drawings are the single most common cause of project delays. Without issued drawings, the QS cannot price, Engineering cannot design, and Construction cannot build.',
+            cost:'Design changes after tender are extremely expensive. Each revision triggers BoQ amendments, variation orders, and potential contractor claims for delay.',
+            scope:'An architectural scope change — such as adding a floor or changing the building envelope — forces re-engineering, re-pricing, and re-procurement of materials.',
+            resource:'A reduced architectural team means incomplete or late drawings, which holds up every downstream discipline simultaneously.'
+        }
+    },
+    D4:{
+        emoji:'⚙️',
+        role:'Engineer (Civil, Structural, MEP)',
+        what:'Provides structural, civil, and mechanical/electrical/plumbing designs that translate architectural intent into buildable, compliant technical solutions.',
+        processes:['Structural Design','Civil Engineering','MEP Engineering','Technical Specifications','Engineering Calculations','Construction Support','As-Built Design'],
+        asSource:{
+            delay:'Engineering delays prevent finalisation of structural drawings and specifications, which are required by QS for pricing and by contractors to order materials and begin construction.',
+            cost:'Engineering cost overruns (e.g. ground conditions, structural changes) often require contract variations and can increase the overall project budget significantly.',
+            scope:'An engineering scope change (e.g. revised foundation system) requires architectural co-ordination, revised BoQ, and may affect procurement lead times for specialist materials.',
+            resource:'Fewer engineers means slower design completion and more errors — leading to on-site clashes, expensive rectifications, and programme delays.'
+        }
+    },
+    D5:{
+        emoji:'🏗',
+        role:'Contractor / Construction Manager',
+        what:'Executes the physical construction works on site, manages subcontractors and labour, orders and receives materials, and reports progress against the programme.',
+        processes:['Site Establishment','Subcontractor Management','Materials Management','Quality Control','Progress Reporting','Health & Safety','Defects Rectification'],
+        asSource:{
+            delay:'A contractor delay directly impacts the handover date, triggers penalties under most contracts, and may require acceleration costs to recover the programme.',
+            cost:'Cost overruns on site (labour, materials, subcontractors) flow directly into contractor claims and variation orders that the QS must assess and the client must fund.',
+            scope:'On-site scope issues (e.g. unforeseen conditions) generate variation orders, delay notificaitons, and require emergency re-design and re-pricing.',
+            resource:'A reduction in labour or subcontractor resources slows the programme, increases supervision costs, and puts the delivery date at risk.'
+        }
+    },
+    D6:{
+        emoji:'📝',
+        role:'Contract Administrator',
+        what:'Administers the construction contract on behalf of the employer — issuing instructions, certifying payments, assessing claims, and managing the contractual relationship with the contractor.',
+        processes:['Contract Award','Site Instructions','Payment Certification','Variation Orders','Claims Assessment','Defects Management','Contract Closeout'],
+        asSource:{
+            delay:'A late contract instruction leaves the contractor unable to proceed on a particular element, creating a delay event and a potential contractual claim against the employer.',
+            cost:'Scope changes instructed by the CA trigger variation pricing by the QS and payment obligations that must be funded by the client.',
+            scope:'Any contract scope change requires updated drawings from Architecture, revised pricing from QS, and revised sequencing from the contractor.',
+            resource:'Reduced contract administration capacity means slow responses to contractor queries, late payment certificates, and unresolved claims that escalate into disputes.'
+        }
+    },
+    D7:{
+        emoji:'✅',
+        role:'Compliance & Regulatory',
+        what:'Ensures the project meets all statutory, regulatory, and safety requirements — from planning approval and building control through to environmental and health & safety compliance.',
+        processes:['Planning Approval','Building Control','Environmental Compliance','Health & Safety','NHBRC Compliance','Occupancy Certificate','Statutory Submissions'],
+        asSource:{
+            delay:'A compliance delay (e.g. planning approval not received) can halt design finalisation and prevent construction from starting — the entire downstream is frozen.',
+            cost:'Non-compliance penalties, rectification works, or re-submissions add unplanned costs and can require design changes late in the project.',
+            scope:'A regulatory requirement that triggers a design change (e.g. accessibility, fire escape) forces Architecture and Engineering to revise drawings and QS to reprice.',
+            resource:'Insufficient compliance resource means slower approvals and greater risk of non-compliance being discovered on site — far more expensive to rectify.'
+        }
+    },
+    D8:{
+        emoji:'🚚',
+        role:'Procurement & Supply Chain',
+        what:'Manages the sourcing, tendering, appointment, and delivery of contractors, subcontractors, and materials needed to build the project.',
+        processes:['Tender Strategy','Contractor Procurement','Subcontractor Appointment','Materials Procurement','Vendor Management','Delivery Scheduling','Supply Chain Risk'],
+        asSource:{
+            delay:'Procurement delays mean materials or subcontractors are not on site when needed — directly stopping construction and triggering contractor delay claims.',
+            cost:'Procurement cost overruns (price increases, urgent sourcing) directly inflate the project budget and require QS to issue revised cost reports.',
+            scope:'A scope change requiring new materials or specialist subcontractors enters a new procurement cycle — adding weeks or months to the programme.',
+            resource:'Reduced procurement capacity means slower sourcing, longer tender periods, and a higher risk of appointing unsuitable contractors or receiving poor-quality materials.'
+        }
+    }
+};
+
+const FLOW_INFO = {
+    'D3-D4':{label:'Architecture → Engineering',what:'Architecture issues co-ordinated drawings and spatial layouts to Engineering, who then develop structural, civil and MEP designs that fit within the architectural intent.',why:'Without finalised architectural drawings, engineers cannot design the structure. This is the first major dependency in the design phase — any delay here freezes the entire technical design process.'},
+    'D3-D1':{label:'Architecture → QS & Cost',what:'Architectural drawings and the room/space schedules are the primary input for the QS to prepare the Bill of Quantities and elemental cost plan.',why:'The QS cannot price what has not been drawn. Late or incomplete drawings are the most common reason for delayed pricing, tender delays, and contract award slippage.'},
+    'D4-D1':{label:'Engineering → QS & Cost',what:'Engineering provides technical specifications, structural schedules, and material quantities that the QS incorporates into the BoQ for accurate pricing.',why:'Engineering specifications determine material grades, structural elements, and MEP system types — all of which carry very different cost implications. Missing this data leads to inaccurate tenders and costly variations.'},
+    'D6-D1':{label:'Contract Admin → QS & Cost',what:'The Contract Administrator issues formal instructions, variation orders, and scope change notices which the QS must price, assess, and incorporate into cost reports.',why:'Every instruction issued by the CA has a cost implication. The QS is responsible for quantifying and certifying these — without this flow, financial control of the contract breaks down.'},
+    'D6-D5':{label:'Contract Admin → Construction',what:'The Contract Administrator issues site instructions, inspection notices, quality directives, and defects notices directly to the contractor on site.',why:'The contractor is legally obliged to comply with CA instructions. This flow governs what is built, when, and to what standard. Delayed instructions are a major source of contractor claims.'},
+    'D1-D2':{label:'QS & Cost → Project Management',what:'The QS provides the Project Manager with cost reports, cash flow forecasts, and budget status updates needed to manage the overall project.',why:'Without accurate cost data, the PM cannot make informed programme decisions, brief the client, or manage risk. Financial and programme control are inseparable.'},
+    'D1-D7':{label:'QS & Cost → Compliance',what:'Budget data and cost reports from the QS inform the compliance team of available resources for statutory submissions, inspections, and rectification works.',why:'Compliance activities cost money. If budget is overrun, compliance work may be deferred — creating legal and regulatory risk that can delay the occupancy certificate.'},
+    'D1-D8':{label:'QS & Cost → Procurement',what:'The approved BoQ and budget from the QS sets the financial parameters for procurement — defining what the project can afford to spend on contractors and materials.',why:'Procurement without a budget leads to appointing contractors the client cannot afford. The QS budget is the financial authority that procurement must work within.'},
+    'D2-D5':{label:'Project Management → Construction',what:'The Project Manager issues and maintains the master programme, which dictates sequencing, milestones, resource allocation, and the expected completion date for the contractor.',why:'The contractor plans labour, material orders, and subcontractor schedules around the master programme. Without a current programme, site operations become reactive and uncoordinated.'},
+    'D7-D5':{label:'Compliance → Construction',what:'The compliance/regulatory function issues approvals, inspection clearances, and compliance certificates that the contractor requires before proceeding with specific works.',why:'Construction cannot legally proceed without the relevant approvals (e.g. building plan approval, foundation inspection sign-off). Non-compliance found on site is extremely expensive to rectify.'},
+    'D8-D5':{label:'Procurement → Construction',what:'Procurement delivers appointed subcontractors, ordered materials, and plant/equipment to site in line with the construction programme.',why:'Construction stops when materials or subcontractors are not available. Procurement is the supply chain backbone of the construction phase — any bottleneck here directly halts progress on site.'}
+};
+
+/* ═══ DOM ═══ */
+const $ = id => document.getElementById(id);
+const selSrc=$('sel-src'), selType=$('sel-type'), inpMag=$('inp-mag'),
+      rngSev=$('rng-sev'), sevVal=$('sev-val'), magUnit=$('mag-unit'),
+      btnReset=$('btn-reset'), impPanel=$('imp'), impSum=$('imp-sum'),
+      impTb=$('imp-tb'), sw=$('sw'), svg=$('arrows-svg');
+
+/* ═══ POPUP ═══ */
+function showPopup(cfg){
+    const overlay=$('popup-overlay');
+    $('popup-did').textContent=cfg.did||'';
+    $('popup-did').style.color=cfg.color||'var(--slate-400)';
+    $('popup-title').textContent=cfg.title;
+    $('popup-sub').textContent=cfg.sub||'';
+    const icon=$('popup-icon');
+    icon.textContent=cfg.emoji||'';
+    icon.style.background=cfg.color ? cfg.color+'18' : '#f0f0f0';
+    icon.style.borderColor=cfg.color||'#d4d4d4';
+    $('popup-body').innerHTML=cfg.body;
+    overlay.classList.add('show');
+}
+function closePopup(){$('popup-overlay').classList.remove('show');}
+$('popup-close').addEventListener('click',closePopup);
+$('popup-backdrop').addEventListener('click',closePopup);
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closePopup(); });
+
+function domainPopupBody(did, impactState, impData, type, mag){
+    const info=DOMAIN_INFO[did];
+    const d=DOMAINS[did];
+    if(!info) return '';
+
+    let html='';
+
+    // What this domain does
+    html+=`<div><div class="popup-section-title">What This Domain Does</div>
+    <p class="popup-desc">${info.what}</p></div>`;
+
+    // Process areas
+    html+=`<div><div class="popup-section-title">Key Processes (${d.pas} Process Areas)</div>
+    <div class="popup-tags">${info.processes.map(p=>`<span class="popup-tag">${p}</span>`).join('')}</div></div>`;
+
+    // Impact context
+    if(impactState==='src' && type && info.asSource[type]){
+        html+=`<div class="popup-impact-box src">
+            <div class="popup-impact-label src">⚡ You selected this as the Impact Source</div>
+            <p class="popup-impact-text">${info.asSource[type]}</p>
+        </div>`;
+    } else if(impactState && impData){
+        const lvl=impData.level;
+        const c=lvl>=60?'high':lvl>=30?'med':'low';
+        const clr=lvl>=60?'var(--impact-high)':lvl>=30?'var(--impact-med)':'var(--impact-low)';
+        const lbl=lvl>=60?'High Impact':'Medium Impact';
+        const ti=TYPES[type];
+        const cm=Math.round(mag*Math.pow(0.7,impData.hop));
+        const desc=impData.hop===1
+            ? `This domain is <strong>directly connected</strong> to the impact source and receives a <strong>${cm}${ti.unit} ${ti.fx}</strong>. The change flows through an existing data dependency — meaning this team's work is immediately disrupted.`
+            : `This domain is <strong>${impData.hop} steps downstream</strong> from the impact source. It receives a <strong>${cm}${ti.unit} ${ti.fx}</strong> as the disruption cascades through the project chain. Teams here may not immediately feel the impact, but it will arrive.`;
+        html+=`<div class="popup-impact-box ${c}">
+            <div class="popup-impact-label ${c}">${lbl} — ${lvl}% severity · Cascade Hop ${impData.hop}</div>
+            <p class="popup-impact-text">${desc}</p>
+        </div>`;
+    }
+
+    return html;
+}
+
+function flowPopupBody(from, to){
+    const key=`${from}-${to}`;
+    const info=FLOW_INFO[key];
+    if(!info) return '<p class="popup-desc">Data flows between these two domains.</p>';
+    return `
+        <div>
+            <div class="popup-flow-arrow">
+                <span class="popup-flow-from" style="color:${DOMAINS[from].color}">${from} · ${DOMAINS[from].name}</span>
+                <div class="popup-flow-line"></div>
+                <span class="popup-flow-to" style="color:${DOMAINS[to].color}">${to} · ${DOMAINS[to].name}</span>
+            </div>
+        </div>
+        <div>
+            <div class="popup-section-title">What Is Being Exchanged</div>
+            <p class="popup-desc">${info.what}</p>
+        </div>
+        <div>
+            <div class="popup-section-title">Why This Connection Matters</div>
+            <p class="popup-desc">${info.why}</p>
+        </div>`;
+}
+
+
+/* ═══ ARROW DRAWING ═══ */
+function drawArrows(){
+    const defs = svg.querySelector('defs');
+    while(svg.lastChild !== defs) svg.removeChild(svg.lastChild);
+    const lw = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--label-w'));
+    const w = sw.offsetWidth - lw;
+    const h = sw.offsetHeight;
+    svg.style.cssText = `position:absolute;top:0;left:${lw}px;width:${w}px;height:${h}px;pointer-events:none;z-index:1;overflow:visible`;
+    svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
+    const cr = sw.getBoundingClientRect();
+
+    FLOWS.forEach(f => {
+        const fe=$('n-'+f.from), te=$('n-'+f.to);
+        if(!fe||!te) return;
+        const fr=fe.getBoundingClientRect(), tr=te.getBoundingClientRect();
+        const x1=fr.right-cr.left-lw, y1=fr.top+fr.height/2-cr.top;
+        const x2=tr.left-cr.left-lw, y2=tr.top+tr.height/2-cr.top;
+        const dx=Math.abs(x2-x1);
+        let d;
+        if(dx<30){
+            const bulge=Math.abs(y2-y1)*0.5;
+            d=`M${x1},${y1} C${x1+bulge},${y1} ${x2+bulge},${y2} ${x2},${y2}`;
+        } else {
+            const cx=dx*0.4;
+            d=`M${x1},${y1} C${x1+cx},${y1} ${x2-cx},${y2} ${x2},${y2}`;
+        }
+        const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+        p.setAttribute('d',d); p.setAttribute('class','fp');
+        p.setAttribute('data-f',f.from); p.setAttribute('data-t',f.to);
+        p.id=`f-${f.from}-${f.to}`; p.setAttribute('marker-end','url(#arr)');
+        p.addEventListener('click',()=>{
+            const info=FLOW_INFO[`${f.from}-${f.to}`];
+            if(!info) return;
+            showPopup({
+                emoji:'→',
+                color:'var(--blue-400)',
+                did:'DATA FLOW',
+                title: info.label,
+                sub: 'Click the nodes at either end for more detail on each domain',
+                body: flowPopupBody(f.from, f.to)
+            });
+        });
+        svg.appendChild(p);
+        const mx=(x1+x2)/2, my=(y1+y2)/2-8;
+        const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+        t.setAttribute('x',mx); t.setAttribute('y',my);
+        t.setAttribute('class','ft'); t.setAttribute('text-anchor','middle');
+        t.setAttribute('data-f',f.from); t.setAttribute('data-t',f.to);
+        t.textContent=f.label; svg.appendChild(t);
+    });
+}
+
+/* ═══ IMPACT SIMULATION ═══ */
+function simulate(src, sev){
+    const out={}, q=[{d:src,l:sev,h:0}], vis=new Set();
+    while(q.length){
+        const {d,l,h}=q.shift();
+        if(vis.has(d)) continue; vis.add(d);
+        out[d]={level:Math.round(l),hop:h};
+        if(adj[d]) adj[d].forEach(f=>{
+            if(!vis.has(f.to)) q.push({d:f.to,l:l*0.7,h:h+1});
+        });
+    }
+    return out;
+}
+function cls(level){ return level>=60?'high':level>=30?'med':'low'; }
+
+/* ═══ CLEAR ═══ */
+function clearAll(){
+    pending.forEach(t=>clearTimeout(t)); pending=[];
+    document.querySelectorAll('.node').forEach(n=>{
+        n.classList.remove('imp-src','imp-low','imp-med','imp-high','selected','pop','idle');
+    });
+    document.querySelectorAll('.ibadge').forEach(b=>b.classList.remove('show'));
+    document.querySelectorAll('.fp').forEach(p=>{
+        p.classList.remove('active','fl','fm','fh','hl','dim');
+        p.setAttribute('marker-end','url(#arr)');
+    });
+    document.querySelectorAll('.ft').forEach(t=>t.classList.remove('hl','dim'));
+    document.querySelectorAll('.lane').forEach(l=>l.style.background='');
+    impPanel.classList.remove('show');
+    impacts=null;
+}
+
+/* ═══ UPDATE VISUALIZATION ═══ */
+function update(animate){
+    if(!source) return;
+    $('sw-cta').classList.add('hide');
+    $('ctrl-hint').style.display='inline';
+    clearAll();
+    $('n-'+source).classList.add('selected');
+
+    const sev=parseInt(rngSev.value);
+    const type=selType.value;
+    const mag=parseInt(inpMag.value)||DEFAULTS[type];
+    impacts=simulate(source,sev);
+
+    const maxHop=Math.max(...Object.values(impacts).map(i=>i.hop));
+
+    for(const[did,imp] of Object.entries(impacts)){
+        const delay=animate?imp.hop*350:0;
+        const tid=setTimeout(()=>{
+            const node=$('n-'+did), badge=$('b-'+did), lane=node.closest('.lane');
+            if(imp.hop===0){
+                node.classList.add('imp-src');
+            } else {
+                const c=cls(imp.level);
+                node.classList.add('imp-'+c);
+                if(animate) node.classList.add('pop');
+            }
+            const cm=imp.hop===0?mag:Math.round(mag*Math.pow(0.7,imp.hop));
+            const ti=TYPES[type];
+            badge.textContent=cm+ti.unit;
+            badge.style.background=imp.hop===0?'var(--impact-src)':
+                imp.level>=60?'var(--impact-high)':imp.level>=30?'var(--impact-med)':'var(--impact-low)';
+            badge.classList.add('show');
+            const a=Math.max(.02,imp.level/500);
+            lane.style.background=imp.hop===0?'rgba(59,130,246,.05)':`rgba(255,255,255,${a})`;
+        },delay);
+        pending.push(tid);
+    }
+
+    FLOWS.forEach(f=>{
+        const p=$('f-'+f.from+'-'+f.to); if(!p) return;
+        const txts=svg.querySelectorAll(`.ft[data-f="${f.from}"][data-t="${f.to}"]`);
+        if(impacts[f.from]&&impacts[f.to]){
+            const hop=impacts[f.to].hop;
+            const lv=impacts[f.to].level;
+            const c=cls(lv);
+            const delay=animate?(hop-1)*350+175:0;
+            const tid=setTimeout(()=>{
+                p.classList.add('active','f'+c[0]);
+                const mk={low:'arr-g',med:'arr-a',high:'arr-r'};
+                p.setAttribute('marker-end','url(#'+mk[c]+')');
+                txts.forEach(t=>t.classList.add('hl'));
+            },delay);
+            pending.push(tid);
+        } else {
+            p.classList.add('dim');
+            txts.forEach(t=>t.classList.add('dim'));
+        }
+    });
+
+    const totalDelay=animate?(maxHop*350+250):50;
+    const tid=setTimeout(()=>showPanel(source,type,sev,mag,impacts),totalDelay);
+    pending.push(tid);
+}
+
+/* ═══ IMPACT PANEL ═══ */
+function showPanel(src,type,sev,mag,imps){
+    impPanel.classList.add('show');
+    const ti=TYPES[type];
+    impSum.innerHTML=`
+        <div class="m">Source: <strong>${DOMAINS[src].full}</strong></div>
+        <div class="m">Type: <strong>${ti.label}</strong></div>
+        <div class="m">Magnitude: <strong>${mag}${ti.unit}</strong></div>
+        <div class="m">Severity: <strong>${sev}%</strong></div>
+        <div class="m">Affected: <strong>${Object.keys(imps).length} of 8</strong> domains</div>`;
+    const sorted=Object.entries(imps).sort((a,b)=>a[1].hop-b[1].hop||b[1].level-a[1].level);
+    const colors={src:'var(--impact-src)',low:'var(--impact-low)',med:'var(--impact-med)',high:'var(--impact-high)'};
+    const labels={src:'Source',low:'Low',med:'Medium',high:'High'};
+    impTb.innerHTML=sorted.map(([did,imp])=>{
+        const d=DOMAINS[did];
+        const c=imp.hop===0?'src':cls(imp.level);
+        const cm=imp.hop===0?mag:Math.round(mag*Math.pow(0.7,imp.hop));
+        const fx=imp.hop===0?`${mag}${ti.unit} ${ti.verb}`:`${cm}${ti.unit} ${ti.fx}`;
+        return `<tr>
+            <td><span class="idot" style="background:${colors[c]}"></span><strong>${did}</strong> ${d.name}</td>
+            <td style="color:${colors[c]};font-weight:600">${labels[c]}</td>
+            <td>${imp.hop===0?'Source':'Hop '+imp.hop}</td>
+            <td>${fx}</td>
+            <td><div class="ibar"><div class="ibar-f" style="width:${imp.level}%;background:${colors[c]}"></div></div> <span style="font-size:10px;font-weight:600">${imp.level}%</span></td>
+        </tr>`;
+    }).join('');
+}
+
+/* ═══ HOVER HIGHLIGHT ═══ */
+function highlight(did){
+    document.querySelectorAll('.fp').forEach(p=>{
+        const f=p.getAttribute('data-f'), t=p.getAttribute('data-t');
+        if(f===did||t===did){ p.classList.add('hl'); p.setAttribute('marker-end','url(#arr-b)'); }
+        else p.classList.add('dim');
+    });
+    document.querySelectorAll('.ft').forEach(t=>{
+        const f=t.getAttribute('data-f'), to=t.getAttribute('data-t');
+        if(f===did||to===did) t.classList.add('hl'); else t.classList.add('dim');
+    });
+}
+function unhighlight(){
+    if(impacts) return;
+    document.querySelectorAll('.fp').forEach(p=>{
+        p.classList.remove('hl','dim'); p.setAttribute('marker-end','url(#arr)');
+    });
+    document.querySelectorAll('.ft').forEach(t=>t.classList.remove('hl','dim'));
+}
+
+/* ═══ SELECT SOURCE ═══ */
+function selectSource(did, animate){
+    source=did;
+    selSrc.value=did;
+    document.querySelectorAll('.node').forEach(n=>n.classList.remove('selected'));
+    $('n-'+did).classList.add('selected');
+    update(animate!==false);
+}
+
+/* ═══ EVENT HANDLERS ═══ */
+document.querySelectorAll('.node').forEach(node=>{
+    const did=node.id.replace('n-','');
+    node.addEventListener('click',()=>{
+        if(!impacts){
+            // No simulation yet — show domain info popup first, then trigger simulation
+            const info=DOMAIN_INFO[did];
+            const d=DOMAINS[did];
+            showPopup({
+                did: did,
+                color: d.color,
+                emoji: info ? info.emoji : '📌',
+                title: d.full,
+                sub: info ? `Role: ${info.role}` : '',
+                body: domainPopupBody(did, null, null, null, null)
+                    + `<div style="padding-top:4px"><button class="btn btn-p" id="popup-sim-btn" style="width:100%;margin-top:4px">⚡ Simulate Impact from ${did}</button></div>`
+            });
+            document.getElementById('popup-sim-btn').addEventListener('click',()=>{
+                closePopup();
+                selectSource(did,true);
+            });
+        } else if(impacts[did]){
+            // Simulation active — show what this node's impact means
+            const info=DOMAIN_INFO[did];
+            const d=DOMAINS[did];
+            const impState=impacts[did].hop===0?'src':'impacted';
+            showPopup({
+                did: did,
+                color: d.color,
+                emoji: info ? info.emoji : '📌',
+                title: d.full,
+                sub: info ? `Role: ${info.role}` : '',
+                body: domainPopupBody(did, impState, impacts[did], selType.value, parseInt(inpMag.value)||DEFAULTS[selType.value])
+            });
+        } else {
+            // Node not in current cascade
+            const info=DOMAIN_INFO[did];
+            const d=DOMAINS[did];
+            showPopup({
+                did: did,
+                color: d.color,
+                emoji: info ? info.emoji : '📌',
+                title: d.full,
+                sub: info ? `Role: ${info.role}` : '',
+                body: domainPopupBody(did, null, null, null, null)
+                    + `<div class="popup-impact-box" style="border-color:#ccc"><p class="popup-impact-text" style="color:#888">This domain is not directly connected to the current impact source, so it is not affected by this particular change.</p></div>`
+            });
+        }
+        if(!impacts) return; // handled above with sim button
+    });
+    node.addEventListener('mouseenter',()=>{ if(!impacts) highlight(did); });
+    node.addEventListener('mouseleave',unhighlight);
+});
+
+selSrc.addEventListener('change',()=>{ if(selSrc.value) selectSource(selSrc.value,true); });
+
+selType.addEventListener('change',()=>{
+    const t=selType.value;
+    magUnit.textContent=TYPES[t].unit;
+    inpMag.value=DEFAULTS[t];
+    inpMag.max=TYPES[t].max;
+    if(source) update(false);
+});
+
+rngSev.addEventListener('input',()=>{
+    sevVal.textContent=rngSev.value+'%';
+    if(source) update(false);
+});
+inpMag.addEventListener('input',()=>{ if(source) update(false); });
+
+btnReset.addEventListener('click',()=>{
+    source=null; selSrc.value=''; rngSev.value=50; sevVal.textContent='50%';
+    inpMag.value=30; selType.value='delay'; magUnit.textContent='days'; inpMag.max=365;
+    clearAll(); drawArrows();
+    document.querySelectorAll('.node').forEach(n=>n.classList.add('idle'));
+    $('sw-cta').classList.remove('hide');
+    $('ctrl-hint').style.display='none';
+});
+
+// Quick scenario buttons
+document.querySelectorAll('.sc-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+        const s=btn.dataset.src, t=btn.dataset.type, m=btn.dataset.mag, sv=btn.dataset.sev;
+        selType.value=t; magUnit.textContent=TYPES[t].unit; inpMag.value=m; inpMag.max=TYPES[t].max;
+        rngSev.value=sv; sevVal.textContent=sv+'%';
+        selectSource(s,true);
+    });
+});
+
+/* ═══ INIT ═══ */
+function init(){
+    drawArrows();
+    document.querySelectorAll('.node').forEach(n=>n.classList.add('idle'));
+    $('ctrl-hint').style.display='none';
+    let resizeTimer;
+    window.addEventListener('resize',()=>{
+        clearTimeout(resizeTimer);
+        resizeTimer=setTimeout(()=>{ drawArrows(); if(impacts) update(false); },150);
+    });
+}
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(init);
+else window.addEventListener('load',init);
+</script>
+    <script src="nav.js"></script>
+</body>
+</html>

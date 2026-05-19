@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>L4 — Tasks: Final Measurement &amp; Final Account</title>
+    <style>
+        :root{--navy-950:#0a0f1e;--navy-900:#0f172a;--navy-800:#1e293b;--navy-700:#334155;--navy-600:#475569;--slate-400:#94a3b8;--slate-300:#cbd5e1;--white:#f8fafc;--accent:#3b82f6;--accent-light:#60a5fa}
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:var(--navy-950);color:var(--slate-300);line-height:1.7;font-size:12px}
+        @page{size:A4;margin:15mm}.page{max-width:210mm;margin:0 auto;padding:32px 40px;background:var(--navy-900)}
+        .doc-header{border-bottom:3px solid var(--accent);padding-bottom:18px;margin-bottom:24px}
+        .doc-header .level-badge{display:inline-block;padding:3px 12px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:rgba(59,130,246,.15);color:var(--accent-light);margin-bottom:6px}
+        .doc-header h1{font-size:22px;font-weight:800;color:var(--white);margin-bottom:4px}
+        .doc-header .subtitle{font-size:13px;color:var(--slate-400)}
+        .doc-header .meta{display:flex;gap:20px;margin-top:10px;font-size:10px;color:var(--slate-400)}
+        h2{font-size:16px;font-weight:700;color:var(--white);margin:24px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--navy-700)}
+        h3{font-size:13px;font-weight:600;color:var(--accent-light);margin:16px 0 6px}
+        p{margin-bottom:10px}
+        .nav-bar{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
+        .nav-link{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:6px;font-size:10px;font-weight:600;text-decoration:none;border:1px solid var(--navy-700);color:var(--slate-300);background:var(--navy-800);transition:all .2s}
+        .nav-link:hover{border-color:var(--accent);color:var(--accent-light)}
+        .nav-link.active{border-color:var(--accent);color:var(--accent-light);background:rgba(59,130,246,.1)}
+        .nav-link .arrow{font-size:12px}
+        table{width:100%;border-collapse:collapse;margin:10px 0;font-size:11px}
+        thead th{background:var(--navy-800);color:var(--accent-light);font-weight:600;text-align:left;padding:7px 10px;border-bottom:2px solid var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+        tbody td{padding:7px 10px;border-bottom:1px solid var(--navy-700);vertical-align:top}
+        ul{margin:4px 0 8px 14px;font-size:11px}li{margin-bottom:3px}
+        .task-block{background:var(--navy-800);border:1px solid var(--navy-700);border-left:3px solid var(--accent);border-radius:8px;padding:14px;margin:10px 0}
+        .task-block .task-id{font-size:9px;font-weight:700;color:var(--accent-light);letter-spacing:1px;margin-bottom:3px}
+        .task-block h4{font-size:12px;font-weight:700;color:var(--white);margin-bottom:6px}
+        .task-block .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10px}
+        .task-block .detail-label{font-weight:600;color:var(--accent-light);font-size:9px;text-transform:uppercase;letter-spacing:.5px}
+        .task-block .detail-value{color:var(--slate-300)}
+        .check{color:#34d399;font-weight:600}
+        .doc-footer{margin-top:28px;padding-top:10px;border-top:1px solid var(--navy-700);font-size:9px;color:var(--navy-600);display:flex;justify-content:space-between}
+    </style>
+    <style id="pro-override">
+        :root{
+            --navy-950:#f0f0f0;--navy-900:#ffffff;--navy-800:#f5f5f5;
+            --navy-700:#d4d4d4;--navy-600:#888;
+            --slate-400:#666;--slate-300:#333;--white:#1c1c1c;
+            --blue-500:#555;--blue-400:#555;
+            --accent:#555;--accent-light:#555;
+            --amber-500:#888;--amber-400:#aaa;
+            --green-500:#666;--green-400:#888;
+            --cyan-500:#777;--cyan-400:#999;
+            --purple-500:#666;--purple-400:#888;
+            --rose-500:#777;--rose-400:#999;
+            --teal-500:#666;--teal-400:#888;
+            --red-500:#666;--orange-500:#777;--orange-400:#999;
+            --violet-500:#666;--violet-400:#888
+        }
+        body{font-family:'Segoe UI',Arial,sans-serif!important;background:#f0f0f0!important;color:#333!important}
+        .page{background:#fff!important;border:1px solid #d4d4d4;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+        .doc-header{border-bottom:1px solid #d4d4d4!important}
+        .level-badge{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc}
+        .doc-header h1{color:#1c1c1c!important;font-weight:700!important}
+        .doc-header .subtitle{color:#555!important}
+        .doc-header .meta{color:#888!important}
+        h2{color:#1c1c1c!important;border-bottom:1px solid #d4d4d4!important;font-weight:700!important}
+        h3{color:#444!important}
+        h4{color:#333!important}
+        p{color:#444}
+        .nav-bar{gap:6px}
+        .nav-link{background:#f5f5f5!important;border:1px solid #d0d0d0!important;color:#444!important;border-radius:3px!important}
+        .nav-link:hover{border-color:#888!important;color:#1c1c1c!important;background:#ebebeb!important}
+        .nav-link.active{border-color:#888!important;color:#1c1c1c!important;background:#e4e4e4!important;font-weight:600!important}
+        table{border:1px solid #e0e0e0}
+        thead th{background:#f0f0f0!important;color:#333!important;border-bottom:2px solid #d4d4d4!important;font-weight:700!important}
+        tbody td{border-bottom:1px solid #ebebeb!important;color:#444!important}
+        tbody tr:hover td{background:#fafafa}
+        .card,.phase-card,.domain-card,.info-card,.process-card,.step-card,.task-card{background:#f8f8f8!important;border:1px solid #d4d4d4!important}
+        .card h4{color:#333!important;text-transform:none!important}
+        .phase-card .phase-num{color:#666!important}
+        .phase-card h4{color:#1c1c1c!important}
+        .phase-card p{color:#555!important}
+        .phase-card.p1,.phase-card.p2,.phase-card.p3,.phase-card.p4,.phase-card.p5,.phase-card.p6,.phase-card.p7{border-top:2px solid #bbb!important}
+        .domain-card .domain-icon,.d1,.d2,.d3,.d4,.d5,.d6,.d7,.d8{background:#e8e8e8!important;color:#444!important}
+        .domain-card .domain-info h4{color:#1c1c1c!important}
+        .domain-card .domain-info .pa-count{color:#666!important}
+        .domain-card .domain-info .link{color:#444!important}
+        .domain-card:hover{border-color:#888!important}
+        .callout{background:#f5f5f5!important;border-left:3px solid #888!important;color:#444!important}
+        .callout strong{color:#333!important}
+        .doc-footer{border-top:1px solid #e4e4e4!important;color:#aaa!important}
+        .mermaid{background:#fff!important}
+        a{color:#333}
+        a:hover{color:#000}
+        code{background:#efefef!important;color:#333!important;border:1px solid #ddd}
+        li{color:#444}
+        .pa-card,.process-area-card{background:#f8f8f8!important;border-color:#d4d4d4!important}
+        .badge,.tag,.label{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc!important}
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="doc-header">
+        <div class="level-badge">Level 4 — Tasks</div>
+        <h1>Tasks: Final Measurement &amp; Final Account</h1>
+        <div class="subtitle">L0 → L1: D1 QS → L2: D1.8 Final Account &amp; Close-out → L3: Final Measurement &amp; Account → <strong>L4: Tasks</strong></div>
+        <div class="meta"><span>Task Set: D1.8-SP-001-T</span><span>BPMN Level: 4</span><span>8 Tasks</span><span>Version 2.0</span><span>April 2026</span></div>
+    </div>
+
+    <div class="nav-bar">
+        <a class="nav-link" href="../../../L3_Sub_Processes/D1_QS_Cost_Management/D1.8_Final_Account_Closeout/SP_Final_Measurement_Account.html"><span class="arrow">↑</span> L3 Final Measurement &amp; Account</a>
+        <span class="nav-link active"><span class="arrow">●</span> L4 Tasks</span>
+    </div>
+
+    <h2>1. Task Overview</h2>
+    <p>This task set expands the Final Measurement &amp; Final Account sub-process into granular work instructions. Each task covers a critical step in achieving financial close-out of the construction contract: conducting the final site measurement of all outstanding quantities, closing open variation orders, reconciling provisional sum and prime cost adjustments, compiling the draft Final Account statement, reconciling against the contractor's submission, negotiating disputed items, issuing the agreed Final Account with the Final Payment Certificate, and releasing remaining retention. Per JBCC clause 34, the Final Account must be agreed within 6 months of Practical Completion.</p>
+
+    <h2>2. Detailed Task Breakdown</h2>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.8.1-01</div>
+        <h4>Conduct Final Site Measurement of All Outstanding Quantities</h4>
+        <p>Perform a comprehensive final measurement of all work completed under the contract. This differs from interim measurement in that every trade section must be measured to final quantities — no estimates or provisional percentages are acceptable. Use as-built drawings, site records, and physical measurement to establish definitive quantities for the re-measurement adjustment.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS + Contractor QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">2–4 weeks (dependent on project size)</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">As-built drawings; BoQ; all interim measurement records; site access; previous valuation data</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Final measurement schedules per BoQ section; re-measurement adjustment schedule</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Laser distance meter; as-built drawings; measurement book / tablet; ASAQS measurement rules</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC clause 34; ASAQS Standard System of Measuring; NEC4 clause 53</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Schedule a joint final measurement programme with the contractor QS — agree on the sequence of trades to be measured and the timeline</li>
+            <li>Measure every BoQ section to final quantities using as-built drawings and physical site measurement — no provisional allowances</li>
+            <li>For earthworks: obtain final survey data (cut/fill volumes) from the land surveyor; reconcile against BoQ quantities</li>
+            <li>For concrete/structural: take final dimensions from as-built drawings; verify against site measurement for any deviations</li>
+            <li>For finishes and services: use unit-by-unit registers to confirm completion status of every item</li>
+            <li>Record all measurements with clear BoQ item references; both parties to sign each measurement sheet</li>
+            <li>Calculate the re-measurement adjustment: final measured quantity − original BoQ quantity = over/under measurement per item</li>
+            <li class="check">✓ Quality Check: Every BoQ section measured to final; joint measurement sheets signed by both QS parties; re-measurement schedule complete</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.8.1-02</div>
+        <h4>Finalise All Variation Order Values</h4>
+        <p>Close all open variation orders by agreeing final values with the contractor QS. Ensure every approved VO has a signed agreement on the final cost. Compile the final VO schedule showing the cumulative impact on the contract sum.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS + Contractor QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">2–4 weeks</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">VO register (D1.6); individual VO valuations; contractor's VO claims; site records</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Final VO schedule with agreed values; signed VO agreements; cumulative VO impact on contract sum</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">VO register; valuation spreadsheet; platform VO module; contract rates schedule</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC clause 25 (Variations); GCC 2015 clause 6.9; NEC4 clause 63</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Extract all open VOs from the variation register — identify those not yet agreed at final value</li>
+            <li>For each open VO: review the approved scope, measure the actual work executed, and value using contract rates or agreed star rates</li>
+            <li>Compare QS valuation against the contractor's claim for each VO — negotiate and agree on disputed amounts</li>
+            <li>Record the agreed final value for each VO on the VO agreement form; both parties sign</li>
+            <li>Compile the final VO schedule showing: VO number, description, approved value, net impact (addition/omission), and cumulative total</li>
+            <li>Where agreement cannot be reached on specific VOs, record both parties' positions and note for dispute resolution</li>
+            <li class="check">✓ Quality Check: All VOs closed with signed agreements; final VO schedule complete; cumulative impact calculated; unresolved items documented</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.8.1-03</div>
+        <h4>Reconcile Provisional Sum &amp; Prime Cost Adjustments</h4>
+        <p>Finalise all provisional sum (PS) and prime cost (PC) item adjustments by comparing actual expenditure against the original BoQ allowances. Calculate the net adjustment (surplus or deficit) for each PS and PC item.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1–2 weeks</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">PS/PC registers; actual supplier invoices; BoQ PS/PC allowances; D1.4-SP-003 records</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">PS/PC adjustment schedule; net adjustment per item; supporting invoice schedule</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">PS/PC tracking spreadsheet; invoice register; platform financial module</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC clause 24 (Provisional Sums); JBCC clause 22 (Prime Cost); GCC 2015</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Extract all PS and PC items from the BoQ with their original allowance values</li>
+            <li>For each PS item: compile all actual expenditure (invoices, sub-contractor payments, attendance) and calculate total actual cost</li>
+            <li>Calculate PS adjustment: actual expenditure − BoQ allowance = adjustment (addition if over, omission if under)</li>
+            <li>For each PC item: compile actual supplier invoices plus contractor's profit and attendance markup as per contract</li>
+            <li>Calculate PC adjustment: (actual invoice + attendance) − BoQ PC allowance = adjustment</li>
+            <li>Prepare a consolidated PS/PC adjustment schedule with supporting invoice references for each item</li>
+            <li class="check">✓ Quality Check: All PS/PC items reconciled; actual invoices verified and cross-referenced; net adjustments calculated; schedule ready for Final Account</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.8.1-04</div>
+        <h4>Compile Draft Final Account Statement</h4>
+        <p>Assemble all component schedules into a single draft Final Account Statement showing the reconciliation from the original contract sum to the final adjusted contract sum. This is the definitive financial record of the contract.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 week</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Re-measurement schedule (Task 1.8.1-01); VO schedule (Task 1.8.1-02); PS/PC schedule (Task 1.8.1-03); CPA records; penalty / claims records</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Draft Final Account Statement; component summary; calculation of final adjusted contract sum</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Final Account template; valuation spreadsheet; platform Final Account module</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC clause 34 (Final Account); SACQSP Final Account guidelines</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Use the Final Account template with the following structure:
+                <ul>
+                    <li>A. Original Contract Sum (from D1.4-SP-001)</li>
+                    <li>B. ± Re-measurement Adjustments (from Task 1.8.1-01)</li>
+                    <li>C. + Approved Variation Orders (from Task 1.8.1-02)</li>
+                    <li>D. ± Provisional Sum Adjustments (from Task 1.8.1-03)</li>
+                    <li>E. ± Prime Cost Adjustments (from Task 1.8.1-03)</li>
+                    <li>F. + Cumulative CPA to Practical Completion (from D1.4-SP-002)</li>
+                    <li>G. − Penalties (if applicable, per PA determination)</li>
+                    <li>H. + Agreed Claims (if any)</li>
+                    <li>= Final Account Total</li>
+                </ul>
+            </li>
+            <li>Cross-check each component total against the underlying schedules — ensure R0 tolerance</li>
+            <li>Prepare a one-page executive summary showing the original contract sum, each adjustment category, and the final total</li>
+            <li>Attach all supporting schedules as appendices to the draft Final Account Statement</li>
+            <li class="check">✓ Quality Check: All components included; arithmetic verified to R0 tolerance; executive summary prepared; supporting appendices attached</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.8.1-05</div>
+        <h4>Reconcile Against Contractor's Final Account Submission</h4>
+        <p>Compare the QS-prepared draft Final Account against the contractor's own final account submission. Prepare a detailed item-by-item reconciliation highlighting agreements and discrepancies.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS + Contractor QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">2–4 weeks</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">QS Draft Final Account (Task 1.8.1-04); contractor's final account submission; supporting documentation from both parties</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Item-by-item reconciliation schedule; agreed items list; disputed items list with both parties' positions</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Reconciliation template; Final Account comparison spreadsheet; platform reconciliation module</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC clause 34; fair dealing per SACQSP Professional Code of Conduct</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Line up the QS Final Account and contractor's submission side-by-side at the component level (A through H)</li>
+            <li>For each component, drill down to the individual schedule items and compare values</li>
+            <li>Categorise each item as: Agreed (values match within 1%), Minor Variance (1–5%), or Disputed (&gt;5% or fundamentally different basis)</li>
+            <li>For disputed items: document the QS position, the contractor's position, the variance amount, and the evidence supporting each position</li>
+            <li>Prepare a reconciliation summary: total agreed value, total disputed value, and the range of possible final account outcomes</li>
+            <li>Schedule a reconciliation meeting with the contractor QS to work through disputed items systematically</li>
+            <li class="check">✓ Quality Check: Every line item compared; categorisation complete; disputed items documented with both positions; reconciliation meeting scheduled</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.8.1-06</div>
+        <h4>Negotiate &amp; Agree Disputed Items</h4>
+        <p>Conduct structured negotiations with the contractor QS to resolve all disputed items section by section. Apply evidence-based negotiation using measurement records, contract provisions, and precedent. Aim for agreement within the JBCC 6-month window from Practical Completion.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS + Contractor QS (escalate to PA if required)</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">4–8 weeks</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Reconciliation schedule (Task 1.8.1-05); evidence packs per disputed item; contract conditions</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Negotiation records; agreed settlement per item; escalation records for unresolved items</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Negotiation tracker; evidence pack templates; contract reference documents</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC clause 34 (6-month deadline); JBCC clause 40 (dispute resolution); NEC4 clause 53</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Prepare an evidence pack for each disputed item containing: measurement records, photographs, contract clause references, and the QS rationale</li>
+            <li>Schedule negotiation meetings — work through items in order of value (highest-value disputes first)</li>
+            <li>For each item: present both positions, review supporting evidence, identify the contractual basis for the correct interpretation</li>
+            <li>Record the agreed settlement amount for each item — both parties sign the negotiation record</li>
+            <li>For items where agreement cannot be reached: formally record both positions and escalate to the Principal Agent per JBCC clause 40</li>
+            <li>If PA determination does not resolve, initiate contractual dispute resolution (mediation / adjudication / arbitration per contract)</li>
+            <li>Track the JBCC 6-month deadline — escalate proactively if resolution is not progressing</li>
+            <li class="check">✓ Quality Check: All disputed items addressed; negotiation records signed; unresolved items formally escalated; 6-month deadline tracked</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.8.1-07</div>
+        <h4>Issue Agreed Final Account &amp; Final Payment Certificate</h4>
+        <p>Formalise the agreed Final Account by issuing the Final Account Statement for contractor signature. Prepare and issue the Final Payment Certificate reflecting the final balance due (or owed) after deducting all previous payments.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS → PA for certification</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 week</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Agreed Final Account; cumulative payment certificate record; retention balance</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Signed Final Account Statement; Final Payment Certificate; payment instruction to Employer</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Final Account template; payment certificate template; platform certificate module</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC clause 34 (Final Account); clause 33 (payment certificate); SACQSP</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Update the Final Account Statement with all agreed values from the negotiation phase (Task 1.8.1-06)</li>
+            <li>Calculate the Final Payment Certificate: Final Account Total − cumulative payments to date (all previous certificates) = final balance due</li>
+            <li>If balance is positive: amount due to contractor; if negative: amount owed by contractor to employer</li>
+            <li>Submit the Final Account Statement to the contractor for signature — allow 7 days for review and signature</li>
+            <li>Submit the Final Payment Certificate to the PA for certification and issue to the Employer</li>
+            <li>Instruct the Employer on the final payment amount and due date per JBCC payment terms</li>
+            <li class="check">✓ Quality Check: Final Account signed by both parties; Final Payment Certificate issued; payment instruction to Employer; amounts reconcile to R0</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.8.1-08</div>
+        <h4>Release Remaining Retention &amp; Prepare Financial Close-out Report</h4>
+        <p>Release any remaining retention balance held under the contract and prepare the financial close-out report summarising the complete financial history of the project from award to final account.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 week</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Final Payment Certificate (Task 1.8.1-07); retention register; defects completion certificate; all financial records</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Retention release instruction; financial close-out report; archived contract financial records</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Retention register; close-out report template; document management system</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC clause 26 (retention); SACQSP record-keeping; project audit requirements</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Confirm the defects completion certificate has been issued by the PA (coordinate with D1.8-SP-002 Defects Liability)</li>
+            <li>Calculate the remaining retention balance after any defect remedy deductions</li>
+            <li>Prepare the retention release instruction to the Employer for the remaining retention amount</li>
+            <li>Compile the financial close-out report covering: original contract sum, all adjustments, final account total, total payments made, retention released, and any outstanding matters</li>
+            <li>Include a lessons-learned section highlighting key financial outcomes: actual vs budget, major VO impacts, and claims history</li>
+            <li>Archive all contract financial records in the project document management system per SACQSP record-keeping requirements (minimum 5 years)</li>
+            <li class="check">✓ Quality Check: Retention fully released; close-out report complete; all records archived; financial obligations discharged; contract financially closed</li>
+        </ul>
+    </div>
+
+    <h2>3. Task Summary</h2>
+    <table>
+        <thead><tr><th>Task ID</th><th>Task Name</th><th>Role</th><th>SLA</th><th>Output</th></tr></thead>
+        <tbody>
+            <tr><td>1.8.1-01</td><td>Final Site Measurement of All Outstanding Quantities</td><td>QS + Contractor QS</td><td>2–4 weeks</td><td>Final measurement schedules</td></tr>
+            <tr><td>1.8.1-02</td><td>Finalise All Variation Order Values</td><td>QS + Contractor QS</td><td>2–4 weeks</td><td>Final VO schedule (signed)</td></tr>
+            <tr><td>1.8.1-03</td><td>Reconcile PS &amp; PC Adjustments</td><td>QS</td><td>1–2 weeks</td><td>PS/PC adjustment schedule</td></tr>
+            <tr><td>1.8.1-04</td><td>Compile Draft Final Account Statement</td><td>QS</td><td>1 week</td><td>Draft FA statement (A–H)</td></tr>
+            <tr><td>1.8.1-05</td><td>Reconcile Against Contractor's Submission</td><td>QS + Contractor QS</td><td>2–4 weeks</td><td>Reconciliation schedule</td></tr>
+            <tr><td>1.8.1-06</td><td>Negotiate &amp; Agree Disputed Items</td><td>QS + Contractor QS</td><td>4–8 weeks</td><td>Signed negotiation records</td></tr>
+            <tr><td>1.8.1-07</td><td>Issue Final Account &amp; Final Payment Certificate</td><td>QS → PA</td><td>1 week</td><td>Signed FA + FPC</td></tr>
+            <tr><td>1.8.1-08</td><td>Release Retention &amp; Financial Close-out Report</td><td>QS</td><td>1 week</td><td>Close-out report + archive</td></tr>
+        </tbody>
+    </table>
+
+    <div class="doc-footer"><span>L4 Tasks — D1.8-SP-001 Final Measurement &amp; Account v2.0</span><span>Confidential — Swift Designz</span></div>
+</div>
+    <script src="../../../nav.js"></script>
+</body>
+</html>

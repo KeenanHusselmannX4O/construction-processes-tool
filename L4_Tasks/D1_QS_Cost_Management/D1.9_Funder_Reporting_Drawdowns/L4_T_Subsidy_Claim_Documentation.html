@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>L4 — Tasks: Subsidy Claim Documentation</title>
+    <style>
+        :root{--navy-950:#0a0f1e;--navy-900:#0f172a;--navy-800:#1e293b;--navy-700:#334155;--navy-600:#475569;--slate-400:#94a3b8;--slate-300:#cbd5e1;--white:#f8fafc;--accent:#3b82f6;--accent-light:#60a5fa}
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:var(--navy-950);color:var(--slate-300);line-height:1.7;font-size:12px}
+        @page{size:A4;margin:15mm}.page{max-width:210mm;margin:0 auto;padding:32px 40px;background:var(--navy-900)}
+        .doc-header{border-bottom:3px solid var(--accent);padding-bottom:18px;margin-bottom:24px}
+        .doc-header .level-badge{display:inline-block;padding:3px 12px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:rgba(59,130,246,.15);color:var(--accent-light);margin-bottom:6px}
+        .doc-header h1{font-size:22px;font-weight:800;color:var(--white);margin-bottom:4px}
+        .doc-header .subtitle{font-size:13px;color:var(--slate-400)}
+        .doc-header .meta{display:flex;gap:20px;margin-top:10px;font-size:10px;color:var(--slate-400)}
+        h2{font-size:16px;font-weight:700;color:var(--white);margin:24px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--navy-700)}
+        h3{font-size:13px;font-weight:600;color:var(--accent-light);margin:16px 0 6px}
+        p{margin-bottom:10px}
+        .nav-bar{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
+        .nav-link{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:6px;font-size:10px;font-weight:600;text-decoration:none;border:1px solid var(--navy-700);color:var(--slate-300);background:var(--navy-800);transition:all .2s}
+        .nav-link:hover{border-color:var(--accent);color:var(--accent-light)}
+        .nav-link.active{border-color:var(--accent);color:var(--accent-light);background:rgba(59,130,246,.1)}
+        .nav-link .arrow{font-size:12px}
+        table{width:100%;border-collapse:collapse;margin:10px 0;font-size:11px}
+        thead th{background:var(--navy-800);color:var(--accent-light);font-weight:600;text-align:left;padding:7px 10px;border-bottom:2px solid var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+        tbody td{padding:7px 10px;border-bottom:1px solid var(--navy-700);vertical-align:top}
+        ul{margin:4px 0 8px 14px;font-size:11px}li{margin-bottom:3px}
+        .task-block{background:var(--navy-800);border:1px solid var(--navy-700);border-left:3px solid var(--accent);border-radius:8px;padding:14px;margin:10px 0}
+        .task-block .task-id{font-size:9px;font-weight:700;color:var(--accent-light);letter-spacing:1px;margin-bottom:3px}
+        .task-block h4{font-size:12px;font-weight:700;color:var(--white);margin-bottom:6px}
+        .task-block .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10px}
+        .task-block .detail-label{font-weight:600;color:var(--accent-light);font-size:9px;text-transform:uppercase;letter-spacing:.5px}
+        .task-block .detail-value{color:var(--slate-300)}
+        .check{color:#34d399;font-weight:600}
+        .doc-footer{margin-top:28px;padding-top:10px;border-top:1px solid var(--navy-700);font-size:9px;color:var(--navy-600);display:flex;justify-content:space-between}
+    </style>
+    <style id="pro-override">
+        :root{
+            --navy-950:#f0f0f0;--navy-900:#ffffff;--navy-800:#f5f5f5;
+            --navy-700:#d4d4d4;--navy-600:#888;
+            --slate-400:#666;--slate-300:#333;--white:#1c1c1c;
+            --blue-500:#555;--blue-400:#555;
+            --accent:#555;--accent-light:#555;
+            --amber-500:#888;--amber-400:#aaa;
+            --green-500:#666;--green-400:#888;
+            --cyan-500:#777;--cyan-400:#999;
+            --purple-500:#666;--purple-400:#888;
+            --rose-500:#777;--rose-400:#999;
+            --teal-500:#666;--teal-400:#888;
+            --red-500:#666;--orange-500:#777;--orange-400:#999;
+            --violet-500:#666;--violet-400:#888
+        }
+        body{font-family:'Segoe UI',Arial,sans-serif!important;background:#f0f0f0!important;color:#333!important}
+        .page{background:#fff!important;border:1px solid #d4d4d4;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+        .doc-header{border-bottom:1px solid #d4d4d4!important}
+        .level-badge{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc}
+        .doc-header h1{color:#1c1c1c!important;font-weight:700!important}
+        .doc-header .subtitle{color:#555!important}
+        .doc-header .meta{color:#888!important}
+        h2{color:#1c1c1c!important;border-bottom:1px solid #d4d4d4!important;font-weight:700!important}
+        h3{color:#444!important}
+        h4{color:#333!important}
+        p{color:#444}
+        .nav-bar{gap:6px}
+        .nav-link{background:#f5f5f5!important;border:1px solid #d0d0d0!important;color:#444!important;border-radius:3px!important}
+        .nav-link:hover{border-color:#888!important;color:#1c1c1c!important;background:#ebebeb!important}
+        .nav-link.active{border-color:#888!important;color:#1c1c1c!important;background:#e4e4e4!important;font-weight:600!important}
+        table{border:1px solid #e0e0e0}
+        thead th{background:#f0f0f0!important;color:#333!important;border-bottom:2px solid #d4d4d4!important;font-weight:700!important}
+        tbody td{border-bottom:1px solid #ebebeb!important;color:#444!important}
+        tbody tr:hover td{background:#fafafa}
+        .card,.phase-card,.domain-card,.info-card,.process-card,.step-card,.task-card{background:#f8f8f8!important;border:1px solid #d4d4d4!important}
+        .card h4{color:#333!important;text-transform:none!important}
+        .phase-card .phase-num{color:#666!important}
+        .phase-card h4{color:#1c1c1c!important}
+        .phase-card p{color:#555!important}
+        .phase-card.p1,.phase-card.p2,.phase-card.p3,.phase-card.p4,.phase-card.p5,.phase-card.p6,.phase-card.p7{border-top:2px solid #bbb!important}
+        .domain-card .domain-icon,.d1,.d2,.d3,.d4,.d5,.d6,.d7,.d8{background:#e8e8e8!important;color:#444!important}
+        .domain-card .domain-info h4{color:#1c1c1c!important}
+        .domain-card .domain-info .pa-count{color:#666!important}
+        .domain-card .domain-info .link{color:#444!important}
+        .domain-card:hover{border-color:#888!important}
+        .callout{background:#f5f5f5!important;border-left:3px solid #888!important;color:#444!important}
+        .callout strong{color:#333!important}
+        .doc-footer{border-top:1px solid #e4e4e4!important;color:#aaa!important}
+        .mermaid{background:#fff!important}
+        a{color:#333}
+        a:hover{color:#000}
+        code{background:#efefef!important;color:#333!important;border:1px solid #ddd}
+        li{color:#444}
+        .pa-card,.process-area-card{background:#f8f8f8!important;border-color:#d4d4d4!important}
+        .badge,.tag,.label{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc!important}
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="doc-header">
+        <div class="level-badge">Level 4 — Tasks</div>
+        <h1>Tasks: Subsidy Claim Documentation</h1>
+        <div class="subtitle">L0 → L1: D1 QS → L2: D1.9 Funder Reporting &amp; Drawdowns → L3: Subsidy Claim → <strong>L4: Tasks</strong></div>
+        <div class="meta"><span>Task Set: D1.9-SP-003-T</span><span>BPMN Level: 4</span><span>8 Tasks</span><span>Version 2.0</span><span>April 2026</span></div>
+    </div>
+
+    <div class="nav-bar">
+        <a class="nav-link" href="../../../L3_Sub_Processes/D1_QS_Cost_Management/D1.9_Funder_Reporting_Drawdowns/SP_Subsidy_Claim_Documentation.html"><span class="arrow">↑</span> L3 Subsidy Claim Documentation</a>
+        <span class="nav-link active"><span class="arrow">●</span> L4 Tasks</span>
+    </div>
+
+    <h2>1. Task Overview</h2>
+    <p>This task set expands the Subsidy Claim Documentation sub-process into granular work instructions for government-funded affordable housing projects in South Africa. Tasks cover the complete subsidy claim cycle: confirming the construction milestone, requesting and coordinating NHBRC stage inspections, conducting the QS unit count and progress certification, compiling the subsidy claim pack (claim form, QS cert, NHBRC cert, photographs, beneficiary list), obtaining developer signature, submitting to the Provincial Housing Department (PHD), tracking PHD review and addressing queries, and updating the subsidy register upon fund release. Per the National Housing Code subsidy quantum structure, claims are submitted at prescribed milestone stages (slab, wall-plate, roof, practical completion).</p>
+
+    <h2>2. Detailed Task Breakdown</h2>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.9.3-01</div>
+        <h4>Confirm Construction Milestone &amp; Request NHBRC Inspection</h4>
+        <p>Verify that the construction milestone has been reached for the batch of units being claimed. The milestone must correspond to the subsidy payment schedule stages (slab, wall-plate, roof, or practical completion). Request the NHBRC stage inspection — NHBRC clearance is a prerequisite for the subsidy claim.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">PM + QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">Same day as milestone reached</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Site progress report; unit completion registers; NHBRC enrolment details; construction programme</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Milestone confirmation report; NHBRC inspection request; list of units at milestone</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Unit progress tracker; NHBRC online portal; site inspection checklist</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">National Housing Code (milestone definitions); NHBRC Act 95 of 1998; BNG subsidy payment schedule</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Conduct a site walk to verify which units have reached the claimed milestone — physically inspect each unit or use the unit progress tracker</li>
+            <li>Verify milestone definitions against the subsidy payment schedule:
+                <ul>
+                    <li>Stage 1 (Slab): Foundation complete, slab poured and cured — check for structural integrity and level</li>
+                    <li>Stage 2 (Wall-plate): All walls at wall-plate height, ready for roof structure</li>
+                    <li>Stage 3 (Roof): Roof structure complete, waterproofing done</li>
+                    <li>Stage 4 (Practical Completion): All finishes complete, unit habitable, services connected</li>
+                </ul>
+            </li>
+            <li>Compile the list of unit numbers that have reached the milestone — record stand number, unit number, and block/section</li>
+            <li>Log onto the NHBRC online portal and submit the stage inspection request — include the project enrolment number, milestone stage, and number of units</li>
+            <li>Coordinate the inspection date with the NHBRC — ensure site access and contractor attendance during the inspection</li>
+            <li class="check">✓ Quality Check: Milestone physically verified; unit list complete; NHBRC inspection requested; inspection date coordinated</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.9.3-02</div>
+        <h4>Attend NHBRC Stage Inspection &amp; Obtain Clearance</h4>
+        <p>Attend the NHBRC stage inspection on site, facilitate the inspector's access to all units, and obtain the NHBRC pass certificate for the relevant milestone stage. If any units fail inspection, coordinate rectification and re-inspection.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS + PM + Contractor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">5–10 days (NHBRC processing time)</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">NHBRC inspection request confirmation; site access arrangements; unit list at milestone</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">NHBRC stage pass certificate; inspection report; failed unit list (if any); re-inspection request (if needed)</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">NHBRC portal; site access plan; unit checklist per NHBRC requirements</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">NHBRC Act; Housing Consumer Protection Measures Act; SANS 10400 building standards</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Confirm the NHBRC inspection date and ensure the site team is prepared — all units must be accessible, clean, and representative of the claimed milestone</li>
+            <li>Before the NHBRC inspector arrives: conduct a pre-inspection walk-through to identify and rectify any obvious defects that could cause a failure</li>
+            <li>Attend the inspection with the NHBRC inspector — take the inspector to each unit; address questions about materials, methods, and compliance</li>
+            <li>Record the inspection outcome per unit: Pass / Conditional Pass / Fail. Note any conditions or defects identified by the inspector</li>
+            <li>If units fail: instruct the contractor to rectify the identified issues and re-request an NHBRC inspection for the failed units</li>
+            <li>Obtain the NHBRC stage pass certificate (or download from the NHBRC portal) — verify it covers all units in the claim batch</li>
+            <li class="check">✓ Quality Check: NHBRC inspection attended; pass certificate obtained for claim batch; failed units tracked for re-inspection; certificate filed</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.9.3-03</div>
+        <h4>Conduct QS Unit Count &amp; Progress Certification</h4>
+        <p>Conduct an independent QS progress assessment to certify the number of units at each subsidy milestone stage. This is the QS's professional certification that forms part of the subsidy claim pack. The unit count must reconcile with the NHBRC inspection results.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">2–3 working days</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Site inspection; unit progress tracker; NHBRC pass certificate; stand/unit register from beneficiary allocation</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">QS progress certification schedule; unit-by-unit milestone status; claim value calculation per subsidy quantum</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Unit progress register; site measurement tools; camera; QS certification template</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">National Housing Code; BNG subsidy quantum (R228,584 per unit 2024/25); SACQSP certification standards</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Walk the site and count each unit at the claimed milestone stage — verify against the contractor's progress claim and the NHBRC inspection results</li>
+            <li>Record the status per unit: stand number, unit number, milestone stage reached, date verified</li>
+            <li>For each milestone claim, calculate the subsidy claim amount: number of units × milestone percentage × subsidy quantum per unit</li>
+            <li>Example: 50 units at slab stage × 32% × R228,584 = R3,657,344 total claim</li>
+            <li>Reconcile the QS count against: (a) contractor's claim, (b) NHBRC inspection, (c) unit progress tracker — resolve any discrepancies</li>
+            <li>Prepare the QS progress certification schedule: unit list, milestone stages, claim calculation, and a signed certification statement</li>
+            <li>Certification statement: "I certify that [N] units have reached [milestone stage] as at [date], based on my site inspection, and the claim value of R[X] is a fair representation of the subsidy quantum entitlement"</li>
+            <li class="check">✓ Quality Check: Unit count reconciles across all sources; claim calculation verified; QS certification signed; amounts within subsidy quantum limits</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.9.3-04</div>
+        <h4>Compile Subsidy Claim Pack</h4>
+        <p>Assemble the complete subsidy claim pack containing all documents required by the Provincial Housing Department (PHD). The pack must be complete — incomplete submissions are returned, causing significant delays (PHD processing can take 2–6 weeks even for complete claims).</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS + Admin</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">3–5 working days</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">QS progress certification (Task 1.9.3-03); NHBRC certificate (Task 1.9.3-02); PHD claim form; beneficiary list; photographs</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Complete subsidy claim pack; document index; completeness checklist</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">PHD claim form template; document assembly checklist; platform document management</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">National Housing Code; PHD provincial claim procedures; DHS guidelines</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Assemble the claim pack with the following items per PHD requirements:
+                <ul>
+                    <li>1. PHD subsidy claim form (provincial template) — completed and signed</li>
+                    <li>2. QS progress certification schedule (Task 1.9.3-03) — signed by registered QS</li>
+                    <li>3. NHBRC stage pass certificate (Task 1.9.3-02) — covering all units in the claim</li>
+                    <li>4. Beneficiary allocation list — stand numbers matched to beneficiary names and ID numbers</li>
+                    <li>5. Beneficiary ID document copies — certified copies of ID documents for each beneficiary in this claim batch</li>
+                    <li>6. Progress photographs — dated photographs showing the milestone completion (minimum 1 photo per block/section)</li>
+                    <li>7. Site plan / layout plan — showing the location of claimed units within the development</li>
+                </ul>
+            </li>
+            <li>Prepare a document index listing each item, date, and page count</li>
+            <li>Complete the PHD completeness checklist — sign and stamp each item as present and verified</li>
+            <li>Verify that beneficiary ID numbers match the PHD's approved beneficiary database — mismatched beneficiaries will cause rejection</li>
+            <li>Package the claim pack per PHD requirements (typically hard copy in triplicate + electronic copy)</li>
+            <li class="check">✓ Quality Check: All 7 document items present; beneficiary IDs verified; completeness checklist signed; pack in correct format for PHD</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.9.3-05</div>
+        <h4>Developer Signs &amp; Submits to Provincial Housing Department</h4>
+        <p>The developer (as the subsidy applicant) signs the claim form and submits the complete pack to the PHD or municipality (depending on the provincial claiming procedure). Some provinces require submission to the municipality first, which then forwards to the PHD.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Developer + QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1–2 working days</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Complete claim pack (Task 1.9.3-04); developer authorisation; PHD submission address / portal</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Signed claim form; PHD receipt confirmation; submission reference number</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">PHD submission portal / physical submission; receipt tracking; courier service</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">National Housing Code; provincial claiming procedures; DHS guidelines</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Present the complete claim pack to the developer for review — brief the developer on the claim amount, units claimed, and milestone stage</li>
+            <li>Developer signs the PHD claim form as the subsidy applicant / implementing agent</li>
+            <li>Submit to the correct receiving authority per provincial procedures:
+                <ul>
+                    <li>Option A: Direct submission to PHD (Gauteng, Western Cape — project-specific)</li>
+                    <li>Option B: Submit to municipality, which forwards to PHD (common in smaller municipalities)</li>
+                </ul>
+            </li>
+            <li>Obtain a receipt or reference number from the receiving authority — this is critical for tracking the claim in the PHD system</li>
+            <li>Record the submission date, reference number, and receiving officer's name in the subsidy claim tracker</li>
+            <li class="check">✓ Quality Check: Developer signed; submitted to correct authority; receipt obtained; reference number recorded; claim tracker updated</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.9.3-06</div>
+        <h4>Track PHD Review &amp; Address Queries</h4>
+        <p>Monitor the PHD's claim review process, which typically takes 2–6 weeks. The PHD may raise queries on documentation, beneficiary details, NHBRC clearance, or the claim amount. Respond to queries promptly — unresolved queries delay fund release and can cascade across the project cash-flow.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">2–6 weeks (PHD processing); respond to queries within 5 business days</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">PHD submission confirmation; claim tracker; PHD query correspondence; additional documentation (if requested)</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Query response correspondence; additional documentation submitted; claim status updates; escalation records (if needed)</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Claim tracker; PHD contact directory; correspondence templates; platform workflow module</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">PHD processing standards; Promotion of Administrative Justice Act (PAJA); professional response standards</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: After submission, follow up with the PHD at 2-week intervals to check the claim status — use the submission reference number</li>
+            <li>Common PHD queries include: beneficiary ID mismatches, NHBRC certificate discrepancies, unit count questions, claim calculation errors, or missing documents</li>
+            <li>Upon receiving a query: log it in the claim tracker, assess the issue, prepare the response within 5 business days, and resubmit the corrected documentation</li>
+            <li>For beneficiary-related queries: coordinate with the developer's community liaison or beneficiary administration team to provide updated information</li>
+            <li>If the claim is delayed beyond 6 weeks without feedback: escalate to the PHD's project manager or the developer's government liaison</li>
+            <li>Track the total processing time — average time from submission to payment should be benchmarked and reported to the developer</li>
+            <li class="check">✓ Quality Check: Regular follow-ups maintained; queries resolved within 5 days; claim status tracked; escalation procedures followed; processing time benchmarked</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.9.3-07</div>
+        <h4>Update Subsidy Register upon Fund Release</h4>
+        <p>Upon confirmation that the PHD has released the subsidy funds to the project account, update the subsidy register, reconcile against the claim amount, and update the project cash-flow. The subsidy register is the master record of all claims submitted, amounts received, and outstanding claims.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 working day after fund receipt</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">PHD payment confirmation; bank statement; subsidy register; project financial model; cash-flow forecast</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Updated subsidy register; bank reconciliation; cash-flow forecast update; contractor payment trigger</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Subsidy register; bank reconciliation template; cash-flow model; platform financial module</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">National Housing Code; financial management best practice; SACQSP guidelines</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Confirm receipt of subsidy funds in the project bank account — verify the amount matches the approved claim (R0 tolerance)</li>
+            <li>Update the subsidy register: claim number, milestone stage, number of units, claim amount, date received, cumulative received</li>
+            <li>Calculate the outstanding subsidy balance: total project subsidy allocation − cumulative received = remaining subsidy entitlement</li>
+            <li>Reconcile the subsidy register against the unit progress tracker — verify that all claimed milestones have been paid for and no double claims exist</li>
+            <li>Update the project cash-flow forecast with the actual receipt date and amount received</li>
+            <li>Notify the PM and developer that subsidy funds have been received — trigger the contractor payment process if payments were held pending funding</li>
+            <li class="check">✓ Quality Check: Register updated; bank receipt verified; reconciliation complete; no double claims; cash-flow updated; payment process triggered</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.9.3-08</div>
+        <h4>Prepare for Next Milestone Claim &amp; Reconcile Subsidy Quantum</h4>
+        <p>After each successful claim, prepare for the next milestone stage by updating the unit progress tracker, reconciling the per-unit subsidy quantum utilisation, and identifying the next batch of units approaching the next milestone. Maintain a rolling forecast of subsidy claims aligned to the construction programme.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">Ongoing (after each claim cycle)</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Updated subsidy register (Task 1.9.3-07); construction programme; unit progress tracker; subsidy quantum schedule</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Next milestone claim forecast; per-unit subsidy reconciliation; subsidy cash-flow projection; developer briefing</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Subsidy register; unit progress tracker; cash-flow model; platform forecasting module</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">National Housing Code; BNG subsidy quantum; FLISP guidelines (if applicable); DHS reporting</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Update the unit progress tracker showing the current milestone status of every unit in the project</li>
+            <li>Calculate the per-unit subsidy quantum utilisation: for each unit, track cumulative subsidy claimed vs total quantum available — flag any units approaching the quantum limit</li>
+            <li>Identify the next batch of units expected to reach the next milestone stage based on the construction programme</li>
+            <li>Prepare a subsidy claim forecast: expected claim dates, unit counts, and claim amounts for the next 3 months</li>
+            <li>For FLISP (Finance Linked Individual Subsidy Programme) units: separately track the FLISP subsidy quantum and qualification requirements — FLISP has different claim procedures</li>
+            <li>Brief the developer on the subsidy pipeline: claims submitted, amounts received, next claims expected, and any risks to the claiming schedule</li>
+            <li>Verify that the total per-unit cost does not exceed the subsidy quantum — over-expenditure beyond the quantum is the developer's risk</li>
+            <li class="check">✓ Quality Check: Unit tracker current; quantum utilisation per unit monitored; next claim forecast prepared; FLISP separately tracked; developer briefed; no over-quantum risk</li>
+        </ul>
+    </div>
+
+    <h2>3. Task Summary</h2>
+    <table>
+        <thead><tr><th>Task ID</th><th>Task Name</th><th>Role</th><th>SLA</th><th>Output</th></tr></thead>
+        <tbody>
+            <tr><td>1.9.3-01</td><td>Confirm Milestone &amp; Request NHBRC Inspection</td><td>PM + QS</td><td>Same day</td><td>NHBRC inspection request</td></tr>
+            <tr><td>1.9.3-02</td><td>Attend NHBRC Inspection &amp; Obtain Clearance</td><td>QS + PM + Contractor</td><td>5–10 days</td><td>NHBRC pass certificate</td></tr>
+            <tr><td>1.9.3-03</td><td>QS Unit Count &amp; Progress Certification</td><td>QS</td><td>2–3 days</td><td>Signed QS certification</td></tr>
+            <tr><td>1.9.3-04</td><td>Compile Subsidy Claim Pack</td><td>QS + Admin</td><td>3–5 days</td><td>Complete claim pack (7 items)</td></tr>
+            <tr><td>1.9.3-05</td><td>Developer Signs &amp; Submits to PHD</td><td>Developer + QS</td><td>1–2 days</td><td>PHD receipt confirmation</td></tr>
+            <tr><td>1.9.3-06</td><td>Track PHD Review &amp; Address Queries</td><td>QS</td><td>2–6 weeks</td><td>Query responses + status</td></tr>
+            <tr><td>1.9.3-07</td><td>Update Subsidy Register upon Fund Release</td><td>QS</td><td>1 day</td><td>Updated register + reconciliation</td></tr>
+            <tr><td>1.9.3-08</td><td>Prepare Next Milestone &amp; Reconcile Quantum</td><td>QS</td><td>Ongoing</td><td>Claim forecast + quantum tracking</td></tr>
+        </tbody>
+    </table>
+
+    <div class="doc-footer"><span>L4 Tasks — D1.9-SP-003 Subsidy Claim Documentation v2.0</span><span>Confidential — Swift Designz</span></div>
+</div>
+    <script src="../../../nav.js"></script>
+</body>
+</html>

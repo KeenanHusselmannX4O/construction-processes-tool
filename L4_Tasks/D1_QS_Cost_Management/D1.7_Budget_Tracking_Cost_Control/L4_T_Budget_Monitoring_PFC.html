@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>L4 — Tasks: Budget Monitoring &amp; Cost Forecast (PFC)</title>
+    <style>
+        :root{--navy-950:#0a0f1e;--navy-900:#0f172a;--navy-800:#1e293b;--navy-700:#334155;--navy-600:#475569;--slate-400:#94a3b8;--slate-300:#cbd5e1;--white:#f8fafc;--accent:#3b82f6;--accent-light:#60a5fa}
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:var(--navy-950);color:var(--slate-300);line-height:1.7;font-size:12px}
+        @page{size:A4;margin:15mm}.page{max-width:210mm;margin:0 auto;padding:32px 40px;background:var(--navy-900)}
+        .doc-header{border-bottom:3px solid var(--accent);padding-bottom:18px;margin-bottom:24px}
+        .doc-header .level-badge{display:inline-block;padding:3px 12px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:rgba(59,130,246,.15);color:var(--accent-light);margin-bottom:6px}
+        .doc-header h1{font-size:22px;font-weight:800;color:var(--white);margin-bottom:4px}
+        .doc-header .subtitle{font-size:13px;color:var(--slate-400)}
+        .doc-header .meta{display:flex;gap:20px;margin-top:10px;font-size:10px;color:var(--slate-400)}
+        h2{font-size:16px;font-weight:700;color:var(--white);margin:24px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--navy-700)}
+        h3{font-size:13px;font-weight:600;color:var(--accent-light);margin:16px 0 6px}
+        p{margin-bottom:10px}
+        .nav-bar{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
+        .nav-link{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:6px;font-size:10px;font-weight:600;text-decoration:none;border:1px solid var(--navy-700);color:var(--slate-300);background:var(--navy-800);transition:all .2s}
+        .nav-link:hover{border-color:var(--accent);color:var(--accent-light)}
+        .nav-link.active{border-color:var(--accent);color:var(--accent-light);background:rgba(59,130,246,.1)}
+        .nav-link .arrow{font-size:12px}
+        table{width:100%;border-collapse:collapse;margin:10px 0;font-size:11px}
+        thead th{background:var(--navy-800);color:var(--accent-light);font-weight:600;text-align:left;padding:7px 10px;border-bottom:2px solid var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+        tbody td{padding:7px 10px;border-bottom:1px solid var(--navy-700);vertical-align:top}
+        ul{margin:4px 0 8px 14px;font-size:11px}li{margin-bottom:3px}
+        .task-block{background:var(--navy-800);border:1px solid var(--navy-700);border-left:3px solid var(--accent);border-radius:8px;padding:14px;margin:10px 0}
+        .task-block .task-id{font-size:9px;font-weight:700;color:var(--accent-light);letter-spacing:1px;margin-bottom:3px}
+        .task-block h4{font-size:12px;font-weight:700;color:var(--white);margin-bottom:6px}
+        .task-block .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10px}
+        .task-block .detail-label{font-weight:600;color:var(--accent-light);font-size:9px;text-transform:uppercase;letter-spacing:.5px}
+        .task-block .detail-value{color:var(--slate-300)}
+        .check{color:#34d399;font-weight:600}
+        .doc-footer{margin-top:28px;padding-top:10px;border-top:1px solid var(--navy-700);font-size:9px;color:var(--navy-600);display:flex;justify-content:space-between}
+    </style>
+    <style id="pro-override">
+        :root{
+            --navy-950:#f0f0f0;--navy-900:#ffffff;--navy-800:#f5f5f5;
+            --navy-700:#d4d4d4;--navy-600:#888;
+            --slate-400:#666;--slate-300:#333;--white:#1c1c1c;
+            --blue-500:#555;--blue-400:#555;
+            --accent:#555;--accent-light:#555;
+            --amber-500:#888;--amber-400:#aaa;
+            --green-500:#666;--green-400:#888;
+            --cyan-500:#777;--cyan-400:#999;
+            --purple-500:#666;--purple-400:#888;
+            --rose-500:#777;--rose-400:#999;
+            --teal-500:#666;--teal-400:#888;
+            --red-500:#666;--orange-500:#777;--orange-400:#999;
+            --violet-500:#666;--violet-400:#888
+        }
+        body{font-family:'Segoe UI',Arial,sans-serif!important;background:#f0f0f0!important;color:#333!important}
+        .page{background:#fff!important;border:1px solid #d4d4d4;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+        .doc-header{border-bottom:1px solid #d4d4d4!important}
+        .level-badge{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc}
+        .doc-header h1{color:#1c1c1c!important;font-weight:700!important}
+        .doc-header .subtitle{color:#555!important}
+        .doc-header .meta{color:#888!important}
+        h2{color:#1c1c1c!important;border-bottom:1px solid #d4d4d4!important;font-weight:700!important}
+        h3{color:#444!important}
+        h4{color:#333!important}
+        p{color:#444}
+        .nav-bar{gap:6px}
+        .nav-link{background:#f5f5f5!important;border:1px solid #d0d0d0!important;color:#444!important;border-radius:3px!important}
+        .nav-link:hover{border-color:#888!important;color:#1c1c1c!important;background:#ebebeb!important}
+        .nav-link.active{border-color:#888!important;color:#1c1c1c!important;background:#e4e4e4!important;font-weight:600!important}
+        table{border:1px solid #e0e0e0}
+        thead th{background:#f0f0f0!important;color:#333!important;border-bottom:2px solid #d4d4d4!important;font-weight:700!important}
+        tbody td{border-bottom:1px solid #ebebeb!important;color:#444!important}
+        tbody tr:hover td{background:#fafafa}
+        .card,.phase-card,.domain-card,.info-card,.process-card,.step-card,.task-card{background:#f8f8f8!important;border:1px solid #d4d4d4!important}
+        .card h4{color:#333!important;text-transform:none!important}
+        .phase-card .phase-num{color:#666!important}
+        .phase-card h4{color:#1c1c1c!important}
+        .phase-card p{color:#555!important}
+        .phase-card.p1,.phase-card.p2,.phase-card.p3,.phase-card.p4,.phase-card.p5,.phase-card.p6,.phase-card.p7{border-top:2px solid #bbb!important}
+        .domain-card .domain-icon,.d1,.d2,.d3,.d4,.d5,.d6,.d7,.d8{background:#e8e8e8!important;color:#444!important}
+        .domain-card .domain-info h4{color:#1c1c1c!important}
+        .domain-card .domain-info .pa-count{color:#666!important}
+        .domain-card .domain-info .link{color:#444!important}
+        .domain-card:hover{border-color:#888!important}
+        .callout{background:#f5f5f5!important;border-left:3px solid #888!important;color:#444!important}
+        .callout strong{color:#333!important}
+        .doc-footer{border-top:1px solid #e4e4e4!important;color:#aaa!important}
+        .mermaid{background:#fff!important}
+        a{color:#333}
+        a:hover{color:#000}
+        code{background:#efefef!important;color:#333!important;border:1px solid #ddd}
+        li{color:#444}
+        .pa-card,.process-area-card{background:#f8f8f8!important;border-color:#d4d4d4!important}
+        .badge,.tag,.label{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc!important}
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="doc-header">
+        <div class="level-badge">Level 4 — Tasks</div>
+        <h1>Tasks: Budget Monitoring &amp; Cost Forecast (PFC)</h1>
+        <div class="subtitle">L0 → L1: D1 QS → L2: D1.7 Budget Tracking &amp; Cost Control → L3: Budget Monitoring &amp; PFC → <strong>L4: Tasks</strong></div>
+        <div class="meta"><span>Task Set: D1.7-SP-001-T</span><span>BPMN Level: 4</span><span>8 Tasks</span><span>Version 2.0</span><span>April 2026</span></div>
+    </div>
+
+    <div class="nav-bar">
+        <a class="nav-link" href="../../../L3_Sub_Processes/D1_QS_Cost_Management/D1.7_Budget_Tracking_Cost_Control/SP_Budget_Monitoring_PFC.html"><span class="arrow">↑</span> L3 Budget Monitoring PFC</a>
+        <span class="nav-link active"><span class="arrow">●</span> L4 Tasks</span>
+    </div>
+
+    <h2>1. Task Overview</h2>
+    <p>This task set expands the Budget Monitoring &amp; Projected Final Cost (PFC) sub-process into granular work instructions. The PFC is the QS's primary financial control instrument — it predicts the total expected project cost at completion by combining committed costs, approved and anticipated variations, CPA projections, provisional sum adjustments, and remaining professional fees. These tasks cover the full monthly cycle: collecting expenditure data, updating the variation forecast, assessing PS exposure, projecting CPA to completion, calculating the PFC, preparing variance analysis, issuing early warnings, and presenting at the monthly project meeting. Per SACPCMP Practice Note 3, the PFC must be maintained monthly throughout the construction phase.</p>
+
+    <h2>2. Detailed Task Breakdown</h2>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.7.1-01</div>
+        <h4>Collect Latest Payment Certificate Data &amp; Cumulative Expenditure</h4>
+        <p>Obtain the latest payment certificate data from D1.5 and compile the cumulative expenditure to date. This forms the "actual" baseline against which the budget forecast is built.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 working day (after IPC issue)</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Latest D1.5 payment certificate; payment certificate register; contractor payment records</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Current expenditure summary; cumulative certified to date; payments made to date</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Payment certificate register; financial tracking spreadsheet; platform finance module</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">SACPCMP Practice Note 3; SACQSP cost reporting guidelines</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Obtain the latest signed IPC from the D1.5 process — record: cert number, date, gross value, nett amount due</li>
+            <li>Update the payment certificate register with the latest certificate data</li>
+            <li>Compile cumulative expenditure: total certified to date (gross), total retention held, total paid to date, outstanding amounts</li>
+            <li>Reconcile against the employer's payment records to confirm all previous certificates have been paid</li>
+            <li>Flag any late payments — interest implications per JBCC clause 31 (interest on late payment)</li>
+            <li class="check">✓ Quality Check: Certificate register up to date; cumulative figures reconcile to individual certificates; payment status confirmed</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.7.1-02</div>
+        <h4>Update Variation Register Status &amp; Forecast</h4>
+        <p>Review and update the D1.6 variation register, classifying each variation as Approved (agreed value), Pending (submitted but not agreed), or Anticipated (likely but not yet formally submitted). Assign monetary estimates to pending and anticipated items for PFC calculation.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 working day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">D1.6 variation register; PA instructions; pending quotations; risk register</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Updated variation forecast with approved, pending, and anticipated totals</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Variation register; risk assessment template; PFC variation schedule</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC clauses 17–19; NEC4 clauses 60–65; SACQSP variation management practice</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Review each entry in the variation register — update the status based on latest information</li>
+            <li>For Approved VOs: confirm the agreed value is correct and capture any partially completed VO work progress</li>
+            <li>For Pending VOs: update the QS estimate based on latest information; note the expected approval timeline</li>
+            <li>For Anticipated VOs: assess the likelihood (low/medium/high) and estimate the cost range based on professional judgement</li>
+            <li>Compile three totals: (A) Approved VO total, (B) Pending VO total (best estimate), (C) Anticipated VO total (weighted by probability)</li>
+            <li>All three categories feed into the PFC at different confidence levels</li>
+            <li class="check">✓ Quality Check: Every register entry reviewed and updated; estimates documented with rationale; three-tier forecast compiled</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.7.1-03</div>
+        <h4>Assess Remaining Provisional Sum Exposure</h4>
+        <p>Review the D1.4-SP-003 Provisional Sum (PS) register and assess the remaining exposure. For expended PS items, record actual costs. For un-instructed PS items, estimate the likely expenditure based on design team input and project progress.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">0.5 working day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">D1.4-SP-003 PS register; design team input; nominated subcontractor quotes</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">PS forecast: expended actual + estimate for unspent; PS savings or overruns identified</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">PS register; PS forecast template</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC PS clauses (Defined &amp; Undefined); GCC 2015 clause 49</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Review each PS item in the register — classify as: Expended (actual cost known), Instructed (quotation received), or Not Yet Instructed</li>
+            <li>For Expended items: record the actual cost and calculate the saving or overrun vs the original PS allowance</li>
+            <li>For Instructed items: record the latest quotation or agreed value</li>
+            <li>For Not Yet Instructed items: consult the design team for likelihood of instruction and expected scope; estimate the cost</li>
+            <li>Sum all categories to produce the PS forecast total and compare against the original PS allowance in the BoQ</li>
+            <li class="check">✓ Quality Check: All PS items classified; expended items have actual costs; estimates reasonable and documented</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.7.1-04</div>
+        <h4>Project CPA to Completion Using Latest Index Trends</h4>
+        <p>Project the Contract Price Adjustment (CPA) to the expected completion date using the latest BER Building Cost Index data and Stats SA PPI trends. Extrapolate from the current index trajectory to estimate the CPA value at project completion.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">0.5 working day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">CPA to date from D1.4-SP-002; latest BER publication; Stats SA PPI data; expected completion date</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">CPA projection to completion; sensitivity range (optimistic / pessimistic)</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">CPA projection model; BER subscription; Stats SA data portal</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC CPA provisions; BER methodology; Stats SA CPA indices</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Obtain the latest published BER Building Cost Index and Stats SA PPI indices</li>
+            <li>Calculate the current CPA percentage: (current index − base index) ÷ base index × 100</li>
+            <li>Determine the annual escalation trend from the last 6–12 months of published data</li>
+            <li>Project the index forward to the expected completion date using the trend rate</li>
+            <li>Calculate the projected CPA value at completion: remaining contract value × projected CPA %</li>
+            <li>Prepare a sensitivity range: optimistic (inflation decreases), base (inflation constant), pessimistic (inflation increases)</li>
+            <li class="check">✓ Quality Check: Latest indices verified against published source; trend calculation documented; projection reasonable vs economic outlook</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.7.1-05</div>
+        <h4>Calculate Projected Final Cost (PFC)</h4>
+        <p>Combine all PFC components to calculate the total expected project cost at completion. The PFC formula: Original Contract Sum + Approved Variations + Pending/Anticipated Variations + PS Adjustments + CPA Projection + Professional Fees − Contingency Used = PFC.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">0.5 working day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">All outputs from Tasks 1.7.1-01 to 1.7.1-04; professional fee schedules; contingency register</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">PFC total; component breakdown; three-scenario analysis (best / likely / worst)</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">PFC calculation model; master financial register; scenario analysis template</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">SACPCMP Practice Note 3; projected final cost methodology</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Populate the PFC model with each component: (A) Original contract sum, (B) Approved variations, (C) Pending variations (best estimate), (D) Anticipated variations (probability-weighted), (E) PS adjustments, (F) CPA projection, (G) Professional fees remaining</li>
+            <li>Calculate PFC = A + B + C + D + E + F + G (note: contingency is reported separately as available / used, not included in PFC total)</li>
+            <li>Prepare three scenarios: Best case (only approved VOs, low CPA), Likely (base estimates), Worst case (all anticipated VOs materialize, high CPA)</li>
+            <li>Compare PFC against the approved project budget (which includes contingency) to determine the budget status</li>
+            <li>Calculate: PFC vs approved budget = variance amount and variance %</li>
+            <li class="check">✓ Quality Check: All components included; PFC reconciles to component sum; three scenarios calculated; variance computed</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.7.1-06</div>
+        <h4>Prepare Budget Variance Analysis with Commentary</h4>
+        <p>Produce a detailed budget variance analysis comparing the PFC against the approved budget. Provide commentary explaining each significant variance driver — which variations, cost increases, or savings are moving the PFC relative to budget.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 working day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">PFC from Task 1.7.1-05; approved project budget; previous month's PFC (for trend)</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Variance report with commentary; trend analysis (PFC movement month-on-month)</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Variance analysis template; charting tools; PFC trend tracker</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">SACPCMP reporting standards; employer-specific reporting format</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Present the variance in tabular format: Budget line item | Approved Budget | Current PFC | Variance (R) | Variance (%)</li>
+            <li>For each significant variance (typically &gt;2% or &gt;R100,000), provide a written commentary explaining the cause</li>
+            <li>Identify the top 5 variance drivers ranked by monetary impact — these are the items to focus management attention on</li>
+            <li>Plot the PFC trend over time (month 1 to current month) to show whether the PFC is trending up, stable, or down</li>
+            <li>Compare this month's PFC movement against previous month: what changed and why</li>
+            <li class="check">✓ Quality Check: All budget lines compared; commentary for material variances; trend chart updated; top 5 drivers identified</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.7.1-07</div>
+        <h4>Issue Early Warning if PFC Exceeds Budget Threshold</h4>
+        <p>If the PFC exceeds the approved budget by more than the agreed threshold (typically 5%), issue a formal early warning notice to the PA and employer. The early warning must quantify the overrun, explain the drivers, and propose mitigation measures.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS → Principal Agent → Employer</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">Immediate (same day as PFC calculation)</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">PFC variance analysis from Task 1.7.1-06; approved budget; threshold criteria</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Early warning notice (if triggered); mitigation recommendations; or confirmation within budget</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Early warning template; mitigation options register</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">NEC4 clause 15 (Early Warning); SACPCMP cost control practice</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Check the PFC variance %: if PFC exceeds approved budget (incl. contingency) by &gt;5%, trigger the early warning process</li>
+            <li>Prepare the early warning notice: state the current PFC, the approved budget, the variance (R and %), and the primary driver</li>
+            <li>Propose mitigation measures: scope reduction, value engineering, deferred work, alternative specifications, additional funding request</li>
+            <li>Issue the notice to the PA with a recommendation for action; PA forwards to employer with PA's assessment</li>
+            <li>If PFC is within the 5% threshold, record "Within budget — no early warning required" in the PFC report</li>
+            <li>Track all issued early warnings and their resolution status in the early warning register</li>
+            <li class="check">✓ Quality Check: Threshold correctly applied; early warning issued promptly if triggered; mitigations are actionable and realistic</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.7.1-08</div>
+        <h4>Present PFC Report at Monthly Project Meeting</h4>
+        <p>Present the monthly PFC report and budget status at the project meeting. Ensure the financial position is formally minuted, decisions on early warnings are recorded, and any budget-related actions are assigned with deadlines.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">Monthly project meeting (per programme schedule)</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">PFC report; variance analysis; early warning notices; contingency status</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Meeting minutes recording financial status; action items assigned; decisions documented</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">PFC presentation slides; project meeting agenda; minutes template</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">SACPCMP meeting protocols; project-specific reporting requirements</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Prepare a concise financial summary slide/page: approved budget, current PFC, variance, contingency remaining, key risks</li>
+            <li>Present at the monthly project meeting — cover: (1) expenditure to date, (2) PFC status, (3) variance drivers, (4) early warnings, (5) contingency status</li>
+            <li>For any early warnings issued, present the mitigation options and facilitate a decision from the employer/PA</li>
+            <li>Ensure the meeting minutes accurately record: PFC figure, budget status (on/over/under), decisions taken, actions assigned</li>
+            <li>Distribute the PFC report to all project team members and the funder (if required by funding agreement)</li>
+            <li class="check">✓ Quality Check: Financial status presented and minuted; early warnings addressed; actions assigned with deadlines; report distributed</li>
+        </ul>
+    </div>
+
+    <h2>3. Task Summary</h2>
+    <table>
+        <thead><tr><th>Task ID</th><th>Task Name</th><th>Role</th><th>SLA</th><th>Output</th></tr></thead>
+        <tbody>
+            <tr><td>1.7.1-01</td><td>Collect Latest Payment Certificate Data</td><td>QS</td><td>1 day</td><td>Cumulative expenditure summary</td></tr>
+            <tr><td>1.7.1-02</td><td>Update Variation Register &amp; Forecast</td><td>QS</td><td>1 day</td><td>Three-tier variation forecast</td></tr>
+            <tr><td>1.7.1-03</td><td>Assess Remaining PS Exposure</td><td>QS</td><td>0.5 day</td><td>PS forecast (actual + estimate)</td></tr>
+            <tr><td>1.7.1-04</td><td>Project CPA to Completion</td><td>QS</td><td>0.5 day</td><td>CPA projection &amp; sensitivity range</td></tr>
+            <tr><td>1.7.1-05</td><td>Calculate Projected Final Cost (PFC)</td><td>QS</td><td>0.5 day</td><td>PFC total &amp; three-scenario analysis</td></tr>
+            <tr><td>1.7.1-06</td><td>Prepare Budget Variance Analysis</td><td>QS</td><td>1 day</td><td>Variance report &amp; trend analysis</td></tr>
+            <tr><td>1.7.1-07</td><td>Issue Early Warning if Threshold Exceeded</td><td>QS → PA</td><td>Immediate</td><td>Early warning notice (if triggered)</td></tr>
+            <tr><td>1.7.1-08</td><td>Present PFC Report at Monthly Meeting</td><td>QS</td><td>Monthly meeting</td><td>Minuted financial status &amp; actions</td></tr>
+        </tbody>
+    </table>
+
+    <div class="doc-footer"><span>L4 Tasks — D1.7-SP-001 Budget Monitoring &amp; PFC v2.0</span><span>Confidential — Swift Designz</span></div>
+</div>
+    <script src="../../../nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>L4 — Tasks: Measurement &amp; Take-off</title>
+    <style>
+        :root{--navy-950:#0a0f1e;--navy-900:#0f172a;--navy-800:#1e293b;--navy-700:#334155;--navy-600:#475569;--slate-400:#94a3b8;--slate-300:#cbd5e1;--white:#f8fafc;--accent:#3b82f6;--accent-light:#60a5fa}
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:var(--navy-950);color:var(--slate-300);line-height:1.7;font-size:12px}
+        @page{size:A4;margin:15mm}.page{max-width:210mm;margin:0 auto;padding:32px 40px;background:var(--navy-900)}
+        .doc-header{border-bottom:3px solid var(--accent);padding-bottom:18px;margin-bottom:24px}
+        .doc-header .level-badge{display:inline-block;padding:3px 12px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:rgba(59,130,246,.15);color:var(--accent-light);margin-bottom:6px}
+        .doc-header h1{font-size:22px;font-weight:800;color:var(--white);margin-bottom:4px}
+        .doc-header .subtitle{font-size:13px;color:var(--slate-400)}
+        .doc-header .meta{display:flex;gap:20px;margin-top:10px;font-size:10px;color:var(--slate-400)}
+        h2{font-size:16px;font-weight:700;color:var(--white);margin:24px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--navy-700)}
+        h3{font-size:13px;font-weight:600;color:var(--accent-light);margin:16px 0 6px}
+        p{margin-bottom:10px}
+        .nav-bar{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
+        .nav-link{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:6px;font-size:10px;font-weight:600;text-decoration:none;border:1px solid var(--navy-700);color:var(--slate-300);background:var(--navy-800);transition:all .2s}
+        .nav-link:hover{border-color:var(--accent);color:var(--accent-light)}
+        .nav-link.active{border-color:var(--accent);color:var(--accent-light);background:rgba(59,130,246,.1)}
+        .nav-link .arrow{font-size:12px}
+        table{width:100%;border-collapse:collapse;margin:10px 0;font-size:11px}
+        thead th{background:var(--navy-800);color:var(--accent-light);font-weight:600;text-align:left;padding:7px 10px;border-bottom:2px solid var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+        tbody td{padding:7px 10px;border-bottom:1px solid var(--navy-700);vertical-align:top}
+        ul{margin:4px 0 8px 14px;font-size:11px}li{margin-bottom:3px}
+        .task-block{background:var(--navy-800);border:1px solid var(--navy-700);border-left:3px solid var(--accent);border-radius:8px;padding:14px;margin:10px 0}
+        .task-block .task-id{font-size:9px;font-weight:700;color:var(--accent-light);letter-spacing:1px;margin-bottom:3px}
+        .task-block h4{font-size:12px;font-weight:700;color:var(--white);margin-bottom:6px}
+        .task-block .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10px}
+        .task-block .detail-label{font-weight:600;color:var(--accent-light);font-size:9px;text-transform:uppercase;letter-spacing:.5px}
+        .task-block .detail-value{color:var(--slate-300)}
+        .check{color:#34d399;font-weight:600}
+        .doc-footer{margin-top:28px;padding-top:10px;border-top:1px solid var(--navy-700);font-size:9px;color:var(--navy-600);display:flex;justify-content:space-between}
+    </style>
+    <style id="pro-override">
+        :root{
+            --navy-950:#f0f0f0;--navy-900:#ffffff;--navy-800:#f5f5f5;
+            --navy-700:#d4d4d4;--navy-600:#888;
+            --slate-400:#666;--slate-300:#333;--white:#1c1c1c;
+            --blue-500:#555;--blue-400:#555;
+            --accent:#555;--accent-light:#555;
+            --amber-500:#888;--amber-400:#aaa;
+            --green-500:#666;--green-400:#888;
+            --cyan-500:#777;--cyan-400:#999;
+            --purple-500:#666;--purple-400:#888;
+            --rose-500:#777;--rose-400:#999;
+            --teal-500:#666;--teal-400:#888;
+            --red-500:#666;--orange-500:#777;--orange-400:#999;
+            --violet-500:#666;--violet-400:#888
+        }
+        body{font-family:'Segoe UI',Arial,sans-serif!important;background:#f0f0f0!important;color:#333!important}
+        .page{background:#fff!important;border:1px solid #d4d4d4;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+        .doc-header{border-bottom:1px solid #d4d4d4!important}
+        .level-badge{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc}
+        .doc-header h1{color:#1c1c1c!important;font-weight:700!important}
+        .doc-header .subtitle{color:#555!important}
+        .doc-header .meta{color:#888!important}
+        h2{color:#1c1c1c!important;border-bottom:1px solid #d4d4d4!important;font-weight:700!important}
+        h3{color:#444!important}
+        h4{color:#333!important}
+        p{color:#444}
+        .nav-bar{gap:6px}
+        .nav-link{background:#f5f5f5!important;border:1px solid #d0d0d0!important;color:#444!important;border-radius:3px!important}
+        .nav-link:hover{border-color:#888!important;color:#1c1c1c!important;background:#ebebeb!important}
+        .nav-link.active{border-color:#888!important;color:#1c1c1c!important;background:#e4e4e4!important;font-weight:600!important}
+        table{border:1px solid #e0e0e0}
+        thead th{background:#f0f0f0!important;color:#333!important;border-bottom:2px solid #d4d4d4!important;font-weight:700!important}
+        tbody td{border-bottom:1px solid #ebebeb!important;color:#444!important}
+        tbody tr:hover td{background:#fafafa}
+        .card,.phase-card,.domain-card,.info-card,.process-card,.step-card,.task-card{background:#f8f8f8!important;border:1px solid #d4d4d4!important}
+        .card h4{color:#333!important;text-transform:none!important}
+        .phase-card .phase-num{color:#666!important}
+        .phase-card h4{color:#1c1c1c!important}
+        .phase-card p{color:#555!important}
+        .phase-card.p1,.phase-card.p2,.phase-card.p3,.phase-card.p4,.phase-card.p5,.phase-card.p6,.phase-card.p7{border-top:2px solid #bbb!important}
+        .domain-card .domain-icon,.d1,.d2,.d3,.d4,.d5,.d6,.d7,.d8{background:#e8e8e8!important;color:#444!important}
+        .domain-card .domain-info h4{color:#1c1c1c!important}
+        .domain-card .domain-info .pa-count{color:#666!important}
+        .domain-card .domain-info .link{color:#444!important}
+        .domain-card:hover{border-color:#888!important}
+        .callout{background:#f5f5f5!important;border-left:3px solid #888!important;color:#444!important}
+        .callout strong{color:#333!important}
+        .doc-footer{border-top:1px solid #e4e4e4!important;color:#aaa!important}
+        .mermaid{background:#fff!important}
+        a{color:#333}
+        a:hover{color:#000}
+        code{background:#efefef!important;color:#333!important;border:1px solid #ddd}
+        li{color:#444}
+        .pa-card,.process-area-card{background:#f8f8f8!important;border-color:#d4d4d4!important}
+        .badge,.tag,.label{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc!important}
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="doc-header">
+        <div class="level-badge">Level 4 — Tasks</div>
+        <h1>Tasks: Measurement &amp; Take-off</h1>
+        <div class="subtitle">L0 → L1: D1 QS → L2: D1.2 BoQ Production → L3: Measurement &amp; Take-off → <strong>L4: Tasks</strong></div>
+        <div class="meta"><span>Task Set: D1.2-SP-001-T</span><span>BPMN Level: 4</span><span>10 Tasks</span><span>Version 2.0</span><span>April 2026</span></div>
+    </div>
+
+    <div class="nav-bar">
+        <a class="nav-link" href="../../../L3_Sub_Processes/D1_QS_Cost_Management/D1.2_BoQ_Production/SP_Measurement_Takeoff.html"><span class="arrow">↑</span> L3 Measurement &amp; Take-off</a>
+        <span class="nav-link active"><span class="arrow">●</span> L4 Tasks</span>
+    </div>
+
+    <h2>1. Task Overview</h2>
+    <p>This task set expands the Measurement &amp; Take-off sub-process (D1.2-SP-001) into granular work instructions. It covers the full cycle from receiving finalised construction drawings through to signed-off dimension sheets, following the ASAQS Standard System of Measuring Building Work (7th Edition). Each task provides step-level detail for QS practitioners and cost technicians working in the South African construction context.</p>
+
+    <h2>2. Detailed Task Breakdown</h2>
+
+    <!-- TASK 1 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.2.1-01</div>
+        <h4>Receive &amp; Register Finalised Construction Drawings</h4>
+        <p>Log all incoming drawings into the drawing register. Record drawing number, revision, date received, and originating consultant. Confirm receipt with the design team in writing and file drawings in the project document management system.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS / Cost Technician</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">0.5 day from receipt</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Finalised architectural, structural, civil, mechanical &amp; electrical drawings (PDF / DWG / BIM)</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Updated drawing register; receipt confirmation email</div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">Drawing Register Template (Excel); Document Management System; email</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">All drawings must carry a revision number and architect/engineer stamp before acceptance</div></div>
+        </div>
+        <p class="check" style="margin-top:8px">✓ Quality Check: Drawing register entries match transmittal schedule; no unsigned drawings accepted</p>
+    </div>
+
+    <!-- TASK 2 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.2.1-02</div>
+        <h4>Review Drawing Completeness Against Trade Checklist</h4>
+        <p>Compare received drawings against the standard trade checklist to confirm all required trades are represented. Check for: architectural plans/sections/elevations, structural layout &amp; details, civil site works, mechanical services, electrical reticulation, and landscape/external works. Flag any missing or incomplete sets.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Drawing register; Trade completeness checklist; project scope brief</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Completed checklist with gaps identified; RFI list (if drawings missing)</div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">Trade Drawing Checklist Template; RFI Log Template</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">If &gt;2 trade drawing sets are missing → escalate to Principal Agent before proceeding</div></div>
+        </div>
+        <p class="check" style="margin-top:8px">✓ Quality Check: Every ASAQS trade section has at least one corresponding drawing set; checklist signed by QS</p>
+    </div>
+
+    <!-- TASK 3 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.2.1-03</div>
+        <h4>Request Missing Drawings &amp; Resolve RFIs</h4>
+        <p>Issue formal Requests for Information (RFIs) to the relevant design consultants for missing or unclear drawings. Track RFI status in the project log. Follow up within 48 hours if no response. Do not commence measurement for affected trades until drawings are received and verified.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 day to issue RFIs; 3–5 days for resolution</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Gap list from TASK 1.2.1-02; consultant contact details</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Issued RFIs; updated drawing register upon receipt of outstanding drawings</div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">RFI Template (project standard); RFI Tracking Log</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">If RFIs remain unresolved after 5 working days → escalate to Principal Agent with programme impact note</div></div>
+        </div>
+        <p class="check" style="margin-top:8px">✓ Quality Check: All RFIs closed or escalated before measurement commences; no measurement on unconfirmed drawings</p>
+    </div>
+
+    <!-- TASK 4 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.2.1-04</div>
+        <h4>Plan Measurement Sequence by Trade</h4>
+        <p>Establish the order in which trades will be measured, following the ASAQS Standard System structure: Earthworks → Concrete &amp; Formwork → Masonry → Waterproofing → Roof Covering → Carpentry &amp; Joinery → Metalwork → Plastering → Tiling → Glazing → Painting → Plumbing → Electrical → External Works. Allocate trade sections to QS team members based on expertise and workload. Set internal deadlines per trade.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Senior QS / QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">0.5 day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Complete drawing set; team resource plan; project programme deadlines</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Measurement work plan with trade allocation and internal deadlines</div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">Measurement Work Plan Template (Excel/MS Project); ASAQS trade sequence reference</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">Critical-path trades (structure, services) prioritised; minimum 2 days buffer before tender submission date</div></div>
+        </div>
+        <p class="check" style="margin-top:8px">✓ Quality Check: Work plan reviewed by Senior QS; all trades assigned; deadlines align with project programme</p>
+    </div>
+
+    <!-- TASK 5 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.2.1-05</div>
+        <h4>Measure Building Works per ASAQS Standard</h4>
+        <p>Execute measurement of all building trade sections from architectural and structural drawings. For each trade: extract dimensions from plans/sections/details, apply ASAQS measurement rules for units and deductions, and record on dimension sheets. Key rules include: masonry — deduct openings &gt;0.5 m²; concrete — classify by mix design and element type; formwork — measured separately to concrete face area; plastering — internal and external measured separately.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS / Cost Technician</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">5–10 days (dependent on project scale)</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Architectural &amp; structural drawings; ASAQS Standard System 7th Ed; project specifications</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Completed dimension sheets for building trades (Earthworks through Painting)</div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">Dimension Sheet Template; CostX / WinQS / Excel take-off workbook; scale ruler; digital planimeter</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">Where drawings are ambiguous → note assumptions on dimension sheet and raise RFI; do not guess dimensions</div></div>
+        </div>
+        <p class="check" style="margin-top:8px">✓ Quality Check: Each dimension sheet references drawing number and revision; all assumptions documented; arithmetic verified</p>
+    </div>
+
+    <!-- TASK 6 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.2.1-06</div>
+        <h4>Measure Civil &amp; External Works</h4>
+        <p>Measure all civil and external work items from civil engineering and landscape drawings. Includes: bulk earthworks (classify by depth ranges per ASAQS), roads and paving (m²), stormwater drainage (pipe runs by diameter, manholes enumerated), sewer reticulation, boundary walls and fencing, landscaping, and external lighting. Apply civil engineering measurement conventions for trenching and backfill.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS / Cost Technician</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">2–4 days</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Civil site plan; stormwater layout; geotech report; landscape plan</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Dimension sheets for External Works section</div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">Dimension Sheet Template; CostX / Excel; earthworks volume calculator</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">If geotech report indicates rock → measure rock excavation separately; if no geotech → include provisional allowance and note</div></div>
+        </div>
+        <p class="check" style="margin-top:8px">✓ Quality Check: Earthwork volumes cross-checked against site plan levels; drainage lengths verified against layout drawings</p>
+    </div>
+
+    <!-- TASK 7 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.2.1-07</div>
+        <h4>Measure Mechanical &amp; Electrical Services</h4>
+        <p>Measure services installations from engineer drawings. Plumbing: enumerate sanitary fittings, measure pipework by diameter and type (copper, PVC, HDPE). Electrical: enumerate light points, socket outlets, DB boards; measure cabling by type and length. HVAC: enumerate units, measure ductwork by size. Lift installations measured as prime cost items where applicable. Coordinate with services engineers for specification clarity.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS (Services Specialist where available)</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">2–4 days</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Mechanical drawings; electrical reticulation drawings; HVAC layout; fire services drawings</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Dimension sheets for Plumbing, Electrical, and Mechanical sections</div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">Dimension Sheet Template; services measurement checklist; engineer specification schedules</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">Specialist sub-contractor items (lifts, fire suppression, generator) → include as Provisional Sums with estimated values from engineer</div></div>
+        </div>
+        <p class="check" style="margin-top:8px">✓ Quality Check: Sanitary fitting count matches room schedule; pipe lengths reconcile to layout; cabling allowances verified with engineer</p>
+    </div>
+
+    <!-- TASK 8 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.2.1-08</div>
+        <h4>Cross-Check Quantities Against Drawings</h4>
+        <p>Perform systematic cross-validation of measured quantities across related trades. Verify: total wall area (masonry) aligns with plaster areas; concrete volumes match formwork face areas; roof covering area is consistent with roof plan dimensions; pipe quantities correlate with fitting counts. Use spot-check method on minimum 20% of items. Document all discrepancies and resolve before finalising.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1–2 days</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">All completed dimension sheets; original drawings</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Cross-check reconciliation report; list of corrections applied</div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">Cross-Check Reconciliation Template; calculator / spreadsheet</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">Variance &gt;5% between related quantities → investigate and correct; variance &gt;10% → re-measure from scratch</div></div>
+        </div>
+        <p class="check" style="margin-top:8px">✓ Quality Check: Cross-check report completed and signed; all variances &gt;5% investigated; corrections initialled on dimension sheets</p>
+    </div>
+
+    <!-- TASK 9 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.2.1-09</div>
+        <h4>Compile Final Dimension Sheets &amp; Quantity Schedules</h4>
+        <p>Assemble all corrected dimension sheets into a bound set, ordered by ASAQS trade sequence. Produce clean quantity schedules summarising totals per item, ready for transfer into the Bill of Quantities. Include a measurement summary cover page listing all trades measured, measurer name, date, and drawing references used.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS / Cost Technician</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Corrected dimension sheets; cross-check report</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Bound dimension sheet set; quantity schedule summaries per trade</div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">Quantity Schedule Template (Excel); binding / PDF compilation</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">Only corrected and cross-checked sheets included; no draft or unverified sheets in final set</div></div>
+        </div>
+        <p class="check" style="margin-top:8px">✓ Quality Check: Cover page complete; all sheets referenced to drawings; quantity totals reconcile to individual dimension sheets</p>
+    </div>
+
+    <!-- TASK 10 -->
+    <div class="task-block">
+        <div class="task-id">TASK 1.2.1-10</div>
+        <h4>Peer Review &amp; Senior QS Sign-off</h4>
+        <p>Senior QS conducts independent review of the complete dimension sheet set and quantity schedules. Review focuses on: correct application of ASAQS measurement rules, reasonableness of quantities against project scale, completeness across all trades, and accuracy of arithmetic. Reviewer annotates corrections in red; measurer corrects and re-submits. Process repeats until sign-off is achieved.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Senior QS (Reviewer); QS (Corrections)</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">2–3 days</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Final dimension sheet set; quantity schedules; cross-check report; ASAQS Standard System reference</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Signed-off dimension sheets ready for BoQ compilation (D1.2-SP-002)</div></div>
+            <div><div class="detail-label">Tools / Templates</div><div class="detail-value">Peer Review Checklist; SACQSP professional review guidelines</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">Sign-off granted when: zero unresolved review comments; all corrections verified; ASAQS compliance confirmed</div></div>
+        </div>
+        <p class="check" style="margin-top:8px">✓ Quality Check: Senior QS signature on cover page; peer review checklist 100% complete; dimension sheets released to BoQ Compilation</p>
+    </div>
+
+    <h2>3. Task Summary</h2>
+    <table>
+        <thead><tr><th>Task ID</th><th>Task Name</th><th>Role</th><th>SLA</th><th>Output</th></tr></thead>
+        <tbody>
+            <tr><td>1.2.1-01</td><td>Receive &amp; Register Finalised Construction Drawings</td><td>QS / Cost Tech</td><td>0.5 day</td><td>Updated drawing register</td></tr>
+            <tr><td>1.2.1-02</td><td>Review Drawing Completeness Against Trade Checklist</td><td>QS</td><td>1 day</td><td>Completed checklist; RFI list</td></tr>
+            <tr><td>1.2.1-03</td><td>Request Missing Drawings &amp; Resolve RFIs</td><td>QS</td><td>1 + 3–5 days</td><td>Closed RFIs; updated register</td></tr>
+            <tr><td>1.2.1-04</td><td>Plan Measurement Sequence by Trade</td><td>Senior QS / QS</td><td>0.5 day</td><td>Measurement work plan</td></tr>
+            <tr><td>1.2.1-05</td><td>Measure Building Works per ASAQS Standard</td><td>QS / Cost Tech</td><td>5–10 days</td><td>Dimension sheets (building trades)</td></tr>
+            <tr><td>1.2.1-06</td><td>Measure Civil &amp; External Works</td><td>QS / Cost Tech</td><td>2–4 days</td><td>Dimension sheets (external works)</td></tr>
+            <tr><td>1.2.1-07</td><td>Measure Mechanical &amp; Electrical Services</td><td>QS</td><td>2–4 days</td><td>Dimension sheets (services)</td></tr>
+            <tr><td>1.2.1-08</td><td>Cross-Check Quantities Against Drawings</td><td>QS</td><td>1–2 days</td><td>Cross-check reconciliation report</td></tr>
+            <tr><td>1.2.1-09</td><td>Compile Final Dimension Sheets &amp; Quantity Schedules</td><td>QS / Cost Tech</td><td>1 day</td><td>Bound dimension set; quantity schedules</td></tr>
+            <tr><td>1.2.1-10</td><td>Peer Review &amp; Senior QS Sign-off</td><td>Senior QS</td><td>2–3 days</td><td>Signed-off dimension sheets</td></tr>
+        </tbody>
+    </table>
+
+    <div class="doc-footer"><span>L4 Tasks — D1.2-SP-001 Measurement &amp; Take-off v2.0</span><span>Confidential — Swift Designz</span></div>
+</div>
+    <script src="../../../nav.js"></script>
+</body>
+</html>

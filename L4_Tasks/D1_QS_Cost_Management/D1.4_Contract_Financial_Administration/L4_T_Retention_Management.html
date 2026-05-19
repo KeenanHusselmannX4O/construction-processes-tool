@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>L4 — Tasks: Retention Management</title>
+    <style>
+        :root{--navy-950:#0a0f1e;--navy-900:#0f172a;--navy-800:#1e293b;--navy-700:#334155;--navy-600:#475569;--slate-400:#94a3b8;--slate-300:#cbd5e1;--white:#f8fafc;--accent:#3b82f6;--accent-light:#60a5fa}
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:var(--navy-950);color:var(--slate-300);line-height:1.7;font-size:12px}
+        @page{size:A4;margin:15mm}.page{max-width:210mm;margin:0 auto;padding:32px 40px;background:var(--navy-900)}
+        .doc-header{border-bottom:3px solid var(--accent);padding-bottom:18px;margin-bottom:24px}
+        .doc-header .level-badge{display:inline-block;padding:3px 12px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:rgba(59,130,246,.15);color:var(--accent-light);margin-bottom:6px}
+        .doc-header h1{font-size:22px;font-weight:800;color:var(--white);margin-bottom:4px}
+        .doc-header .subtitle{font-size:13px;color:var(--slate-400)}
+        .doc-header .meta{display:flex;gap:20px;margin-top:10px;font-size:10px;color:var(--slate-400)}
+        h2{font-size:16px;font-weight:700;color:var(--white);margin:24px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--navy-700)}
+        h3{font-size:13px;font-weight:600;color:var(--accent-light);margin:16px 0 6px}
+        p{margin-bottom:10px}
+        .nav-bar{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
+        .nav-link{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:6px;font-size:10px;font-weight:600;text-decoration:none;border:1px solid var(--navy-700);color:var(--slate-300);background:var(--navy-800);transition:all .2s}
+        .nav-link:hover{border-color:var(--accent);color:var(--accent-light)}
+        .nav-link.active{border-color:var(--accent);color:var(--accent-light);background:rgba(59,130,246,.1)}
+        .nav-link .arrow{font-size:12px}
+        table{width:100%;border-collapse:collapse;margin:10px 0;font-size:11px}
+        thead th{background:var(--navy-800);color:var(--accent-light);font-weight:600;text-align:left;padding:7px 10px;border-bottom:2px solid var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+        tbody td{padding:7px 10px;border-bottom:1px solid var(--navy-700);vertical-align:top}
+        ul{margin:4px 0 8px 14px;font-size:11px}li{margin-bottom:3px}
+        .task-block{background:var(--navy-800);border:1px solid var(--navy-700);border-left:3px solid var(--accent);border-radius:8px;padding:14px;margin:10px 0}
+        .task-block .task-id{font-size:9px;font-weight:700;color:var(--accent-light);letter-spacing:1px;margin-bottom:3px}
+        .task-block h4{font-size:12px;font-weight:700;color:var(--white);margin-bottom:6px}
+        .task-block .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10px}
+        .task-block .detail-label{font-weight:600;color:var(--accent-light);font-size:9px;text-transform:uppercase;letter-spacing:.5px}
+        .task-block .detail-value{color:var(--slate-300)}
+        .check{color:#34d399;font-weight:600}
+        .doc-footer{margin-top:28px;padding-top:10px;border-top:1px solid var(--navy-700);font-size:9px;color:var(--navy-600);display:flex;justify-content:space-between}
+    </style>
+    <style id="pro-override">
+        :root{
+            --navy-950:#f0f0f0;--navy-900:#ffffff;--navy-800:#f5f5f5;
+            --navy-700:#d4d4d4;--navy-600:#888;
+            --slate-400:#666;--slate-300:#333;--white:#1c1c1c;
+            --blue-500:#555;--blue-400:#555;
+            --accent:#555;--accent-light:#555;
+            --amber-500:#888;--amber-400:#aaa;
+            --green-500:#666;--green-400:#888;
+            --cyan-500:#777;--cyan-400:#999;
+            --purple-500:#666;--purple-400:#888;
+            --rose-500:#777;--rose-400:#999;
+            --teal-500:#666;--teal-400:#888;
+            --red-500:#666;--orange-500:#777;--orange-400:#999;
+            --violet-500:#666;--violet-400:#888
+        }
+        body{font-family:'Segoe UI',Arial,sans-serif!important;background:#f0f0f0!important;color:#333!important}
+        .page{background:#fff!important;border:1px solid #d4d4d4;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+        .doc-header{border-bottom:1px solid #d4d4d4!important}
+        .level-badge{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc}
+        .doc-header h1{color:#1c1c1c!important;font-weight:700!important}
+        .doc-header .subtitle{color:#555!important}
+        .doc-header .meta{color:#888!important}
+        h2{color:#1c1c1c!important;border-bottom:1px solid #d4d4d4!important;font-weight:700!important}
+        h3{color:#444!important}
+        h4{color:#333!important}
+        p{color:#444}
+        .nav-bar{gap:6px}
+        .nav-link{background:#f5f5f5!important;border:1px solid #d0d0d0!important;color:#444!important;border-radius:3px!important}
+        .nav-link:hover{border-color:#888!important;color:#1c1c1c!important;background:#ebebeb!important}
+        .nav-link.active{border-color:#888!important;color:#1c1c1c!important;background:#e4e4e4!important;font-weight:600!important}
+        table{border:1px solid #e0e0e0}
+        thead th{background:#f0f0f0!important;color:#333!important;border-bottom:2px solid #d4d4d4!important;font-weight:700!important}
+        tbody td{border-bottom:1px solid #ebebeb!important;color:#444!important}
+        tbody tr:hover td{background:#fafafa}
+        .card,.phase-card,.domain-card,.info-card,.process-card,.step-card,.task-card{background:#f8f8f8!important;border:1px solid #d4d4d4!important}
+        .card h4{color:#333!important;text-transform:none!important}
+        .phase-card .phase-num{color:#666!important}
+        .phase-card h4{color:#1c1c1c!important}
+        .phase-card p{color:#555!important}
+        .phase-card.p1,.phase-card.p2,.phase-card.p3,.phase-card.p4,.phase-card.p5,.phase-card.p6,.phase-card.p7{border-top:2px solid #bbb!important}
+        .domain-card .domain-icon,.d1,.d2,.d3,.d4,.d5,.d6,.d7,.d8{background:#e8e8e8!important;color:#444!important}
+        .domain-card .domain-info h4{color:#1c1c1c!important}
+        .domain-card .domain-info .pa-count{color:#666!important}
+        .domain-card .domain-info .link{color:#444!important}
+        .domain-card:hover{border-color:#888!important}
+        .callout{background:#f5f5f5!important;border-left:3px solid #888!important;color:#444!important}
+        .callout strong{color:#333!important}
+        .doc-footer{border-top:1px solid #e4e4e4!important;color:#aaa!important}
+        .mermaid{background:#fff!important}
+        a{color:#333}
+        a:hover{color:#000}
+        code{background:#efefef!important;color:#333!important;border:1px solid #ddd}
+        li{color:#444}
+        .pa-card,.process-area-card{background:#f8f8f8!important;border-color:#d4d4d4!important}
+        .badge,.tag,.label{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc!important}
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="doc-header">
+        <div class="level-badge">Level 4 — Tasks</div>
+        <h1>Tasks: Retention Management</h1>
+        <div class="subtitle">L0 → L1: D1 QS → L2: D1.4 Contract Financial Admin → L3: Retention Management → <strong>L4: Tasks</strong></div>
+        <div class="meta"><span>Task Set: D1.4-SP-004-T</span><span>BPMN Level: 4</span><span>8 Tasks</span><span>Version 2.0</span><span>April 2026</span></div>
+    </div>
+
+    <div class="nav-bar">
+        <a class="nav-link" href="../../../L3_Sub_Processes/D1_QS_Cost_Management/D1.4_Contract_Financial_Administration/SP_Retention_Management.html"><span class="arrow">↑</span> L3 Retention Management</a>
+        <span class="nav-link active"><span class="arrow">●</span> L4 Tasks</span>
+    </div>
+
+    <h2>1. Task Overview</h2>
+    <p>This task set covers the complete retention lifecycle from monthly deduction through to final release. Retention (per JBCC clause 32) is the employer's security against the contractor's obligation to complete defects. The QS must correctly calculate deductions each month, track cumulative retention against the contractual limit, process guarantee substitutions, release the first moiety at practical completion, monitor the defects liability period, and release the final moiety at final completion. These tasks span the full construction phase from first certificate to project close-out.</p>
+
+    <h2>2. Detailed Task Breakdown</h2>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.4-01</div>
+        <h4>Calculate Monthly Retention Deduction</h4>
+        <p>For each monthly payment certificate, calculate the retention amount to be deducted. Apply the contractual retention percentage to the certified value of work. Retention is deducted from the amount due to the contractor before payment.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">Per monthly certificate cycle (within valuation SLA)</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Current certificate value of work; retention % from contract data; previous retention deducted</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Retention deduction amount for current certificate</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Payment certificate workbook; retention tracking register</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC clause 32 (typically 5%); NEC clause 51.3 option X16 (typically 3%)</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: From the current payment certificate, take the gross value of work done for the current period (not cumulative)</li>
+            <li>Apply the retention percentage: Retention this certificate = Current period value × Retention %</li>
+            <li>For JBCC (typical): 5% of each certificate value until the retention limit is reached</li>
+            <li>For NEC (option X16): 3% or as stated in contract data, applied to the Price for Work Done to Date</li>
+            <li>Include the retention deduction as a separate line item on the payment certificate, clearly showing the deduction before arriving at the nett amount due</li>
+            <li class="check">✓ Quality Check: Retention % matches contract data; calculation is arithmetically correct; deduction is shown separately on certificate</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.4-02</div>
+        <h4>Track Cumulative Retention Against Contract Limit</h4>
+        <p>Maintain a running total of cumulative retention deducted across all certificates. Compare against the contractual retention limit (typically 5% of the contract sum). Once the limit is reached, cease further deductions and record the date the limit was achieved.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">Per monthly certificate (concurrent with Task 1.4.4-01)</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Current retention deduction; all previous deductions; retention limit (contract sum × limit %)</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Updated retention schedule; limit status (reached / not reached)</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Retention tracking register; financial register dashboard</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC clause 32: limit = 5% of contract sum; GCC 2015 clause 44</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Update the retention register: add current certificate's retention deduction to cumulative total</li>
+            <li>Calculate the retention limit: Contract Sum (current adjusted) × Retention Limit % (typically 5%)</li>
+            <li>Compare: If cumulative retention ≥ retention limit → limit has been reached</li>
+            <li>If the limit would be exceeded by the current deduction, reduce the current deduction to exactly reach the limit (do not over-deduct)</li>
+            <li>Once limit is reached: record the date, certificate number, and exact cumulative amount; cease future deductions until a release or contract sum adjustment changes the limit</li>
+            <li>Note: if the contract sum increases (e.g., approved variations), the retention limit increases — additional deductions may resume</li>
+            <li class="check">✓ Quality Check: Cumulative retention does not exceed limit; register is arithmetically correct; limit date recorded if applicable</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.4-03</div>
+        <h4>Process Retention Guarantee Substitution</h4>
+        <p>If the contractor requests to substitute cash retention with a retention guarantee (bank guarantee or insurance bond), assess the guarantee document, verify it meets the contract requirements, and process the substitution by releasing the cash retention held.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS + Principal Agent</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">5 working days from receipt of compliant guarantee</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Contractor's written request; retention guarantee document; contract substitution provisions</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Substitution approval/rejection; cash retention release (if approved)</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Guarantee assessment checklist; contract provisions reference</div></div>
+            <div><div class="detail-label">Decision Criteria</div><div class="detail-value">Guarantee is from an approved institution; amount equals cumulative retention; validity period covers defects liability; wording complies with contract requirements</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Receive contractor's written request for retention guarantee substitution with the guarantee document</li>
+            <li>Verify the guarantee meets contract requirements: issued by a registered SA bank or approved insurer; irrevocable and unconditional; amount equals cumulative retention held; validity period extends to at least 3 months beyond the defects liability period</li>
+            <li>Check that the guarantee wording matches the approved format (JBCC often prescribes the guarantee wording)</li>
+            <li>If compliant, recommend approval to the PA; if non-compliant, issue a detailed rejection with reasons and invite resubmission</li>
+            <li>Upon approval, process release of cash retention in the next payment certificate — show as "Retention Released (guarantee substitution)"</li>
+            <li>Record the guarantee details in the retention register: guarantor, amount, reference number, expiry date, original held in safekeeping</li>
+            <li class="check">✓ Quality Check: Guarantee meets all contract requirements; PA has approved; cash retention release processed; guarantee safely filed</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.4-04</div>
+        <h4>Release First Moiety at Practical Completion</h4>
+        <p>Upon certification of practical completion by the Principal Agent, calculate and release the first moiety of retention (typically 50%). This is processed in the payment certificate following the practical completion date.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">In the next payment certificate after PC certification</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Practical Completion certificate from PA; cumulative retention held; whether guarantee substitution applies</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">First moiety release amount in payment certificate; updated retention register</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Payment certificate system; retention register</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC clause 32: 50% released at practical completion; GCC 2015 clause 44</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Confirm practical completion has been formally certified by the PA with the date of practical completion</li>
+            <li>Calculate first moiety: 50% of total retention held (cash retention, not guarantee amount)</li>
+            <li>If a retention guarantee has been substituted, the first moiety release applies to the guarantee amount — request the guarantor to reduce the guarantee by 50% or issue a replacement for the balance</li>
+            <li>Include the first moiety release as a line item in the payment certificate: "Retention Released — First Moiety (Practical Completion)"</li>
+            <li>Update the retention register: record the release date, amount released, balance remaining (50% held for defects liability period)</li>
+            <li>Notify the contractor of the retention release amount and the balance held pending final completion</li>
+            <li class="check">✓ Quality Check: PC certificate is on file; first moiety = exactly 50% of retention held; register updated; contractor notified</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.4-05</div>
+        <h4>Monitor Defects Liability Period</h4>
+        <p>Track the defects liability period (DLP) from practical completion to final completion. Monitor outstanding defects against the retention balance held. The remaining 50% retention serves as security for the contractor's obligation to rectify defects during this period.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS + Principal Agent</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">Ongoing monitoring throughout DLP (typically 3–12 months)</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">PC certificate; defects register from PA; contractor defects rectification reports</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">DLP status report; defects vs retention balance assessment</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Defects tracking register; retention register; project close-out checklist</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC clause 23 (defects liability); NEC clause 45; NHBRC requirements for housing</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Record the DLP start date (= practical completion date) and end date per the contract (typically +3, +6, or +12 months)</li>
+            <li>Obtain the defects list from the PA — this is the snag list issued at practical completion</li>
+            <li>Track the contractor's progress in rectifying defects: monitor defects cleared vs outstanding at monthly intervals</li>
+            <li>If defects are not being rectified within the contractual timeframes, advise the PA of the employer's right to have them rectified by others and deduct the cost from retention</li>
+            <li>For affordable housing projects (NHBRC registered): ensure the 5-year NHBRC warranty enrolment is in place before second moiety release</li>
+            <li>Prepare a monthly DLP status report showing: total defects identified, defects cleared, defects outstanding, estimated cost to rectify outstanding, retention balance held</li>
+            <li class="check">✓ Quality Check: DLP dates correctly recorded; defects register is current; retention balance is sufficient to cover outstanding defects cost</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.4-06</div>
+        <h4>Release Second Moiety at Final Completion</h4>
+        <p>Upon certification of final completion by the PA — confirming all defects have been satisfactorily rectified — release the remaining 50% of retention to the contractor. This is typically processed in the penultimate or final payment certificate.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">In the next certificate after final completion certification</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Final completion certificate from PA; defects clearance confirmation; retention register</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Second moiety release; retention register closed; guarantee returned (if applicable)</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Payment certificate system; retention register; guarantee custody register</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC clause 32; GCC 2015 clause 44; NHBRC enrolment confirmation for housing</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Confirm the PA has issued the final completion certificate — verify all defects have been signed off as rectified</li>
+            <li>Calculate the second moiety: remaining retention balance (should be 50% of original retention held, unless deductions were made for unrectified defects)</li>
+            <li>If any defects were rectified by others at the employer's cost, deduct that cost from the second moiety before release</li>
+            <li>Include the second moiety release in the payment certificate: "Retention Released — Second Moiety (Final Completion)"</li>
+            <li>If a retention guarantee was in place, arrange for the return of the guarantee document to the contractor — record the return in the custody register</li>
+            <li>Close the retention register for this contract — all retention has been released or accounted for</li>
+            <li class="check">✓ Quality Check: Final completion certificate on file; all defects cleared; second moiety correctly calculated; guarantee returned; register closed</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.4-07</div>
+        <h4>Handle Retention on Sectional Completion</h4>
+        <p>Where the contract provides for sectional completion (JBCC schedule or NEC option X5), manage retention release for each section independently. Each section's practical completion triggers a proportional retention release for that section only.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">Per sectional completion certificate</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Sectional completion certificate; section value breakdown; retention allocated per section</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Sectional retention release; updated retention register per section</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Retention register (sectional breakdown); section value schedule</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC sectional completion schedule; NEC option X5; contract-specific section definitions</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Identify the section that has achieved practical completion per the PA's sectional completion certificate</li>
+            <li>Determine the retention attributable to that section: Section retention = Section value × retention % (capped at proportional limit)</li>
+            <li>Release first moiety for the completed section: 50% of the section's retention allocation</li>
+            <li>Maintain separate retention tracking for each section: completed sections in DLP, uncompleted sections still accruing retention</li>
+            <li>Ensure the total retention across all sections does not exceed the overall contract retention limit</li>
+            <li>Each section follows its own DLP timeline — second moiety is released per section upon sectional final completion</li>
+            <li class="check">✓ Quality Check: Sectional retention correctly apportioned; release is limited to the completed section; overall limit not exceeded</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.4.4-08</div>
+        <h4>Reconcile &amp; Close Retention at Final Account</h4>
+        <p>As part of the final account process, perform a complete reconciliation of all retention deductions, releases, guarantee substitutions, and defect rectification deductions. Confirm the retention account balances to zero upon close-out.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">Within final account preparation (per D1.4 close-out timeline)</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Complete retention history; all payment certificates; defect rectification costs; guarantee records</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Retention reconciliation statement; closed retention register; final account retention line</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Retention register; final account workbook; reconciliation template</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">SACQSP final account practice guidelines; JBCC final payment provisions</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Prepare a retention reconciliation showing: total retention deducted (all certificates), less first moiety released, less second moiety released, less defect rectification deductions, equals balance (should be zero)</li>
+            <li>Verify against each payment certificate — the sum of all retention deductions must equal the sum of all retention releases + deductions for defects</li>
+            <li>If a retention guarantee was used: confirm it has been returned to the contractor; record the return date and guarantee reference</li>
+            <li>Include the retention reconciliation as a supporting schedule to the final account statement</li>
+            <li>Close the retention register — mark as "Reconciled and Closed" with the final account date</li>
+            <li>Archive all retention documentation per the project archiving requirements (minimum 5 years per SACQSP guidelines)</li>
+            <li class="check">✓ Quality Check: Reconciliation balances to zero; every deduction and release is accounted for; guarantee returned; register closed and archived</li>
+        </ul>
+    </div>
+
+    <h2>3. Task Summary</h2>
+    <table>
+        <thead><tr><th>Task ID</th><th>Task Name</th><th>Role</th><th>SLA</th><th>Key Output</th></tr></thead>
+        <tbody>
+            <tr><td>1.4.4-01</td><td>Calculate Monthly Retention</td><td>QS</td><td>Per certificate</td><td>Retention deduction</td></tr>
+            <tr><td>1.4.4-02</td><td>Track Against Limit</td><td>QS</td><td>Per certificate</td><td>Updated retention schedule</td></tr>
+            <tr><td>1.4.4-03</td><td>Process Guarantee Substitution</td><td>QS + PA</td><td>5 days</td><td>Substitution record</td></tr>
+            <tr><td>1.4.4-04</td><td>Release First Moiety (PC)</td><td>QS</td><td>Next certificate</td><td>First moiety released</td></tr>
+            <tr><td>1.4.4-05</td><td>Monitor Defects Liability</td><td>QS + PA</td><td>Ongoing (3–12 months)</td><td>DLP status report</td></tr>
+            <tr><td>1.4.4-06</td><td>Release Second Moiety (FC)</td><td>QS</td><td>Next certificate</td><td>Final retention released</td></tr>
+            <tr><td>1.4.4-07</td><td>Sectional Completion Retention</td><td>QS</td><td>Per section</td><td>Sectional release</td></tr>
+            <tr><td>1.4.4-08</td><td>Reconcile &amp; Close at Final Account</td><td>QS</td><td>Final account</td><td>Retention reconciliation</td></tr>
+        </tbody>
+    </table>
+
+    <div class="doc-footer"><span>L4 Tasks — D1.4-SP-004 Retention Management v2.0</span><span>Confidential — Swift Designz</span></div>
+</div>
+    <script src="../../../nav.js"></script>
+</body>
+</html>

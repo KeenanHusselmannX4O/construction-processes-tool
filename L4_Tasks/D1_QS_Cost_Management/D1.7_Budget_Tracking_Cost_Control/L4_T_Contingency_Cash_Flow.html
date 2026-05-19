@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>L4 — Tasks: Contingency Management &amp; Cash Flow Projection</title>
+    <style>
+        :root{--navy-950:#0a0f1e;--navy-900:#0f172a;--navy-800:#1e293b;--navy-700:#334155;--navy-600:#475569;--slate-400:#94a3b8;--slate-300:#cbd5e1;--white:#f8fafc;--accent:#3b82f6;--accent-light:#60a5fa}
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:var(--navy-950);color:var(--slate-300);line-height:1.7;font-size:12px}
+        @page{size:A4;margin:15mm}.page{max-width:210mm;margin:0 auto;padding:32px 40px;background:var(--navy-900)}
+        .doc-header{border-bottom:3px solid var(--accent);padding-bottom:18px;margin-bottom:24px}
+        .doc-header .level-badge{display:inline-block;padding:3px 12px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:rgba(59,130,246,.15);color:var(--accent-light);margin-bottom:6px}
+        .doc-header h1{font-size:22px;font-weight:800;color:var(--white);margin-bottom:4px}
+        .doc-header .subtitle{font-size:13px;color:var(--slate-400)}
+        .doc-header .meta{display:flex;gap:20px;margin-top:10px;font-size:10px;color:var(--slate-400)}
+        h2{font-size:16px;font-weight:700;color:var(--white);margin:24px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--navy-700)}
+        h3{font-size:13px;font-weight:600;color:var(--accent-light);margin:16px 0 6px}
+        p{margin-bottom:10px}
+        .nav-bar{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
+        .nav-link{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:6px;font-size:10px;font-weight:600;text-decoration:none;border:1px solid var(--navy-700);color:var(--slate-300);background:var(--navy-800);transition:all .2s}
+        .nav-link:hover{border-color:var(--accent);color:var(--accent-light)}
+        .nav-link.active{border-color:var(--accent);color:var(--accent-light);background:rgba(59,130,246,.1)}
+        .nav-link .arrow{font-size:12px}
+        table{width:100%;border-collapse:collapse;margin:10px 0;font-size:11px}
+        thead th{background:var(--navy-800);color:var(--accent-light);font-weight:600;text-align:left;padding:7px 10px;border-bottom:2px solid var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+        tbody td{padding:7px 10px;border-bottom:1px solid var(--navy-700);vertical-align:top}
+        ul{margin:4px 0 8px 14px;font-size:11px}li{margin-bottom:3px}
+        .task-block{background:var(--navy-800);border:1px solid var(--navy-700);border-left:3px solid var(--accent);border-radius:8px;padding:14px;margin:10px 0}
+        .task-block .task-id{font-size:9px;font-weight:700;color:var(--accent-light);letter-spacing:1px;margin-bottom:3px}
+        .task-block h4{font-size:12px;font-weight:700;color:var(--white);margin-bottom:6px}
+        .task-block .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10px}
+        .task-block .detail-label{font-weight:600;color:var(--accent-light);font-size:9px;text-transform:uppercase;letter-spacing:.5px}
+        .task-block .detail-value{color:var(--slate-300)}
+        .check{color:#34d399;font-weight:600}
+        .doc-footer{margin-top:28px;padding-top:10px;border-top:1px solid var(--navy-700);font-size:9px;color:var(--navy-600);display:flex;justify-content:space-between}
+    </style>
+    <style id="pro-override">
+        :root{
+            --navy-950:#f0f0f0;--navy-900:#ffffff;--navy-800:#f5f5f5;
+            --navy-700:#d4d4d4;--navy-600:#888;
+            --slate-400:#666;--slate-300:#333;--white:#1c1c1c;
+            --blue-500:#555;--blue-400:#555;
+            --accent:#555;--accent-light:#555;
+            --amber-500:#888;--amber-400:#aaa;
+            --green-500:#666;--green-400:#888;
+            --cyan-500:#777;--cyan-400:#999;
+            --purple-500:#666;--purple-400:#888;
+            --rose-500:#777;--rose-400:#999;
+            --teal-500:#666;--teal-400:#888;
+            --red-500:#666;--orange-500:#777;--orange-400:#999;
+            --violet-500:#666;--violet-400:#888
+        }
+        body{font-family:'Segoe UI',Arial,sans-serif!important;background:#f0f0f0!important;color:#333!important}
+        .page{background:#fff!important;border:1px solid #d4d4d4;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+        .doc-header{border-bottom:1px solid #d4d4d4!important}
+        .level-badge{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc}
+        .doc-header h1{color:#1c1c1c!important;font-weight:700!important}
+        .doc-header .subtitle{color:#555!important}
+        .doc-header .meta{color:#888!important}
+        h2{color:#1c1c1c!important;border-bottom:1px solid #d4d4d4!important;font-weight:700!important}
+        h3{color:#444!important}
+        h4{color:#333!important}
+        p{color:#444}
+        .nav-bar{gap:6px}
+        .nav-link{background:#f5f5f5!important;border:1px solid #d0d0d0!important;color:#444!important;border-radius:3px!important}
+        .nav-link:hover{border-color:#888!important;color:#1c1c1c!important;background:#ebebeb!important}
+        .nav-link.active{border-color:#888!important;color:#1c1c1c!important;background:#e4e4e4!important;font-weight:600!important}
+        table{border:1px solid #e0e0e0}
+        thead th{background:#f0f0f0!important;color:#333!important;border-bottom:2px solid #d4d4d4!important;font-weight:700!important}
+        tbody td{border-bottom:1px solid #ebebeb!important;color:#444!important}
+        tbody tr:hover td{background:#fafafa}
+        .card,.phase-card,.domain-card,.info-card,.process-card,.step-card,.task-card{background:#f8f8f8!important;border:1px solid #d4d4d4!important}
+        .card h4{color:#333!important;text-transform:none!important}
+        .phase-card .phase-num{color:#666!important}
+        .phase-card h4{color:#1c1c1c!important}
+        .phase-card p{color:#555!important}
+        .phase-card.p1,.phase-card.p2,.phase-card.p3,.phase-card.p4,.phase-card.p5,.phase-card.p6,.phase-card.p7{border-top:2px solid #bbb!important}
+        .domain-card .domain-icon,.d1,.d2,.d3,.d4,.d5,.d6,.d7,.d8{background:#e8e8e8!important;color:#444!important}
+        .domain-card .domain-info h4{color:#1c1c1c!important}
+        .domain-card .domain-info .pa-count{color:#666!important}
+        .domain-card .domain-info .link{color:#444!important}
+        .domain-card:hover{border-color:#888!important}
+        .callout{background:#f5f5f5!important;border-left:3px solid #888!important;color:#444!important}
+        .callout strong{color:#333!important}
+        .doc-footer{border-top:1px solid #e4e4e4!important;color:#aaa!important}
+        .mermaid{background:#fff!important}
+        a{color:#333}
+        a:hover{color:#000}
+        code{background:#efefef!important;color:#333!important;border:1px solid #ddd}
+        li{color:#444}
+        .pa-card,.process-area-card{background:#f8f8f8!important;border-color:#d4d4d4!important}
+        .badge,.tag,.label{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc!important}
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="doc-header">
+        <div class="level-badge">Level 4 — Tasks</div>
+        <h1>Tasks: Contingency Management &amp; Cash Flow Projection</h1>
+        <div class="subtitle">L0 → L1: D1 QS → L2: D1.7 Budget Tracking &amp; Cost Control → L3: Contingency &amp; Cash Flow → <strong>L4: Tasks</strong></div>
+        <div class="meta"><span>Task Set: D1.7-SP-002-T</span><span>BPMN Level: 4</span><span>6 Tasks</span><span>Version 2.0</span><span>April 2026</span></div>
+    </div>
+
+    <div class="nav-bar">
+        <a class="nav-link" href="../../../L3_Sub_Processes/D1_QS_Cost_Management/D1.7_Budget_Tracking_Cost_Control/SP_Contingency_Cash_Flow.html"><span class="arrow">↑</span> L3 Contingency &amp; Cash Flow</a>
+        <span class="nav-link active"><span class="arrow">●</span> L4 Tasks</span>
+    </div>
+
+    <h2>1. Task Overview</h2>
+    <p>This task set expands the Contingency Management &amp; Cash Flow Projection sub-process into granular work instructions. The contingency is the employer's risk allowance — it may only be expended on PA instruction and requires disciplined tracking to prevent premature depletion. Cash flow projections enable the funder/employer to plan funding availability against predicted monthly expenditure. These tasks cover: updating the contingency register, assessing anticipated exposure, calculating the available balance, mapping remaining contract value to programme months, generating the S-curve forecast, and producing the funder's monthly funding requirement schedule. Per NHBRC and JBCC provisions, contingency expenditure must be formally authorised and transparently reported.</p>
+
+    <h2>2. Detailed Task Breakdown</h2>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.7.2-01</div>
+        <h4>Update Contingency Register with PA Instructions</h4>
+        <p>Record all new PA instructions that draw on the project contingency fund. Each contingency expenditure must be linked to its authorising PA instruction, the approved VO or cost item, and the amount allocated. Only PA-authorised expenditure may be charged against contingency.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">Monthly (part of PFC cycle)</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">PA instructions; VO register; approved expenditure from contingency; previous contingency register</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Updated contingency register; new approved expenditure recorded; cumulative drawdown total</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Contingency register template; VO register; PA instruction file</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">JBCC contingency provisions; employer delegation of authority; NHBRC funding guidelines</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Review all PA instructions issued since the last register update — identify any that authorise expenditure from contingency</li>
+            <li>For each new contingency drawdown: record the PA instruction number, date, description, and authorised amount</li>
+            <li>Link the contingency entry to the corresponding VO number or cost item in the variation register</li>
+            <li>Calculate the new cumulative approved expenditure from contingency: previous total + new drawdowns this period</li>
+            <li>Verify that every contingency charge has proper PA authority — reject any charges without formal instruction</li>
+            <li class="check">✓ Quality Check: All new PA instructions reviewed; each drawdown has PA authority; cumulative total reconciles to individual entries</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.7.2-02</div>
+        <h4>Assess Anticipated Contingency Exposure for Known Risks</h4>
+        <p>Assess the anticipated contingency exposure for known risks and likely future variations that have not yet been formally approved. Use the project risk register and pending variation estimates to forecast the probable further calls on contingency.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">Monthly (part of PFC cycle)</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Risk register; pending variations (from Task 1.7.1-02); site conditions; design status</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Anticipated expenditure forecast; risk-weighted contingency exposure</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Risk assessment matrix; contingency forecast template</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">SACPCMP risk management practice; contingency management methodology</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Review the project risk register — identify risks that, if materialised, would result in contingency expenditure</li>
+            <li>For each identified risk: estimate the cost impact (R) and assign a probability weighting (low 25%, medium 50%, high 75%)</li>
+            <li>Calculate risk-weighted exposure: cost impact × probability = weighted contingency exposure per risk</li>
+            <li>Add pending variations from the D1.6 register that are likely to be funded from contingency (not additional budget)</li>
+            <li>Sum all anticipated items to produce the total anticipated contingency exposure</li>
+            <li>Present the exposure as a range: best case (low probability items excluded) to worst case (all items materialise)</li>
+            <li class="check">✓ Quality Check: Risk register reviewed; probability weightings reasonable; anticipated exposure documented with methodology</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.7.2-03</div>
+        <h4>Calculate Available Contingency Balance &amp; Depletion Rate</h4>
+        <p>Calculate the available contingency balance by deducting approved and anticipated expenditure from the original contingency allowance. Assess the depletion rate — how quickly the contingency is being consumed relative to project progress — and flag if contingency may be exhausted before completion.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">0.5 working day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Tasks 1.7.2-01 and 1.7.2-02 outputs; original contingency allowance; project progress %</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Contingency balance report; depletion rate analysis; threshold alerts (50%/75%/90%)</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Contingency balance calculator; depletion chart template</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">SACPCMP contingency reporting; employer-specific thresholds</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Calculate: Original Contingency − Approved Expenditure − Anticipated Exposure = Available Balance</li>
+            <li>Express as a percentage: Available Balance ÷ Original Contingency × 100 = % remaining</li>
+            <li>Calculate the depletion rate: Approved Expenditure ÷ Project Progress % — this shows whether contingency is being consumed proportionally to progress</li>
+            <li>If depletion rate exceeds 1.0× (contingency consumed faster than project progress), flag as a concern</li>
+            <li>Apply threshold alerts: issue notice at 50% depleted (caution), 75% depleted (warning), 90% depleted (critical)</li>
+            <li>Chart the contingency drawdown over time against a linear consumption line for visual reporting</li>
+            <li class="check">✓ Quality Check: Balance calculation verified; depletion rate assessed; threshold alerts applied; chart updated</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.7.2-04</div>
+        <h4>Map Remaining Contract Value to Programme Months</h4>
+        <p>Distribute the remaining contract value (PFC minus expenditure to date) across the remaining programme months to create the projected monthly expenditure profile. Use the construction programme and trade sequencing to allocate values by month.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">1 working day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">PFC from D1.7-SP-001; construction programme; contract section values; expenditure to date</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Projected monthly expenditure schedule (remaining months); trade-by-month allocation</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Cash flow projection model; construction programme; BoQ section values</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">SACPCMP cash flow methodology; S-curve projection conventions</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Obtain the latest construction programme (baseline or revised) showing trade activities and their scheduled months</li>
+            <li>For each major trade/BoQ section: determine the remaining value = section PFC − section expenditure to date</li>
+            <li>Distribute the remaining value across the programme months in which that trade is scheduled to be active</li>
+            <li>Apply a weighting for trade intensity — more value in peak activity months, less in ramp-up/ramp-down periods</li>
+            <li>Sum all trades per month to produce the total projected expenditure per month</li>
+            <li>Add retention releases at practical completion and final completion milestones</li>
+            <li class="check">✓ Quality Check: All remaining contract value allocated; monthly totals sum to remaining PFC; programme alignment verified</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.7.2-05</div>
+        <h4>Generate S-Curve: Planned vs Actual vs Projected</h4>
+        <p>Produce the project S-curve showing three series: the original planned expenditure curve (from the baseline cash flow), the actual cumulative expenditure to date (from payment certificates), and the projected expenditure to completion (from Task 1.7.2-04). The S-curve is the primary visual tool for financial progress reporting.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">0.5 working day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Baseline cash flow; cumulative certificate data; projected monthly expenditure from Task 1.7.2-04</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">S-curve graph (planned/actual/projected); data table with monthly and cumulative values</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">S-curve charting template; Excel/platform graphing tools</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">SACPCMP financial reporting; standard S-curve methodology</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Set up the S-curve chart with: X-axis = project months (month 1 to completion); Y-axis = cumulative expenditure (R)</li>
+            <li>Plot Series 1 (Planned): original baseline cash flow cumulative values — this does not change month to month</li>
+            <li>Plot Series 2 (Actual): cumulative certified expenditure from payment certificates — update monthly</li>
+            <li>Plot Series 3 (Projected): actual to date + projected remaining months from Task 1.7.2-04 — this is the forecast line</li>
+            <li>Highlight the gap between Planned and Projected at completion — this visually shows the budget variance</li>
+            <li>Prepare a supporting data table with monthly and cumulative values for all three series</li>
+            <li class="check">✓ Quality Check: Three series correctly plotted; actual matches certificate data; projected connects smoothly from actual; data table complete</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.7.2-06</div>
+        <h4>Produce Monthly Funding Requirement Schedule for Funder/Employer</h4>
+        <p>Convert the cash flow projection into a funding requirement schedule that tells the funder/employer exactly how much money is needed each month. Include the payment certificate cycle timing (30-day payment term), VAT, and any lumpy items (retention releases, large VO payments).</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">0.5 working day</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Cash flow projection; payment certificate cycle; VAT rate; retention release dates; funder requirements</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Monthly funding requirement schedule; total funding requirement to completion</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Funding schedule template; cash flow model; funder reporting format</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">NHBRC funding guidelines; funder-specific reporting requirements; JBCC payment provisions</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Convert projected monthly expenditure into funding requirements, accounting for the 30-day payment cycle lag</li>
+            <li>Add VAT (15%) to each month's projected expenditure: nett amount × 1.15 = gross funding required</li>
+            <li>Identify months with lumpy payments: retention releases at practical and final completion, large VO settlements, final account</li>
+            <li>Flag months where the funding requirement exceeds the average by &gt;20% — the funder needs advance notice for high-requirement months</li>
+            <li>Format the schedule per funder requirements — NHBRC and development finance institutions each have specific templates</li>
+            <li>Present total remaining funding requirement: sum of all future months = total funding still needed</li>
+            <li class="check">✓ Quality Check: Funding schedule includes VAT; payment lag accounted for; lumpy months flagged; funder format complied with; total verified</li>
+        </ul>
+    </div>
+
+    <h2>3. Task Summary</h2>
+    <table>
+        <thead><tr><th>Task ID</th><th>Task Name</th><th>Role</th><th>SLA</th><th>Output</th></tr></thead>
+        <tbody>
+            <tr><td>1.7.2-01</td><td>Update Contingency Register with PA Instructions</td><td>QS</td><td>Monthly</td><td>Updated register &amp; drawdown total</td></tr>
+            <tr><td>1.7.2-02</td><td>Assess Anticipated Contingency Exposure</td><td>QS</td><td>Monthly</td><td>Risk-weighted exposure forecast</td></tr>
+            <tr><td>1.7.2-03</td><td>Calculate Available Balance &amp; Depletion Rate</td><td>QS</td><td>0.5 day</td><td>Balance report &amp; threshold alerts</td></tr>
+            <tr><td>1.7.2-04</td><td>Map Remaining Value to Programme Months</td><td>QS</td><td>1 day</td><td>Projected monthly expenditure schedule</td></tr>
+            <tr><td>1.7.2-05</td><td>Generate S-Curve: Planned vs Actual vs Projected</td><td>QS</td><td>0.5 day</td><td>S-curve graph &amp; data table</td></tr>
+            <tr><td>1.7.2-06</td><td>Produce Monthly Funding Requirement Schedule</td><td>QS</td><td>0.5 day</td><td>Funder funding schedule (incl. VAT)</td></tr>
+        </tbody>
+    </table>
+
+    <div class="doc-footer"><span>L4 Tasks — D1.7-SP-002 Contingency &amp; Cash Flow v2.0</span><span>Confidential — Swift Designz</span></div>
+</div>
+    <script src="../../../nav.js"></script>
+</body>
+</html>

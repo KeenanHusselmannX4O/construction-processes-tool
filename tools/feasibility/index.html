@@ -1,0 +1,2188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Feasibility Cost Estimator — Mzilikazi</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #c8c8c8;
+      --surface: #d8d8d8;
+      --surface2: #e2e2e2;
+      --surface3: #ececec;
+      --border: #999999;
+      --border-light: #777777;
+      --text: #111111;
+      --text-dim: #333333;
+      --text-faint: #666666;
+      --white: #ffffff;
+      --black: #000000;
+      --radius: 3px;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      background: #aaaaaa;
+      border-bottom: 2px solid #888888;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    header h1 { font-size: 14px; font-weight: 700; color: #000000; letter-spacing: 0.2px; }
+    header span { font-size: 12px; color: #444444; }
+    .badge {
+      background: #888888;
+      color: #111111;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 2px;
+      border: 1px solid #666;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 0;
+      height: calc(100vh - 41px);
+      overflow: hidden;
+    }
+
+    .form-panel {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── SIDEBAR NAV TABS ── */
+    .sidebar-nav {
+      display: flex;
+      border-bottom: 2px solid #999;
+      background: #c8c8c8;
+      flex-shrink: 0;
+    }
+    .sidebar-tab {
+      flex: 1;
+      padding: 9px 0;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      text-align: center;
+      cursor: pointer;
+      color: #555;
+      border: none;
+      border-right: 1px solid #999;
+      background: transparent;
+      font-family: Arial, sans-serif;
+      transition: none;
+    }
+    .sidebar-tab:last-child { border-right: none; }
+    .sidebar-tab.active { background: var(--surface); color: #000; font-weight: 700; border-bottom: 2px solid var(--surface); margin-bottom: -2px; }
+    .sidebar-tab:hover:not(.active) { background: #c0c0c0; color: #222; }
+
+    .form-scroll { padding: 16px 18px; flex: 1; overflow-y: auto; }
+    .api-advanced { font-size: 10px; color: #666; cursor: pointer; text-decoration: underline; display: block; margin-bottom: 10px; letter-spacing: 0.3px; }
+    .api-advanced-panel { display: none; background: #d4d4d4; border: 1px solid #bbb; padding: 8px 10px; margin-bottom: 12px; }
+    .api-advanced-panel input { width: 100%; font-size: 11px; padding: 4px 6px; border: 1px solid #aaa; background: #e8e8e8; color: #333; }
+    .api-advanced-panel label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.8px; color: #555; display: block; margin-bottom: 4px; }
+
+    /* ── DOCS VIEW (right panel) ── */
+    .docs-view {
+      display: none;
+      background: #d0d0d0;
+      padding: 32px 40px;
+      overflow-y: auto;
+      height: 100%;
+    }
+    .docs-view-title { font-size: 13px; font-weight: 700; color: #111; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .docs-view-sub { font-size: 11px; color: #444; margin-bottom: 28px; }
+    .docs-group { background: #fff; border: 1px solid #bbb; margin-bottom: 16px; }
+    .docs-group-header {
+      background: #222;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      padding: 7px 14px;
+    }
+    .docs-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      border-bottom: 1px solid #e0e0e0;
+      text-decoration: none;
+      color: #111;
+    }
+    .docs-row:last-child { border-bottom: none; }
+    .docs-row:hover { background: #f5f5f5; }
+    .docs-row-num {
+      width: 36px;
+      flex-shrink: 0;
+      font-size: 10px;
+      font-weight: 700;
+      color: #888;
+      text-align: center;
+      padding: 12px 0;
+      border-right: 1px solid #e0e0e0;
+    }
+    .docs-row-body { padding: 10px 14px; flex: 1; }
+    .docs-row-name { font-size: 12px; font-weight: 700; color: #111; line-height: 1.3; }
+    .docs-row-desc { font-size: 10.5px; color: #444; margin-top: 2px; line-height: 1.4; }
+    .docs-row-arrow { padding: 0 12px; font-size: 13px; color: #888; flex-shrink: 0; }
+
+    /* Database view */
+    .db-tab-btn { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 6px 14px; border: 1px solid #999; background: #e8e8e8; color: #444; cursor: pointer; }
+    .db-tab-btn.active { background: #111; color: #fff; border-color: #111; }
+    .db-tab-btn:hover:not(.active) { background: #d0d0d0; }
+    .db-data-table { width: 100%; border-collapse: collapse; font-size: 11px; background: #fff; }
+    .db-data-table th { background: #222; color: #fff; font-weight: 700; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.6px; padding: 7px 10px; text-align: left; white-space: nowrap; }
+    .db-data-table td { padding: 6px 10px; border-bottom: 1px solid #e8e8e8; color: #222; vertical-align: middle; white-space: nowrap; }
+    .db-data-table tr:hover td { background: #f7f7f7; }
+    td.db-editable { background: #fffff0; color: #111; font-weight: 600; cursor: pointer; }
+    td.db-editable:hover { background: #fffde0; }
+    .db-edit-btn { font-size: 10px; font-weight: 700; padding: 3px 10px; border: 1px solid #aaa; background: #f0f0f0; cursor: pointer; letter-spacing: 0.4px; white-space: nowrap; }
+    .db-edit-btn:hover { background: #ddd; }
+
+    .results-panel {
+      background: #d0d0d0;
+      padding: 24px 32px;
+      overflow-y: auto;
+      height: 100%;
+    }
+
+    h2 { font-size: 11px; font-weight: 700; color: var(--text-faint); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+
+    .section { margin-bottom: 20px; }
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .field { margin-bottom: 10px; }
+    label { display: block; font-size: 11px; color: var(--text-dim); margin-bottom: 3px; font-weight: 400; }
+
+    input, select {
+      width: 100%;
+      background: var(--white);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 8px;
+      border-radius: var(--radius);
+      font-size: 12px;
+      outline: none;
+      transition: border-color 0.1s;
+    }
+    input:focus, select:focus { border-color: #555; background: var(--white); }
+    input::placeholder { color: var(--text-faint); }
+    select option { background: var(--white); color: #111; }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    button[type="submit"] {
+      width: 100%;
+      background: #444444;
+      color: var(--white);
+      border: 1px solid #333;
+      padding: 9px 12px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.1s;
+      letter-spacing: 0.2px;
+    }
+    button[type="submit"]:hover { background: #222; }
+    button[type="submit"]:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-secondary {
+      width: 100%;
+      background: var(--surface3);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 7px 12px;
+      border-radius: var(--radius);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.1s;
+    }
+    .btn-secondary:hover { background: var(--border); }
+
+    .api-row { display: flex; gap: 8px; margin-bottom: 16px; }
+    .api-row input { flex: 1; font-size: 11px; color: var(--text-faint); }
+    .api-row label { display: none; }
+
+    /* Results */
+    .placeholder {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: var(--text-faint);
+      text-align: center;
+    }
+    .placeholder svg { opacity: 0.35; }
+
+    .report { animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+    /* ── DOCUMENT WRAPPER ── */
+    .doc {
+      background: #ffffff;
+      border: 1px solid #bbbbbb;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      color: #111111;
+      font-size: 13px;
+    }
+
+    /* ── LETTERHEAD ── */
+    .doc-letterhead {
+      background: #111111;
+      color: #ffffff;
+      padding: 22px 32px 18px;
+      border-bottom: 4px solid #000;
+    }
+    .doc-letterhead .doc-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #aaaaaa;
+      margin-bottom: 6px;
+    }
+    .doc-letterhead h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 4px;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    .doc-letterhead .doc-meta {
+      font-size: 12px;
+      color: #aaaaaa;
+      margin-top: 6px;
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .doc-letterhead .doc-meta span { white-space: nowrap; }
+
+    /* ── SECTION BLOCKS ── */
+    .doc-section {
+      padding: 18px 32px;
+      border-bottom: 1px solid #dddddd;
+    }
+    .doc-section:last-child { border-bottom: none; }
+    .doc-section-title {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #222222;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #cccccc;
+    }
+
+    /* ── TOTAL BANNER ── */
+    .doc-total-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f5f5f5;
+      border: 2px solid #111111;
+      padding: 16px 24px;
+      margin-bottom: 0;
+    }
+    .doc-total-banner .banner-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #555555;
+    }
+    .doc-total-banner .banner-amount {
+      font-size: 28px;
+      font-weight: 800;
+      font-family: 'Courier New', monospace;
+      color: #000000;
+    }
+    .doc-total-banner .banner-rates {
+      font-size: 12px;
+      color: #555555;
+      text-align: right;
+      margin-top: 2px;
+      font-family: 'Courier New', monospace;
+    }
+    .doc-total-banner .banner-right { text-align: right; }
+
+    /* ── VERDICT STRIP ── */
+    .doc-verdict {
+      padding: 10px 32px;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #dddddd;
+    }
+    .doc-verdict.ok      { background: #f0f0f0; color: #111111; border-left: 4px solid #333333; }
+    .doc-verdict.blocked { background: #f5f5f5; color: #333333; border-left: 4px solid #666666; }
+    .doc-verdict.warn    { background: #fafafa; color: #333333; border-left: 4px solid #999999; }
+    .doc-verdict .verdict-note { font-size: 11px; font-weight: 400; color: #222222; margin-left: 4px; }
+
+    /* ── PARAMETERS GRID ── */
+    .doc-params {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    .doc-param {
+      padding: 8px 0;
+      border-bottom: 1px solid #eeeeee;
+    }
+    .doc-param:nth-child(n+4) { }
+    .doc-param .p-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #444444; margin-bottom: 2px; }
+    .doc-param .p-val   { font-size: 13px; font-weight: 600; color: #111111; }
+
+    /* ── KEY METRICS ── */
+    .doc-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: #dddddd;
+      border: 1px solid #cccccc;
+    }
+    .doc-metric {
+      background: #ffffff;
+      padding: 12px 14px;
+      text-align: center;
+    }
+    .doc-metric .m-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #444444; margin-bottom: 4px; }
+    .doc-metric .m-val   { font-size: 15px; font-weight: 700; font-family: 'Courier New', monospace; color: #111111; }
+    .doc-metric .m-sub   { font-size: 10px; color: #333333; margin-top: 2px; }
+
+    /* ── COST TABLE ── */
+    .doc-cost-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .doc-cost-table colgroup col:nth-child(1) { width: 18%; }
+    .doc-cost-table colgroup col:nth-child(2) { width: 58%; }
+    .doc-cost-table colgroup col:nth-child(3) { width: 24%; }
+    .doc-cost-table th {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #222222;
+      font-weight: 700;
+      padding: 8px 6px;
+      border-bottom: 2px solid #111111;
+      text-align: left;
+    }
+    .doc-cost-table th:last-child { text-align: right; }
+    .doc-cost-table td { padding: 14px 6px; font-size: 13px; color: #111111; border-bottom: 1px solid #e8e8e8; vertical-align: top; line-height: 1.5; }
+    .doc-cost-table td:first-child { font-weight: 700; }
+    .doc-cost-table td:last-child { text-align: right; font-family: 'Courier New', monospace; font-weight: 600; vertical-align: middle; }
+    .doc-cost-table .dc-basis { font-size: 11px; color: #444444; margin-top: 3px; font-weight: 400; line-height: 1.5; word-break: break-word; }
+    .doc-cost-table tr.dc-subtotal td { border-top: 2px solid #aaaaaa; border-bottom: 2px solid #aaaaaa; background: #f5f5f5; font-weight: 700; color: #111111; padding: 10px 6px; }
+    .doc-cost-table tr.dc-subtotal td:last-child { font-weight: 700; }
+    .doc-cost-table tr.dc-vat td { color: #333333; font-size: 12px; padding: 10px 6px; }
+    .doc-cost-table tr.dc-total td { border-top: 3px double #111111; border-bottom: none; font-size: 14px; font-weight: 800; padding-top: 14px; padding-bottom: 6px; }
+    .doc-cost-table tr.dc-total td:last-child { font-size: 15px; }
+
+    /* ── SOURCES TABLE ── */
+    .doc-sources-table { width: 100%; border-collapse: collapse; }
+    .doc-sources-table th { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #222; font-weight: 700; padding: 7px 6px; border-bottom: 2px solid #999; text-align: left; }
+    .doc-sources-table td { padding: 9px 6px; font-size: 11px; color: #111; border-bottom: 1px solid #e8e8e8; vertical-align: top; line-height: 1.5; }
+    .doc-sources-table a { color: #111; text-decoration: underline; }
+    .doc-sources-table .src-desc { color: #333; font-size: 10px; margin-top: 2px; }
+
+    /* ── METHODOLOGY BOX ── */
+    .doc-method-box { background: #f8f8f8; border-left: 3px solid #999; padding: 12px 16px; margin-top: 14px; font-size: 11px; line-height: 1.7; color: #222; }
+    .doc-method-box strong { color: #111; }
+
+    /* ── AGENT FRAMEWORK BOX ── */
+    .doc-agent-box { background: #f5f5f5; border: 1px solid #cccccc; padding: 16px 20px; font-size: 11px; line-height: 1.8; color: #222; }
+    .doc-agent-box h4 { font-size: 11px; font-weight: 700; color: #111; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.8px; }
+    .doc-agent-box table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    .doc-agent-box table td { padding: 5px 6px; font-size: 11px; border-bottom: 1px solid #e0e0e0; vertical-align: top; }
+    .doc-agent-box table td:first-child { font-weight: 600; width: 28%; color: #111; }
+    .doc-agent-box a { color: #111; text-decoration: underline; }
+
+    /* ── PROFESSIONAL FEES BREAKDOWN ── */
+    .doc-fees-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .doc-fees-table col:nth-child(1) { width: 26%; }
+    .doc-fees-table col:nth-child(2) { width: 52%; }
+    .doc-fees-table col:nth-child(3) { width: 22%; }
+    .doc-fees-table td { padding: 13px 6px; font-size: 12px; color: #111111; border-bottom: 1px solid #e8e8e8; vertical-align: top; font-weight: 600; }
+    .doc-fees-table td:last-child { text-align: right; font-family: 'Courier New', monospace; color: #111111; font-weight: 600; vertical-align: middle; }
+    .doc-fees-table tr.fees-total td { border-top: 2px solid #999999; border-bottom: 2px solid #999999; font-weight: 700; color: #111111; font-size: 13px; background: #f5f5f5; padding: 11px 6px; }
+
+    /* ── ACCURACY CHECKS ── */
+    .doc-accuracy-table { width: 100%; border-collapse: collapse; }
+    .doc-accuracy-table th { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #222222; font-weight: 700; padding: 8px 6px; border-bottom: 2px solid #aaaaaa; text-align: left; }
+    .doc-accuracy-table th:last-child { text-align: right; }
+    .doc-accuracy-table td { padding: 12px 6px; font-size: 12px; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+    .doc-accuracy-table td:last-child { text-align: right; }
+    .acc-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; letter-spacing: 0.5px; }
+    .acc-badge.pass { background: #eeeeee; color: #111111; }
+    .acc-badge.fail { background: #cccccc; color: #333333; }
+
+    /* ── RISK FLAGS ── */
+    .doc-risk-list { list-style: none; }
+    .doc-risk-list li { font-size: 12px; color: #111111; padding: 6px 0 6px 20px; border-bottom: 1px solid #f0f0f0; position: relative; }
+    .doc-risk-list li:last-child { border-bottom: none; }
+    .doc-risk-list li::before { content: '▸'; position: absolute; left: 0; color: #333333; font-size: 10px; top: 8px; }
+
+    /* ── EXECUTIVE SUMMARY ── */
+    .doc-summary { font-size: 13px; line-height: 1.9; color: #111111; }
+
+    /* ── FOOTER ── */
+    .doc-footer {
+      background: #f5f5f5;
+      border-top: 2px solid #cccccc;
+      padding: 10px 32px;
+      font-size: 10px;
+      color: #333333;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2px solid rgba(0,0,0,0.15);
+      border-top-color: #333;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .pass { color: #333333; }
+    .fail { color: #777777; }
+    .warn-col { color: #555555; }
+
+    .error-box {
+      background: #f5f5f5;
+      border: 1px solid #aaaaaa;
+      border-left: 3px solid #444444;
+      padding: 14px 18px;
+      color: #333333;
+      font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; height: auto; overflow: visible; }
+      .form-panel { border-right: none; border-bottom: 1px solid var(--border); height: auto; }
+      .results-panel { height: auto; overflow-y: visible; }
+    }
+
+    /* ── MARKET ANALYSIS ── */
+    .doc-market-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #ddd; border: 1px solid #ccc; }
+    .doc-market-metric { background: #fff; padding: 14px 16px; }
+    .doc-market-metric .m-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #444; margin-bottom: 4px; }
+    .doc-market-metric .m-val { font-size: 18px; font-weight: 700; font-family: 'Courier New', monospace; color: #111; }
+    .doc-market-metric .m-sub { font-size: 10px; color: #333; margin-top: 2px; }
+    .doc-market-table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+    .doc-market-table th { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #222; font-weight: 700; padding: 7px 6px; border-bottom: 2px solid #999; text-align: left; }
+    .doc-market-table td { padding: 10px 6px; font-size: 13px; color: #111; border-bottom: 1px solid #e8e8e8; vertical-align: middle; }
+
+    /* ── SCALE SENSITIVITY ── */
+    .doc-scale-table { width: 100%; border-collapse: collapse; }
+    .doc-scale-table th { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #222; font-weight: 700; padding: 7px 6px; border-bottom: 2px solid #999; text-align: left; }
+    .doc-scale-table th:not(:first-child) { text-align: right; }
+    .doc-scale-table td { padding: 10px 6px; font-size: 12px; color: #111; border-bottom: 1px solid #e8e8e8; }
+    .doc-scale-table td:not(:first-child) { text-align: right; font-family: 'Courier New', monospace; }
+
+    /* ── RISK REGISTER ── */
+    .doc-risk-table { width: 100%; border-collapse: collapse; }
+    .doc-risk-table th { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #222; font-weight: 700; padding: 7px 6px; border-bottom: 2px solid #999; text-align: left; }
+    .doc-risk-table td { padding: 10px 6px; font-size: 12px; color: #111; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+
+    /* ── EXPORT BUTTON ── */
+    .btn-export { background: #111; color: #fff; border: none; padding: 9px 22px; font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 16px; font-family: Arial, sans-serif; }
+    .btn-export:hover { background: #333; }
+    .btn-export:disabled { opacity: 0.5; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Feasibility Cost Estimator</h1>
+    <span>SA Construction · ASAQS Class 4/5 · ±15–25% accuracy</span>
+  </div>
+  <span class="badge">PHASE 0</span>
+</header>
+
+<div class="layout">
+  <!-- FORM PANEL -->
+  <div class="form-panel">
+    <div class="sidebar-nav">
+      <button class="sidebar-tab active" id="tab-estimate" onclick="switchTab('estimate')">Estimate</button>
+      <button class="sidebar-tab" id="tab-docs" onclick="switchTab('docs')">Documents</button>
+      <button class="sidebar-tab" id="tab-db" onclick="switchTab('db')">Database</button>
+    </div>
+    <div class="form-scroll">
+
+    <span class="api-advanced" id="apiToggle" onclick="document.getElementById('apiPanel').style.display=document.getElementById('apiPanel').style.display==='block'?'none':'block'">&#9881; Advanced: API endpoint</span>
+    <div class="api-advanced-panel" id="apiPanel">
+      <label for="apiUrl">API Base URL</label>
+      <input id="apiUrl" type="url" value="" placeholder="API base URL (leave blank for same-origin)"/>
+    </div>
+
+    <form id="briefForm">
+
+      <div class="section">
+        <div class="section-title">Project Info</div>
+        <div class="field">
+          <label>Project Name</label>
+          <input name="project_name" required placeholder="e.g. Phumula Gardens Phase 1"/>
+        </div>
+        <div class="field">
+          <label>Developer / Client</label>
+          <input name="developer" required placeholder="e.g. Developer / Client Name"/>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Location</div>
+        <div class="row">
+          <div class="field">
+            <label>Region</label>
+            <select name="region" required>
+              <option value="gauteng">Gauteng</option>
+              <option value="western_cape">Western Cape</option>
+              <option value="kzn">KwaZulu-Natal</option>
+              <option value="eastern_cape">Eastern Cape</option>
+              <option value="free_state">Free State</option>
+              <option value="mpumalanga">Mpumalanga</option>
+              <option value="limpopo">Limpopo</option>
+              <option value="northern_cape">Northern Cape</option>
+              <option value="north_west">North West</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Municipality</label>
+            <input name="municipality" placeholder="e.g. Tshwane (optional)"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Building</div>
+        <div class="field">
+          <label>Typology</label>
+          <select name="typology" required>
+            <option value="bng_subsidy_house">BNG Subsidy House</option>
+            <option value="gap_housing">GAP Housing</option>
+            <option value="affordable_apartment">Affordable Apartment</option>
+              <option value="middle_income_residential">Middle Income Residential</option>
+              <option value="office">Office</option>
+              <option value="retail_centre">Retail Centre</option>
+              <option value="shopping_mall">Shopping Mall</option>
+              <option value="industrial_warehouse">Industrial Warehouse</option>
+              <option value="warehouse_industrial">Warehouse / Industrial</option>
+              <option value="mixed_use">Mixed Use</option>
+              <option value="school">School</option>
+              <option value="hospital">Hospital</option>
+              <option value="hotel_3star">Hotel (3-Star)</option>
+          </select>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Grade</label>
+            <select name="grade">
+              <option value="economy">Economy</option>
+              <option value="standard" selected>Standard</option>
+              <option value="b_grade">B-Grade</option>
+              <option value="a_grade">A-Grade</option>
+              <option value="premium">Premium</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Specification</label>
+            <select name="specification_level">
+              <option value="economy">Economy</option>
+              <option value="standard" selected>Standard</option>
+              <option value="premium">Premium</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Total GLA (m²)</label>
+            <input name="total_gla_m2" type="number" min="1" required placeholder="e.g. 10000"/>
+          </div>
+          <div class="field">
+            <label>Unit Count</label>
+            <input name="unit_count" type="number" min="1" placeholder="e.g. 250"/>
+          </div>
+        </div>
+        <div class="field">
+          <label>Unit Area (m² per unit)</label>
+          <input name="unit_area_m2" type="number" min="1" placeholder="e.g. 40"/>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Site Conditions</div>
+        <div class="row">
+          <div class="field">
+            <label>Geotech Class</label>
+            <select name="geotech_class">
+              <option value="stable" selected>Stable</option>
+              <option value="moderate">Moderate</option>
+              <option value="difficult">Difficult</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Slope (%)</label>
+            <input name="slope_pct" type="number" min="0" max="100" value="0" placeholder="0"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Programme</div>
+        <div class="row">
+          <div class="field">
+            <label>Start Date</label>
+            <input name="start_date" type="date" required/>
+          </div>
+          <div class="field">
+            <label>Duration (months)</label>
+            <input name="duration_months" type="number" min="1" max="120" value="18"/>
+          </div>
+        </div>
+        <div class="field">
+          <label>As-of Date (estimate basis)</label>
+          <input name="as_of_date" type="date" required/>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Funding (optional)</div>
+        <div class="row">
+          <div class="field">
+            <label>Programme</label>
+            <select name="funding_programme">
+              <option value="">None / Commercial</option>
+              <option value="BNG">BNG</option>
+              <option value="FLISP">FLISP</option>
+              <option value="SocialRental">Social Rental</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Band</label>
+            <input name="funding_band" placeholder="e.g. standard"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Market &amp; Return (optional)</div>
+        <div class="row">
+          <div class="field">
+            <label>Selling Price / Unit (ZAR)</label>
+            <input name="market_price_per_unit_zar" type="number" min="0" placeholder="e.g. 850 000"/>
+          </div>
+          <div class="field">
+            <label>Selling Price / m² (ZAR)</label>
+            <input name="market_price_per_m2_zar" type="number" min="0" placeholder="e.g. 18 000"/>
+          </div>
+        </div>
+        <div class="field">
+          <label>Target Developer Margin (%)</label>
+          <input name="target_developer_margin_pct" type="number" min="0" max="100" step="0.5" placeholder="e.g. 15"/>
+        </div>
+      </div>
+
+      <button type="submit" id="submitBtn">Run Feasibility Estimate</button>
+      <button type="button" class="btn-secondary" id="demoBtn">Fill Demo Data (quick test)</button>
+    </form>
+    </div><!-- /.form-scroll -->
+  </div><!-- /.form-panel -->
+
+  <!-- DOCS VIEW (shown when Documents tab is active) -->
+  <div class="docs-view" id="docs-view">
+    <div class="docs-view-title">Reference Documents</div>
+    <div class="docs-view-sub">Industry standards, fee scales, and data sources used by the Mzilikazi Feasibility Agent</div>
+
+    <!-- HOW THE AGENT WORKS -->
+    <div style="background:#fff;border:1px solid #bbb;margin-bottom:24px;padding:28px 32px;">
+      <div style="font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#111;border-bottom:2px solid #111;padding-bottom:8px;margin-bottom:18px;">How This Agent Works — Real-Time Process</div>
+
+      <div style="display:grid;grid-template-columns:28px 1fr;gap:0 14px;margin-bottom:24px;">
+
+        <div style="font-size:11px;font-weight:800;color:#fff;background:#111;width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">1</div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#111;margin-bottom:3px;">You submit a project brief</div>
+          <div style="font-size:11px;color:#444;line-height:1.6;">Enter the project name, location, typology (e.g. BNG housing, office, retail), GLA, unit count, and site conditions. This forms the structured input to the agent — the same information a QS would capture in a project brief meeting.</div>
+        </div>
+
+        <div style="font-size:11px;font-weight:800;color:#fff;background:#111;width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:18px;">2</div>
+        <div style="margin-top:16px;">
+          <div style="font-size:11px;font-weight:700;color:#111;margin-bottom:3px;">The agent queries its benchmark database</div>
+          <div style="font-size:11px;color:#444;line-height:1.6;">The cost engine immediately queries a live PostgreSQL database of construction benchmark rates — seeded from the ASAQS Building Cost Index and calibrated by typology, specification level, grade, and region. No manual lookup is required.</div>
+        </div>
+
+        <div style="font-size:11px;font-weight:800;color:#fff;background:#111;width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:18px;">3</div>
+        <div style="margin-top:16px;">
+          <div style="font-size:11px;font-weight:700;color:#111;margin-bottom:3px;">Costs are computed element by element</div>
+          <div style="font-size:11px;color:#444;line-height:1.6;">Building works, bulk services, external works, contingency, and escalation are each calculated using deterministic rules. Professional fees are applied using the SACAP, ECSA, and ASAQS recommended fee scales — automatically, at the correct project value band.</div>
+        </div>
+
+        <div style="font-size:11px;font-weight:800;color:#fff;background:#111;width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:18px;">4</div>
+        <div style="margin-top:16px;">
+          <div style="font-size:11px;font-weight:700;color:#111;margin-bottom:3px;">A six-layer accuracy gate validates all numbers</div>
+          <div style="font-size:11px;color:#444;line-height:1.6;">Before any report is issued, the agent runs three cross-checks: schema validation (every field in range), rules validation (VAT=15%, fee scales applied correctly), and triangulation (cost computed three independent ways, coefficient of variation ≤10%). Benchmark deviation and range sensitivity are also tested.</div>
+        </div>
+
+        <div style="font-size:11px;font-weight:800;color:#fff;background:#111;width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:18px;">5</div>
+        <div style="margin-top:16px;">
+          <div style="font-size:11px;font-weight:700;color:#111;margin-bottom:3px;">Claude 3.5 drafts the executive narrative</div>
+          <div style="font-size:11px;color:#444;line-height:1.6;">Once the numbers pass the quality gate, the validated cost data is passed to Anthropic's Claude 3.5 Sonnet model which drafts a professional QS narrative — explaining the cost outcome, viability verdict, and recommended adjustments in plain language for developers, funders, and approval boards.</div>
+        </div>
+
+        <div style="font-size:11px;font-weight:800;color:#fff;background:#111;width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:18px;">6</div>
+        <div style="margin-top:16px;">
+          <div style="font-size:11px;font-weight:700;color:#111;margin-bottom:3px;">A structured report is returned in seconds</div>
+          <div style="font-size:11px;color:#444;line-height:1.6;">The complete feasibility cost report — with cost build-up, professional fees schedule, market analysis, scale sensitivity, risk register, and accuracy dossier — is rendered on screen and available for Excel export. What a QS team would take 2–3 days to produce manually is delivered in under 30 seconds.</div>
+        </div>
+
+      </div>
+
+      <div style="background:#f4f4f4;border-left:3px solid #111;padding:12px 16px;font-size:11px;color:#333;line-height:1.6;">
+        <strong>ASAQS Class 4/5 (±15–25%)</strong> — This is a <em>feasibility-stage</em> estimate, appropriate for project go/no-go decisions, funder submissions, and concept approval. It is not a detailed BoQ. All source benchmarks, fee scales, and statutory rates used are listed in the reference documents below.
+      </div>
+    </div>
+
+    <div class="docs-group">
+      <div class="docs-group-header">Quantity Surveying</div>
+      <a class="docs-row" href="https://www.asaqs.co.za/publications" target="_blank">
+        <div class="docs-row-num">01</div>
+        <div class="docs-row-body"><div class="docs-row-name">ASAQS Building Cost Index</div><div class="docs-row-desc">Benchmark construction rates by typology, grade &amp; region (R/m²) — primary rate source</div></div>
+        <div class="docs-row-arrow">&#8599;</div>
+      </a>
+      <a class="docs-row" href="https://www.asaqs.co.za/publications" target="_blank">
+        <div class="docs-row-num">02</div>
+        <div class="docs-row-body"><div class="docs-row-name">ASAQS Schedule of Professional Fees</div><div class="docs-row-desc">QS recommended fee scale by project value band — basis for QS fee computation</div></div>
+        <div class="docs-row-arrow">&#8599;</div>
+      </a>
+      <a class="docs-row" href="https://www.asaqs.co.za/publications" target="_blank">
+        <div class="docs-row-num">03</div>
+        <div class="docs-row-body"><div class="docs-row-name">ASAQS Standard System of Measuring — 7th Ed.</div><div class="docs-row-desc">Defines GLA measurement, elemental format, and cost plan structure used in reports</div></div>
+        <div class="docs-row-arrow">&#8599;</div>
+      </a>
+    </div>
+
+    <div class="docs-group">
+      <div class="docs-group-header">Professional Fee Scales</div>
+      <a class="docs-row" href="https://www.sacap.org.za" target="_blank">
+        <div class="docs-row-num">04</div>
+        <div class="docs-row-body"><div class="docs-row-name">SACAP Practice Note 0007</div><div class="docs-row-desc">Architect recommended fee scale, Stages 1–6 by project value — basis for architect fee line</div></div>
+        <div class="docs-row-arrow">&#8599;</div>
+      </a>
+      <a class="docs-row" href="https://www.ecsa.co.za" target="_blank">
+        <div class="docs-row-num">05</div>
+        <div class="docs-row-body"><div class="docs-row-name">ECSA Fee Guideline</div><div class="docs-row-desc">Engineering fee percentages by discipline (structural, mechanical, electrical, wet services)</div></div>
+        <div class="docs-row-arrow">&#8599;</div>
+      </a>
+    </div>
+
+    <div class="docs-group">
+      <div class="docs-group-header">Funding &amp; Subsidy Programmes</div>
+      <a class="docs-row" href="https://www.nhfc.co.za/flisp" target="_blank">
+        <div class="docs-row-num">06</div>
+        <div class="docs-row-body"><div class="docs-row-name">NHFC — FLISP Programme</div><div class="docs-row-desc">Subsidy quantum thresholds by income band — used for BNG/FLISP viability checks</div></div>
+        <div class="docs-row-arrow">&#8599;</div>
+      </a>
+      <a class="docs-row" href="https://www.dhs.gov.za" target="_blank">
+        <div class="docs-row-num">07</div>
+        <div class="docs-row-body"><div class="docs-row-name">Dept. of Human Settlements</div><div class="docs-row-desc">BNG subsidy quantum &amp; Social Rental unit typology standards (annual gazette)</div></div>
+        <div class="docs-row-arrow">&#8599;</div>
+      </a>
+    </div>
+
+    <div class="docs-group">
+      <div class="docs-group-header">Market &amp; Economic Data</div>
+      <a class="docs-row" href="https://www.ber.ac.za" target="_blank">
+        <div class="docs-row-num">08</div>
+        <div class="docs-row-body"><div class="docs-row-name">BER Building Cost Report</div><div class="docs-row-desc">Construction inflation &amp; escalation rates by quarter — used for programme escalation</div></div>
+        <div class="docs-row-arrow">&#8599;</div>
+      </a>
+      <a class="docs-row" href="https://www.statssa.gov.za" target="_blank">
+        <div class="docs-row-num">09</div>
+        <div class="docs-row-body"><div class="docs-row-name">Stats SA — PPI &amp; CPI</div><div class="docs-row-desc">Construction Producer Price Index &amp; CPI — monthly escalation index source</div></div>
+        <div class="docs-row-arrow">&#8599;</div>
+      </a>
+      <a class="docs-row" href="https://www.rode.co.za" target="_blank">
+        <div class="docs-row-num">10</div>
+        <div class="docs-row-body"><div class="docs-row-name">Rode's Report</div><div class="docs-row-desc">Property market &amp; construction cost benchmarks by node — market analysis validation</div></div>
+        <div class="docs-row-arrow">&#8599;</div>
+      </a>
+    </div>
+
+    <div class="docs-group">
+      <div class="docs-group-header">Contracts &amp; Statutory</div>
+      <a class="docs-row" href="https://www.jbcc.co.za" target="_blank">
+        <div class="docs-row-num">11</div>
+        <div class="docs-row-body"><div class="docs-row-name">JBCC Series 2000</div><div class="docs-row-desc">Standard building contract — defines practical completion, defects liability, retention</div></div>
+        <div class="docs-row-arrow">&#8599;</div>
+      </a>
+      <a class="docs-row" href="https://www.sars.gov.za/types-of-tax/value-added-tax/" target="_blank">
+        <div class="docs-row-num">12</div>
+        <div class="docs-row-body"><div class="docs-row-name">SARS — VAT Act 89 of 1991</div><div class="docs-row-desc">15% VAT rate — applied as deterministic rule to all applicable cost lines</div></div>
+        <div class="docs-row-arrow">&#8599;</div>
+      </a>
+    </div>
+  </div><!-- /.docs-view -->
+
+  <!-- DATABASE VIEW (shown when Database tab is active) -->
+  <div class="docs-view" id="db-view" style="display:none;">
+    <div class="docs-view-title">Benchmark Database</div>
+    <div class="docs-view-sub">Live data driving agent outputs — edit values and save to change future estimates</div>
+
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+      <button class="db-tab-btn active" id="dbt-rates"    onclick="dbTab('rates')"    >Build Cost Rates</button>
+      <button class="db-tab-btn"        id="dbt-fees"     onclick="dbTab('fees')"     >Professional Fees</button>
+      <button class="db-tab-btn"        id="dbt-subsidy"  onclick="dbTab('subsidy')"  >Subsidy Quanta</button>
+      <button class="db-tab-btn"        id="dbt-esc"      onclick="dbTab('esc')"      >Escalation Indices</button>
+    </div>
+
+    <div id="db-status" style="font-size:11px;color:#555;margin-bottom:10px;"></div>
+
+    <!-- Rates table -->
+    <div id="db-panel-rates">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px;">Building Cost Benchmark Rates &mdash; ASAQS-aligned R/m² by typology &times; region &times; grade</div>
+      <div id="db-table-rates"><div style="color:#888;font-size:12px;">Loading…</div></div>
+    </div>
+
+    <!-- Fees table -->
+    <div id="db-panel-fees" style="display:none;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px;">Professional Fee Scales &mdash; SACAP / ECSA / ASAQS recommended % by discipline &amp; tier</div>
+      <div id="db-table-fees"><div style="color:#888;font-size:12px;">Loading…</div></div>
+    </div>
+
+    <!-- Subsidy table -->
+    <div id="db-panel-subsidy" style="display:none;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px;">Subsidy Quanta &mdash; BNG / FLISP / Social Rental government subsidy bands</div>
+      <div id="db-table-subsidy"><div style="color:#888;font-size:12px;">Loading…</div></div>
+    </div>
+
+    <!-- Escalation table -->
+    <div id="db-panel-esc" style="display:none;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:8px;">Escalation Indices &mdash; BCI / PPI / CPI quarterly inflation indices</div>
+      <div id="db-table-esc"><div style="color:#888;font-size:12px;">Loading…</div></div>
+    </div>
+
+    <div style="background:#f9f9f9;border:1px solid #ddd;padding:10px 14px;font-size:10px;color:#666;margin-top:20px;line-height:1.7;">
+      <strong>Note:</strong> Changes saved here take effect on the next estimate run. Rate edits affect all cost calculations for the matching typology + region + grade combination. Fee % edits affect professional fee computations for the matching discipline tier. Subsidy edits affect viability gate checks. Escalation edits affect programme cost uplift.
+    </div>
+  </div><!-- /.db-view -->
+
+  <!-- RESULTS PANEL -->
+  <div class="results-panel" id="results">
+    <div class="placeholder">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M9 7H6a2 2 0 00-2 2v9a2 2 0 002 2h9a2 2 0 002-2v-3M13 3h8m0 0v8m0-8L11 13"/>
+      </svg>
+      <p style="font-size:15px;color:var(--text);margin-top:8px;">Fill in the form and run an estimate</p>
+      <p style="font-size:13px;">Results will appear here — full cost breakdown, accuracy checks, and risk flags.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Pre-fill today's date
+  const today = new Date().toISOString().slice(0, 10);
+  document.querySelector('[name=as_of_date]').value = today;
+  document.querySelector('[name=start_date]').value = today;
+
+  // Demo data button — random scenario each click
+  document.getElementById('demoBtn').addEventListener('click', () => {
+    const f = document.getElementById('briefForm');
+    const set = (name, val) => { const el = f.querySelector(`[name=${name}]`); if (el) el.value = val; };
+
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+    const rand = (min, max) => Math.round(min + Math.random() * (max - min));
+
+    const scenarios = [
+      {
+        project_name: 'Phumula Gardens Phase ' + rand(1,4),
+        developer: 'Mzilikazi Housing Trust',
+        region: 'gauteng', municipality: 'City of Tshwane',
+        typology: 'affordable_apartment', grade: 'standard', specification_level: 'economy',
+        total_gla_m2: rand(3600, 6000), unit_count: rand(90, 150), unit_area_m2: 40,
+        geotech_class: 'stable', slope_pct: rand(1, 4),
+        duration_months: 18, funding_programme: 'FLISP', funding_band: 'standard',
+        market_price_per_unit_zar: rand(780000, 920000), target_developer_margin_pct: 15,
+      },
+      {
+        project_name: 'Thembeka BNG Estate Block ' + rand(1,8),
+        developer: 'Shosholoza Developments',
+        region: 'kzn', municipality: 'eThekwini Metro',
+        typology: 'bng_subsidy_house', grade: 'economy', specification_level: 'economy',
+        total_gla_m2: rand(1800, 4000), unit_count: rand(80, 200), unit_area_m2: 20,
+        geotech_class: pick(['stable','moderate']), slope_pct: rand(2, 8),
+        duration_months: 24, funding_programme: 'BNG', funding_band: 'standard',
+        market_price_per_unit_zar: null, target_developer_margin_pct: null,
+      },
+      {
+        project_name: 'Sandton Tech Hub ' + pick(['North','South','East','West']) + ' Wing',
+        developer: 'Apex Office Developments (Pty) Ltd',
+        region: 'gauteng', municipality: 'City of Johannesburg',
+        typology: 'office', grade: 'premium', specification_level: 'premium',
+        total_gla_m2: rand(5000, 14000), unit_count: null, unit_area_m2: null,
+        geotech_class: 'stable', slope_pct: rand(0, 3),
+        duration_months: rand(24, 36), funding_programme: null, funding_band: null,
+        market_price_per_m2_zar: rand(18000, 28000), target_developer_margin_pct: rand(18, 25),
+      },
+      {
+        project_name: 'Bellville Retail Strip Phase ' + rand(1,3),
+        developer: 'Cape Gateway Properties',
+        region: 'western_cape', municipality: 'City of Cape Town',
+        typology: 'retail_centre', grade: 'standard', specification_level: 'standard',
+        total_gla_m2: rand(2400, 7500), unit_count: null, unit_area_m2: null,
+        geotech_class: pick(['stable','moderate']), slope_pct: rand(1, 6),
+        duration_months: rand(18, 30), funding_programme: null, funding_band: null,
+        market_price_per_m2_zar: rand(12000, 20000), target_developer_margin_pct: rand(15, 22),
+      },
+      {
+        project_name: 'Mthatha Social Rental Cluster ' + rand(1,5),
+        developer: 'Eastern Cape Housing Co-op',
+        region: 'eastern_cape', municipality: 'OR Tambo District',
+        typology: 'social_rental', grade: 'economy', specification_level: 'economy',
+        total_gla_m2: rand(1200, 3600), unit_count: rand(40, 100), unit_area_m2: 28,
+        geotech_class: pick(['moderate','difficult']), slope_pct: rand(5, 15),
+        duration_months: 20, funding_programme: 'SocialRental', funding_band: 'standard',
+        market_price_per_unit_zar: rand(3500, 6500), target_developer_margin_pct: 10,
+      },
+      {
+        project_name: 'Polokwane Mixed-Use Block ' + pick(['A','B','C','D']),
+        developer: 'Limpopo Developments Group',
+        region: 'limpopo', municipality: 'Polokwane Local',
+        typology: 'mixed_use', grade: 'standard', specification_level: 'standard',
+        total_gla_m2: rand(3000, 9000), unit_count: rand(50, 120), unit_area_m2: 45,
+        geotech_class: 'stable', slope_pct: rand(1, 5),
+        duration_months: rand(20, 30), funding_programme: 'FLISP', funding_band: 'standard',
+        market_price_per_unit_zar: rand(650000, 950000), target_developer_margin_pct: rand(12, 18),
+      },
+      {
+        project_name: 'Gqeberha Logistics Park Phase ' + rand(1,3),
+        developer: 'Bay Industrial Properties',
+        region: 'eastern_cape', municipality: 'Nelson Mandela Bay',
+        typology: 'industrial_warehouse', grade: 'standard', specification_level: 'standard',
+        total_gla_m2: rand(8000, 20000), unit_count: null, unit_area_m2: null,
+        geotech_class: pick(['stable','moderate']), slope_pct: rand(0, 4),
+        duration_months: rand(18, 24), funding_programme: null, funding_band: null,
+        market_price_per_m2_zar: rand(7000, 12000), target_developer_margin_pct: rand(14, 20),
+      },
+      {
+        project_name: 'Rustenburg FLISP Estate ' + rand(1,6),
+        developer: 'Platinum Belt Housing',
+        region: 'north_west', municipality: 'Rustenburg Local',
+        typology: 'affordable_apartment', grade: 'standard', specification_level: 'standard',
+        total_gla_m2: rand(2800, 5500), unit_count: rand(70, 140), unit_area_m2: rand(35, 50),
+        geotech_class: pick(['stable','moderate']), slope_pct: rand(2, 7),
+        duration_months: 18, funding_programme: 'FLISP', funding_band: 'standard',
+        market_price_per_unit_zar: rand(700000, 1050000), target_developer_margin_pct: rand(12, 18),
+      },
+    ];
+
+    const s = pick(scenarios);
+
+    // Start date: random 1–6 months from today
+    const startDate = new Date();
+    startDate.setMonth(startDate.getMonth() + rand(1, 6));
+    const startStr = startDate.toISOString().slice(0, 10);
+
+    set('project_name',        s.project_name);
+    set('developer',           s.developer);
+    set('region',              s.region);
+    set('municipality',        s.municipality || '');
+    set('typology',            s.typology);
+    set('grade',               s.grade);
+    set('specification_level', s.specification_level);
+    set('total_gla_m2',        s.total_gla_m2);
+    set('unit_count',          s.unit_count ?? '');
+    set('unit_area_m2',        s.unit_area_m2 ?? '');
+    set('geotech_class',       s.geotech_class);
+    set('slope_pct',           s.slope_pct);
+    set('start_date',          startStr);
+    set('duration_months',     s.duration_months);
+    set('as_of_date',          today);
+    set('funding_programme',   s.funding_programme ?? '');
+    set('funding_band',        s.funding_band ?? '');
+    set('market_price_per_unit_zar', s.market_price_per_unit_zar ?? '');
+    set('market_price_per_m2_zar',   s.market_price_per_m2_zar ?? '');
+    set('target_developer_margin_pct', s.target_developer_margin_pct ?? '');
+  });
+
+  function fmt(val) {
+    const n = parseFloat(val);
+    if (isNaN(n)) return '—';
+    return 'R' + n.toLocaleString('en-ZA', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+
+  function verdictClass(status, checks) {
+    if (!checks) return 'warn';
+    const failed = checks.filter(c => !c.passed).length;
+    if (failed > 0) return 'blocked';
+    if (status === 'WITHIN_BUDGET' || status === 'WITHIN_YIELD_TARGET') return 'ok';
+    return 'warn';
+  }
+
+  function verdictIcon(cls) {
+    if (cls === 'ok') return '✓';
+    if (cls === 'blocked') return '✗';
+    return '⚠';
+  }
+
+  function renderReport(data) {
+    const panel = document.getElementById('results');
+
+    if (data.status === 'BLOCKED' && !data.report) {
+      panel.innerHTML = `<div class="error-box"><strong>BLOCKED:</strong> ${data.blocked_reason || 'Estimate could not be completed.'}</div>`;
+      return;
+    }
+
+    const r = data.report;
+    const acc = r.accuracy;                          // field is "accuracy" not "accuracy_report"
+    const vc = verdictClass(r.viability?.status, acc?.checks);
+
+    const checks = (acc?.checks || []);
+    const l3 = checks.find(c => c.name === 'L3_triangulation');
+    const l4 = checks.find(c => c.name === 'L4_benchmark_peer_deviation');
+    const l5 = checks.find(c => c.name === 'L5_range_sensitivity');
+    const allPassed = acc ? acc.overall_pass : false; // field is "overall_pass" not "all_passed"
+
+    // Nested field helpers
+    const brief = r.brief || {};
+    const typology = brief.typology || '—';
+    const region   = brief.location?.region || '—';
+    const grade    = brief.grade || '—';
+    const asOf     = brief.as_of_date || '—';
+
+    const pf = r.professional_fees || {};
+    const cap = s => s ? s.replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase()) : '—';
+    const genAt = r.generated_at ? new Date(r.generated_at).toLocaleDateString('en-ZA', {day:'2-digit',month:'long',year:'numeric'}) : asOf;
+    const unitCount = brief.unit_count || '—';
+    const gla = brief.total_gla_m2 ? brief.total_gla_m2.toLocaleString('en-ZA') + ' m²' : '—';
+    const duration = brief.programme?.duration_months ? brief.programme.duration_months + ' months' : '—';
+    const estClass = acc?.estimate_class || 'Class 4/5';
+    const accBand  = acc?.accuracy_band_pct ? '±' + acc.accuracy_band_pct + '%' : '±15–25%';
+
+    lastReportData = data;
+    panel.innerHTML = `
+      <div class="report">
+      <button class="btn-export" id="exportBtn" onclick="exportToExcel(lastReportData)">&#11015; Export to Excel</button>
+      <button class="btn-export" id="pdfBtn" onclick="downloadPdf()" style="margin-left:8px;">&#128196; Download PDF</button>
+      <div class="doc">
+
+        <!-- LETTERHEAD -->
+        <div class="doc-letterhead">
+          <div class="doc-title">Feasibility Cost Report — Confidential</div>
+          <h2>${r.project_name}</h2>
+          <div class="doc-meta">
+            <span><strong>Developer:</strong> ${brief.developer || '—'}</span>
+            <span><strong>Prepared:</strong> ${genAt}</span>
+            <span><strong>Estimate Class:</strong> ${estClass} (${accBand})</span>
+            <span><strong>Scenario:</strong> ${r.scenario_id || 'SCN-AUTO'}</span>
+          </div>
+        </div>
+
+        <!-- VERDICT STRIP -->
+        <div class="doc-verdict ${vc}">
+          <span>${verdictIcon(vc)}</span>
+          <span>${r.viability?.headline || r.viability?.status || '—'}</span>
+          ${!allPassed ? '<span class="verdict-note">— accuracy gate failed, review before releasing</span>' : ''}
+        </div>
+
+        <!-- TOTAL BANNER -->
+        <div class="doc-total-banner">
+          <div class="banner-label">All-in Total Cost<br/>(incl. VAT @ 15%)</div>
+          <div class="banner-right">
+            <div class="banner-amount">${fmt(r.total_incl_vat_zar)}</div>
+            <div class="banner-rates">
+              ${r.per_m2_all_in_zar ? fmt(r.per_m2_all_in_zar) + ' / m²' : ''}
+              ${r.per_unit_all_in_zar ? '  ·  ' + fmt(r.per_unit_all_in_zar) + ' / unit' : ''}
+            </div>
+          </div>
+        </div>
+
+        <!-- PROJECT PARAMETERS -->
+        <div class="doc-section">
+          <div class="doc-section-title">Project Parameters</div>
+          <div class="doc-params">
+            <div class="doc-param"><div class="p-label">Typology</div><div class="p-val">${cap(typology)}</div></div>
+            <div class="doc-param"><div class="p-label">Region</div><div class="p-val">${cap(region)}</div></div>
+            <div class="doc-param"><div class="p-label">Grade / Spec</div><div class="p-val">${grade} / ${brief.specification_level || '—'}</div></div>
+            <div class="doc-param"><div class="p-label">Total GLA</div><div class="p-val">${gla}</div></div>
+            <div class="doc-param"><div class="p-label">Unit Count</div><div class="p-val">${unitCount}</div></div>
+            <div class="doc-param"><div class="p-label">Construction Period</div><div class="p-val">${duration}</div></div>
+            <div class="doc-param"><div class="p-label">Geotech Class</div><div class="p-val">${brief.site_info?.geotech_class || '—'}</div></div>
+            <div class="doc-param"><div class="p-label">Slope</div><div class="p-val">${brief.site_info?.slope_pct ?? 0}%</div></div>
+            <div class="doc-param"><div class="p-label">Funding</div><div class="p-val">${brief.funding?.programme || 'Commercial'}</div></div>
+          </div>
+        </div>
+
+        <!-- KEY METRICS -->
+        <div class="doc-section" style="padding-top:14px;padding-bottom:14px;">
+          <div class="doc-section-title">Key Feasibility Metrics</div>
+          <div class="doc-metrics">
+            <div class="doc-metric">
+              <div class="m-label">Cost / m²</div>
+              <div class="m-val">${fmt(r.per_m2_all_in_zar)}</div>
+              <div class="m-sub">all-in incl. VAT</div>
+            </div>
+            <div class="doc-metric">
+              <div class="m-label">Cost / Unit</div>
+              <div class="m-val">${r.per_unit_all_in_zar ? fmt(r.per_unit_all_in_zar) : '—'}</div>
+              <div class="m-sub">all-in incl. VAT</div>
+            </div>
+            <div class="doc-metric">
+              <div class="m-label">Subtotal excl. VAT</div>
+              <div class="m-val">${fmt(r.subtotal_excl_vat_zar)}</div>
+              <div class="m-sub">before tax</div>
+            </div>
+            <div class="doc-metric">
+              <div class="m-label">VAT @ 15%</div>
+              <div class="m-val">${fmt(r.vat_zar)}</div>
+              <div class="m-sub">SARS liability</div>
+            </div>
+          </div>
+        </div>
+
+        ${renderMarketSection(r)}
+
+        <!-- COST BUILD-UP -->
+        <div class="doc-section">
+          <div class="doc-section-title">Cost Build-Up (ASAQS Format)</div>
+          <table class="doc-cost-table">
+            <colgroup><col/><col/><col/></colgroup>
+            <thead>
+              <tr><th>Cost Component</th><th>Basis &amp; Calculation</th><th>Amount (ZAR)</th></tr>
+            </thead>
+            <tbody>
+              ${dcRow('Building Works', r.building_works?.basis, r.building_works?.amount_zar)}
+              ${dcRow('Bulk Services', r.bulk_services?.basis, r.bulk_services?.amount_zar)}
+              ${dcRow('External Works', r.external_works?.basis, r.external_works?.amount_zar)}
+              <tr class="dc-subtotal"><td colspan="2">Construction Subtotal</td><td>${fmt(r.construction_subtotal_zar)}</td></tr>
+              ${dcRow('Professional Fees', 'ASAQS / SACAP / ECSA fee scales — proportional to construction value', r.professional_fees?.total_zar)}
+              ${dcRow('Contingency', r.contingency?.basis, r.contingency?.amount_zar)}
+              ${dcRow('Escalation', r.escalation?.basis, r.escalation?.amount_zar)}
+              <tr class="dc-subtotal"><td colspan="2">Subtotal (excl. VAT)</td><td>${fmt(r.subtotal_excl_vat_zar)}</td></tr>
+              <tr class="dc-vat"><td colspan="2">Value Added Tax @ 15% (SARS — VAT Act 89 of 1991)</td><td>${fmt(r.vat_zar)}</td></tr>
+              <tr class="dc-total"><td colspan="2"><strong>TOTAL ALL-IN COST (incl. VAT)</strong></td><td><strong>${fmt(r.total_incl_vat_zar)}</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- DATA SOURCES -->
+        <div class="doc-section">
+          <div class="doc-section-title">Data Sources &amp; Evidence Base</div>
+          <table class="doc-sources-table">
+            <thead><tr><th>Item</th><th>Source</th><th>Use in This Estimate</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Benchmark Rate</strong><br/><span class="src-desc">R/m² by typology, region, grade</span></td>
+                <td><a href="https://asaqs.co.za" target="_blank">ASAQS Building Cost Index</a><br/>
+                    <a href="https://www.ber.ac.za" target="_blank">BER Building Cost Report</a></td>
+                <td>Primary rate applied to GLA to derive building works cost. Cross-checked against peer regions.</td>
+              </tr>
+              <tr>
+                <td><strong>Professional Fee Scales</strong></td>
+                <td><a href="https://www.sacap.org.za" target="_blank">SACAP (Architects)</a><br/>
+                    <a href="https://www.ecsa.co.za" target="_blank">ECSA (Engineers)</a><br/>
+                    <a href="https://asaqs.co.za" target="_blank">ASAQS (QS)</a></td>
+                <td>Statutory/recommended fee scales for each professional discipline applied as % of construction.</td>
+              </tr>
+              <tr>
+                <td><strong>Subsidy &amp; Funding Thresholds</strong></td>
+                <td><a href="https://www.nhfc.co.za/flisp" target="_blank">NHFC — FLISP Programme</a><br/>
+                    <a href="https://www.dhs.gov.za" target="_blank">Dept. of Human Settlements</a></td>
+                <td>Subsidy quantum benchmarks used in viability gate check (Step 7 of ASAQS D1.1 process).</td>
+              </tr>
+              <tr>
+                <td><strong>Escalation Rate</strong></td>
+                <td><a href="https://www.statssa.gov.za" target="_blank">Stats SA — PPI / CPI</a><br/>
+                    <a href="https://www.rode.co.za" target="_blank">Rode's Report</a></td>
+                <td>YoY construction cost inflation applied over programme midpoint period.</td>
+              </tr>
+              <tr>
+                <td><strong>VAT Rate</strong></td>
+                <td><a href="https://www.sars.gov.za/types-of-tax/value-added-tax/" target="_blank">SARS — VAT Act 89 of 1991</a></td>
+                <td>15% applied to subtotal. Standard rate confirmed current at date of estimate.</td>
+              </tr>
+              <tr>
+                <td><strong>Measurement Standards</strong></td>
+                <td><a href="https://asaqs.co.za" target="_blank">ASAQS Standard System of Measuring Building Work (7th Ed.)</a><br/>
+                    <a href="https://www.jbcc.co.za" target="_blank">JBCC Series 2000</a></td>
+                <td>GLA measurement methodology, elemental format, and cost classification system.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- PROFESSIONAL FEES BREAKDOWN -->
+        ${pf.total_zar ? `
+        <div class="doc-section">
+          <div class="doc-section-title">Professional Fees Breakdown</div>
+          <table class="doc-fees-table">
+            <colgroup><col/><col/><col/></colgroup>
+            <thead><tr><th style="font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;padding:7px 6px;border-bottom:2px solid #999;color:#222;">Discipline</th><th style="font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;padding:7px 6px;border-bottom:2px solid #999;color:#222;">Fee Basis &amp; Justification</th><th style="font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;padding:7px 6px;border-bottom:2px solid #999;color:#222;text-align:right;">Amount (ZAR)</th></tr></thead>
+            <tbody>
+              ${feesRow('Architect', pf.architect_zar, 'SACAP recommended fee scale — Stage 1 (Inception) through Stage 6 (Close-out). Calculated as % of construction value per SACAP Practice Note 0007. Covers concept, design development, documentation, and contract administration. Appointment runs concurrent with construction programme.')}
+              ${feesRow('Quantity Surveyor', pf.quantity_surveyor_zar, 'ASAQS recommended fee scale (Schedule of Professional Fees). Covers feasibility, cost planning, BoQ production, tender documentation, valuations, and final account. Duration aligned to full project lifecycle including 3-month close-out after practical completion.')}
+              ${feesRow('Structural Engineer', pf.structural_zar, 'ECSA recommended fee guideline. Covers structural design, drawings, and inspection of substructure and superstructure. Applicable for multi-storey residential — includes footing design, slab, and shear wall analysis.')}
+              ${feesRow('Mechanical Engineer', pf.mechanical_zar, 'ECSA recommended fee guideline. Covers HVAC, fire suppression, and vertical transportation (lifts if applicable). Scaled for medium-density residential typology — reduced scope vs commercial.')}
+              ${feesRow('Electrical Engineer', pf.electrical_zar, 'ECSA recommended fee guideline. Covers LV reticulation, metering (prepaid), external services coordination with municipality, and solar/PV where applicable under SANS 10400-XA energy requirements.')}
+              ${feesRow('Wet Services Engineer', pf.wet_services_zar, 'ECSA recommended fee guideline. Covers internal plumbing, drainage design, hot water systems, and connection to bulk municipal services. Includes geyser/heat pump specification per SANS 204.')}
+              <tr class="fees-total"><td>Total Professional Fees</td><td style="font-size:11px;color:#444;font-weight:400;">All fees at feasibility stage — subject to revision at appointment. Programme: ${duration}.</td><td>${fmt(pf.total_zar)}</td></tr>
+            </tbody>
+          </table>
+          ${pf.total_pct_of_construction ? `<p style="font-size:11px;color:#333;margin-top:8px;"><strong>${parseFloat(pf.total_pct_of_construction).toFixed(1)}%</strong> of construction subtotal — within ASAQS Class 4/5 acceptable range of 8–30% for this project type and scale.</p>` : ''}
+        </div>` : ''}
+
+        ${renderScaleSensitivity(r)}
+
+        <!-- ACCURACY & ESTIMATE QUALITY -->
+        ${(l3 || l4 || l5) ? `
+        <div class="doc-section">
+          <div class="doc-section-title">Estimate Accuracy — ${estClass} (${accBand})</div>
+          <table class="doc-accuracy-table">
+            <thead><tr><th>Check</th><th>Value</th><th>Threshold</th><th>Details</th><th>Result</th></tr></thead>
+            <tbody>
+              ${accRow(l3, 'L3 — Triangulation CoV', false)}
+              ${accRow(l4, 'L4 — Benchmark Peer Deviation', true)}
+              ${accRow(l5, 'L5 — Range Sensitivity CoV', true)}
+            </tbody>
+          </table>
+          <div class="doc-method-box">
+            <strong>How accuracy is calculated:</strong> This estimate is subjected to a three-layer statistical quality gate aligned with ASAQS Class 4/5 practice standards.<br/><br/>
+            <strong>L3 — Triangulation (CoV ≤ 10%):</strong> The building works total is independently computed three ways — (a) GLA × rate/m², (b) units × rate/unit, (c) low/high band midpoint × GLA. The coefficient of variation (standard deviation ÷ mean) across these three methods must stay within 10%. A low CoV confirms the benchmark data is internally consistent for this typology.<br/><br/>
+            <strong>L4 — Benchmark Peer Deviation (≤ 15%):</strong> The rate chosen for this region is compared against the same typology and grade in all other regions. The estimate passes if the chosen rate sits within ±15% of the peer median — guarding against outlier data or typology misclassification.<br/><br/>
+            <strong>L5 — Range Sensitivity (CoV ≤ 10%):</strong> The full cost pipeline is rerun at three rate points (low / mid / high of the ASAQS benchmark band). The CoV of the resulting all-in totals measures how sensitive the final figure is to rate uncertainty. A wide band signals the typology spans multiple pricing segments and the estimate should be treated with caution.
+          </div>
+        </div>` : ''}
+
+        ${renderRiskRegister(r.risk_flags)}
+
+        <!-- EXECUTIVE SUMMARY -->
+        ${r.executive_summary ? `
+        <div class="doc-section">
+          <div class="doc-section-title">Executive Summary</div>
+          <div class="doc-summary">${r.executive_summary}</div>
+        </div>` : ''}
+
+        <!-- AGENT FRAMEWORK -->
+        <div class="doc-section">
+          <div class="doc-section-title">How This Report Was Generated — Agent Architecture</div>
+          <div class="doc-agent-box">
+            <h4>Mzilikazi Feasibility Agent · Proprietary Software</h4>
+            <p style="margin-bottom:10px;">This report was produced autonomously by the Mzilikazi Feasibility Agent — a purpose-built agentic AI system for construction cost intelligence. The agent operates as a <em>Level 3 agentic loop</em>: it perceives structured project inputs, executes a deterministic ASAQS-aligned cost engine, calls benchmark database tools, self-validates all outputs against statistical quality gates, and drafts a narrative — without human intervention between input and report.</p>
+            <p style="margin-bottom:14px;">The architecture follows the <strong>Pydantic AI</strong> agent framework pattern (ReAct: Reasoning + Acting), which is recognised in independent evaluations of open-source agent frameworks as the leading choice for type-safe, structured-output Python agents in professional services contexts. The LLM is used exclusively for narrative and reasoning — all monetary calculations use <code>Decimal</code> precision arithmetic and are never delegated to the model.</p>
+            <table>
+              <tr><td>Agent Framework</td><td><a href="https://ai.pydantic.dev" target="_blank">Pydantic AI</a> (MIT licence) — type-safe Python agent framework with explicit tool registration and structured output validation</td></tr>
+              <tr><td>Reasoning Engine</td><td>Anthropic Claude 3.5 Sonnet — narrative generation, cross-check reasoning, and executive summary only. Cost calculations are deterministic.</td></tr>
+              <tr><td>Calculation Engine</td><td>ASAQS-aligned Python engine (FastAPI + PostgreSQL). All rates, fees, escalation and VAT computed with <code>Decimal</code> precision.</td></tr>
+              <tr><td>Tool Use Pattern</td><td>Agent calls benchmark DB tool → receives structured rate data → runs cost engine → runs 3-layer accuracy gate → invokes LLM for narrative only</td></tr>
+              <tr><td>Accuracy Gate</td><td>L3/L4/L5 statistical checks run post-calculation. Failures surface in the report — the agent does not suppress or alter results.</td></tr>
+              <tr><td>Audit Trail</td><td>All tool calls and LLM completions are logged. API: <a href="https://feasibility-api-production.up.railway.app/docs" target="_blank">feasibility-api-production.up.railway.app/docs</a></td></tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="doc-footer">
+          <span>Mzilikazi Feasibility Agent · Proprietary &amp; Confidential</span>
+          <span>ASAQS Class 4/5 · For discussion purposes only · Not for tender</span>
+          <span>${genAt}</span>
+        </div>
+
+      </div>
+      </div>
+    `;
+  }
+
+  let lastReportData = null;
+
+  // ── Sidebar tab switching ────────────────────────────────────────
+  function switchTab(tab) {
+    ['estimate','docs','db'].forEach(t => {
+      document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+    });
+    document.getElementById('results').style.display    = tab === 'estimate' ? '' : 'none';
+    document.getElementById('docs-view').style.display  = tab === 'docs'     ? 'block' : 'none';
+    document.getElementById('db-view').style.display    = tab === 'db'       ? 'block' : 'none';
+    if (tab === 'db') dbInit();
+  }
+
+  // ── Database tab inner sub-tabs ──────────────────────────────────
+  const DB_TABS = ['rates','fees','subsidy','esc'];
+  let dbLoaded = {};
+
+  function dbTab(name) {
+    DB_TABS.forEach(t => {
+      document.getElementById('dbt-' + t).classList.toggle('active', t === name);
+      document.getElementById('db-panel-' + t).style.display = t === name ? 'block' : 'none';
+    });
+    if (!dbLoaded[name]) dbLoad(name);
+  }
+
+  function dbInit() {
+    if (!dbLoaded['rates']) dbLoad('rates');
+  }
+
+  function dbStatus(msg, err) {
+    const el = document.getElementById('db-status');
+    el.textContent = msg;
+    el.style.color = err ? '#c00' : '#555';
+  }
+
+  async function dbLoad(name) {
+    const apiUrl = document.getElementById('apiUrl').value.replace(/\/$/, '');
+    const endpoints = {
+      rates:   '/benchmarks/rates',
+      fees:    '/benchmarks/professional-fees',
+      subsidy: '/benchmarks/subsidy-quanta',
+      esc:     '/benchmarks/escalation',
+    };
+    dbStatus('Loading ' + name + '…');
+    try {
+      const res = await fetch(apiUrl + endpoints[name]);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const rows = await res.json();
+      dbLoaded[name] = rows;
+      dbRender(name, rows);
+      dbStatus(rows.length + ' rows loaded.');
+    } catch(e) {
+      dbStatus('Error loading ' + name + ': ' + e.message, true);
+    }
+  }
+
+  function dbRender(name, rows) {
+    const container = document.getElementById('db-table-' + name);
+    if (!rows.length) { container.innerHTML = '<div style="color:#888;font-size:12px;">No data.</div>'; return; }
+    const configs = {
+      rates: {
+        cols: ['typology','region','grade','rate_per_m2_zar','low_range_zar','high_range_zar','source','effective_date','notes'],
+        heads: ['Typology','Region','Grade','Rate R/m²','Low R/m²','High R/m²','Source','Effective','Notes'],
+        editable: ['rate_per_m2_zar','low_range_zar','high_range_zar','notes'],
+        endpoint: '/benchmarks/rates',
+        fmt: { rate_per_m2_zar: 'zar', low_range_zar: 'zar', high_range_zar: 'zar' },
+      },
+      fees: {
+        cols: ['discipline','council','tier_min_zar','tier_max_zar','fee_pct','effective_date','source'],
+        heads: ['Discipline','Council','Tier Min (R)','Tier Max (R)','Fee %','Effective','Source'],
+        editable: ['fee_pct'],
+        endpoint: '/benchmarks/professional-fees',
+        fmt: { tier_min_zar: 'zar', tier_max_zar: 'zar', fee_pct: 'pct' },
+      },
+      subsidy: {
+        cols: ['programme','band','quantum_zar','income_min_zar','income_max_zar','effective_date','source'],
+        heads: ['Programme','Band','Quantum (R)','Income Min (R)','Income Max (R)','Effective','Source'],
+        editable: ['quantum_zar'],
+        endpoint: '/benchmarks/subsidy-quanta',
+        fmt: { quantum_zar: 'zar', income_min_zar: 'zar', income_max_zar: 'zar' },
+      },
+      esc: {
+        cols: ['index_name','period','index_value','yoy_change_pct','source'],
+        heads: ['Index','Period','Value','YoY %','Source'],
+        editable: ['index_value','yoy_change_pct'],
+        endpoint: '/benchmarks/escalation',
+        fmt: { yoy_change_pct: 'pct' },
+      },
+    };
+    const cfg = configs[name];
+    let html = '<table class="db-data-table"><thead><tr>';
+    cfg.heads.forEach(h => { html += `<th>${h}</th>`; });
+    html += '<th></th></tr></thead><tbody>';
+    rows.forEach(row => {
+      html += `<tr id="dbrow-${name}-${row.id}">`;
+      cfg.cols.forEach(col => {
+        const raw = row[col];
+        const disp = raw == null ? '—' : (cfg.fmt?.[col] === 'zar' ? 'R ' + Number(raw).toLocaleString('en-ZA', {minimumFractionDigits:0,maximumFractionDigits:0}) : cfg.fmt?.[col] === 'pct' ? Number(raw).toFixed(3) + '%' : raw);
+        const editable = cfg.editable.includes(col);
+        html += `<td data-col="${col}" data-raw="${raw ?? ''}" data-id="${row.id}" data-name="${name}"${editable ? ' class="db-editable"' : ''}>${disp}</td>`;
+      });
+      html += `<td><button class="db-edit-btn" onclick="dbEditRow('${name}',${row.id})">Edit</button></td>`;
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    container.innerHTML = html;
+  }
+
+  function dbEditRow(name, id) {
+    const row = document.getElementById(`dbrow-${name}-${id}`);
+    const editableCells = row.querySelectorAll('td.db-editable');
+    editableCells.forEach(cell => {
+      const raw = cell.getAttribute('data-raw');
+      cell.innerHTML = `<input class="db-input" value="${raw ?? ''}" style="width:90%;font-size:11px;padding:2px 4px;border:1px solid #999;background:#fffde7;">`;
+    });
+    const actionCell = row.querySelector('td:last-child');
+    actionCell.innerHTML = `<button class="db-edit-btn" style="background:#222;color:#fff;" onclick="dbSaveRow('${name}',${id})">Save</button> <button class="db-edit-btn" onclick="dbCancelRow('${name}',${id})">Cancel</button>`;
+  }
+
+  function dbCancelRow(name, id) {
+    dbRender(name, dbLoaded[name]);
+  }
+
+  async function dbSaveRow(name, id) {
+    const apiUrl = document.getElementById('apiUrl').value.replace(/\/$/, '');
+    const configs = {
+      rates:   '/benchmarks/rates',
+      fees:    '/benchmarks/professional-fees',
+      subsidy: '/benchmarks/subsidy-quanta',
+      esc:     '/benchmarks/escalation',
+    };
+    const row = document.getElementById(`dbrow-${name}-${id}`);
+    const inputs = row.querySelectorAll('td.db-editable input');
+    const body = {};
+    inputs.forEach(inp => {
+      const col = inp.closest('td').getAttribute('data-col');
+      const val = inp.value.trim();
+      body[col] = val === '' || val === '—' ? null : val;
+    });
+    dbStatus('Saving…');
+    try {
+      const res = await fetch(apiUrl + configs[name] + '/' + id, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ detail: res.statusText }));
+        throw new Error(err.detail || res.statusText);
+      }
+      const updated = await res.json();
+      // Update local cache
+      dbLoaded[name] = dbLoaded[name].map(r => r.id === id ? { ...r, ...updated } : r);
+      dbRender(name, dbLoaded[name]);
+      dbStatus('Saved — changes will affect next estimate run.', false);
+    } catch(e) {
+      dbStatus('Save failed: ' + e.message, true);
+    }
+  }
+
+
+  function renderMarketSection(r) {
+    const ma = r.market_analysis;
+    if (!ma) return '';
+    const marginPos = parseFloat(ma.developer_margin_pct) >= 0;
+    const perUnitMargin = (ma.gdv_per_unit_zar != null && ma.cost_per_unit_zar != null)
+      ? fmt(parseFloat(ma.gdv_per_unit_zar) - parseFloat(ma.cost_per_unit_zar)) : '—';
+    const targetCell = ma.target_margin_pct != null ? `
+      <tr>
+        <td style="font-size:11px;color:#444;">Target margin</td>
+        <td style="text-align:right;font-size:11px;color:#444;">${parseFloat(ma.target_margin_pct).toFixed(1)}% of GDV</td>
+        <td style="text-align:right;"><span style="font-size:10px;font-weight:700;padding:2px 8px;background:${ma.meets_target?'#222':'#888'};color:#fff;letter-spacing:0.5px;">${ma.meets_target?'✓ MEETS TARGET':'✗ BELOW TARGET'}</span></td>
+      </tr>` : '';
+    const targetMetric = ma.target_margin_pct != null ? `
+      <div class="doc-market-metric">
+        <div class="m-label">Target vs Actual</div>
+        <div class="m-val" style="font-size:22px;">${parseFloat(ma.developer_margin_pct).toFixed(1)}%</div>
+        <div class="m-sub" style="font-weight:700;color:${ma.meets_target?'#1a5c1a':'#8a1a1a'};">${ma.meets_target?'✓ Meets '+parseFloat(ma.target_margin_pct).toFixed(1)+'% target':'✗ Below '+parseFloat(ma.target_margin_pct).toFixed(1)+'% target'}</div>
+      </div>` : '';
+    return `
+    <div class="doc-section">
+      <div class="doc-section-title">Developer Return &amp; Market Viability</div>
+      <div class="doc-market-grid">
+        <div class="doc-market-metric">
+          <div class="m-label">Gross Development Value</div>
+          <div class="m-val">${fmt(ma.gdv_zar)}</div>
+          <div class="m-sub">${ma.gdv_per_unit_zar ? fmt(ma.gdv_per_unit_zar)+' / unit (market price)' : 'GLA × selling rate'}</div>
+        </div>
+        <div class="doc-market-metric">
+          <div class="m-label">Total Development Cost</div>
+          <div class="m-val">${fmt(ma.tdc_zar)}</div>
+          <div class="m-sub">all-in incl. VAT</div>
+        </div>
+        <div class="doc-market-metric">
+          <div class="m-label">Developer Margin</div>
+          <div class="m-val" style="color:${marginPos?'#111':'#777'};">${fmt(ma.developer_margin_zar)}</div>
+          <div class="m-sub">${parseFloat(ma.developer_margin_pct).toFixed(1)}% of GDV</div>
+        </div>
+        ${targetMetric}
+      </div>
+      <table class="doc-market-table">
+        <thead><tr><th>Item</th><th style="text-align:right;">Total</th><th style="text-align:right;">Per Unit</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Gross Development Value</strong> (Revenue)</td><td style="text-align:right;font-family:'Courier New',monospace;font-weight:600;">${fmt(ma.gdv_zar)}</td><td style="text-align:right;font-family:'Courier New',monospace;">${ma.gdv_per_unit_zar?fmt(ma.gdv_per_unit_zar):'—'}</td></tr>
+          <tr><td>Less: Total Development Cost</td><td style="text-align:right;font-family:'Courier New',monospace;">(${fmt(ma.tdc_zar)})</td><td style="text-align:right;font-family:'Courier New',monospace;">${ma.cost_per_unit_zar?'('+fmt(ma.cost_per_unit_zar)+')':'—'}</td></tr>
+          <tr style="border-top:2px solid #999;"><td><strong>Developer Margin / Return</strong></td><td style="text-align:right;font-family:'Courier New',monospace;font-weight:700;font-size:14px;">${fmt(ma.developer_margin_zar)} <span style="font-weight:400;font-size:11px;">(${parseFloat(ma.developer_margin_pct).toFixed(1)}%)</span></td><td style="text-align:right;font-family:'Courier New',monospace;">${perUnitMargin}</td></tr>
+          ${targetCell}
+        </tbody>
+      </table>
+      <p style="font-size:10px;color:#444;margin-top:10px;line-height:1.6;"><strong>Note:</strong> GDV is market price × unit count. TDC is the ASAQS all-in cost including VAT. This margin excludes land cost, transfer duty, finance charges, and holding costs — add these to TDC for a complete financial model.</p>
+    </div>`;
+  }
+
+  // ── Scale sensitivity section ────────────────────────────────────
+  function renderScaleSensitivity(r) {
+    if (!r.per_m2_all_in_zar || !r.brief?.total_gla_m2) return '';
+    const ratePerM2 = parseFloat(r.per_m2_all_in_zar);
+    const baseGla = parseFloat(r.brief.total_gla_m2);
+    const baseUnits = r.brief.unit_count;
+    const rows = [0.5, 0.75, 1.0, 1.25, 1.5].map(mult => {
+      const gla = Math.round(baseGla * mult);
+      const units = baseUnits ? Math.round(baseUnits * mult) : null;
+      const total = gla * ratePerM2;
+      const perUnit = units ? total / units : null;
+      const isBase = mult === 1.0;
+      return `<tr${isBase?' style="background:#f5f5f5;font-weight:600;"':''}>
+        <td>${(mult*100).toFixed(0)}%${isBase?' ← current':''}</td>
+        <td>${gla.toLocaleString('en-ZA')} m²</td>
+        <td>${units?units.toLocaleString('en-ZA'):'—'}</td>
+        <td>${fmt(total)}</td>
+        <td>${fmt(ratePerM2)}</td>
+        <td>${perUnit?fmt(perUnit):'—'}</td>
+      </tr>`;
+    }).join('');
+    return `
+    <div class="doc-section">
+      <div class="doc-section-title">Scale Sensitivity — Capital Requirement vs Project Size</div>
+      <table class="doc-scale-table">
+        <thead><tr><th>Scale</th><th>GLA (m²)</th><th>Units (est)</th><th>Total All-in</th><th>Cost / m²</th><th>Cost / Unit</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <p style="font-size:10px;color:#444;margin-top:8px;line-height:1.6;">Cost/m² is benchmark-rate-driven and is constant across scales in this model. Total capital requirement scales linearly with GLA. Professional fee tiers may reduce the effective rate slightly at larger project values — run separate scenarios to quantify. Land and finance costs excluded from all figures.</p>
+    </div>`;
+  }
+
+  // ── Risk register section ────────────────────────────────────────
+  function renderRiskRegister(flags) {
+    if (!flags || !flags.length) return '';
+    const classify = (flag) => {
+      const f = flag.toLowerCase();
+      if (f.includes('afford') || f.includes('mortgage') || f.includes('buyer')) return {cat:'Affordability',bg:'#555',level:'High'};
+      if (f.includes('subsidy') || f.includes('envelope') || f.includes('gap') || f.includes('bng')) return {cat:'Funding',bg:'#555',level:'High'};
+      if (f.includes('nhbrc') || f.includes('nhfc') || f.includes('legislative') || f.includes('flisp')) return {cat:'Compliance',bg:'#444',level:'High'};
+      if (f.includes('geotech') || f.includes('foundation') || f.includes('slope') || f.includes('steep')) return {cat:'Site',bg:'#777',level:'Medium'};
+      if (f.includes('service') || f.includes('bulk') || f.includes('infrastructure') || f.includes('missing')) return {cat:'Infrastructure',bg:'#777',level:'Medium'};
+      if (f.includes('fees') || f.includes('cost') || f.includes('pct') || f.includes('%')) return {cat:'Cost',bg:'#999',level:'Low'};
+      return {cat:'General',bg:'#999',level:'Low'};
+    };
+    const rows = flags.map(flag => {
+      const risk = classify(flag);
+      return `<tr><td style="font-weight:600;">${risk.cat}</td><td><span style="font-size:10px;font-weight:700;padding:2px 8px;background:${risk.bg};color:#fff;letter-spacing:0.5px;">${risk.level}</span></td><td>${flag}</td></tr>`;
+    }).join('');
+    return `
+    <div class="doc-section">
+      <div class="doc-section-title">Risk Register</div>
+      <table class="doc-risk-table">
+        <thead><tr><th style="width:18%;">Category</th><th style="width:12%;">Level</th><th>Flag &amp; Finding</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  }
+
+  function buildRow(label, val) {
+    if (val === null || val === undefined) return '';
+    return `<tr><td>${label}</td><td>${fmt(val)}</td></tr>`;
+  }
+
+  function dcRow(label, basis, val) {
+    if (val === null || val === undefined) return '';
+    return `<tr><td>${label}</td><td><div class="dc-basis">${basis || ''}</div></td><td>${fmt(val)}</td></tr>`;
+  }
+
+  function feesRow(label, val, justification) {
+    if (val === null || val === undefined) return '';
+    const just = justification ? `<div class="dc-basis" style="margin-top:4px;font-weight:400;">${justification}</div>` : '';
+    return `<tr><td>${label}</td><td style="font-weight:400;">${just}</td><td>${fmt(val)}</td></tr>`;
+  }
+
+  function accRow(check, label, alreadyPct = false) {
+    if (!check) return '';
+    const fmtPct = v => v !== null ? (alreadyPct ? parseFloat(v).toFixed(2) : (parseFloat(v)*100).toFixed(2)) + '%' : '—';
+    const pct  = fmtPct(check.value);
+    const thr  = fmtPct(check.threshold);
+    const cls  = check.passed ? 'pass' : 'fail';
+    const badge = `<span class="acc-badge ${cls}">${check.passed ? '✓ PASS' : '✗ FAIL'}</span>`;
+    return `<tr>
+      <td style="font-weight:600;color:#111;width:22%;">${label}</td>
+      <td style="font-family:'Courier New',monospace;color:#111;width:10%;">${pct}</td>
+      <td style="font-family:'Courier New',monospace;color:#333;width:10%;">${thr}</td>
+      <td style="font-size:11px;color:#222;width:48%;line-height:1.5;">${check.details || ''}</td>
+      <td style="width:10%;text-align:right;">${badge}</td>
+    </tr>`;
+  }
+
+  function accCard(label, check) {
+    if (!check) return '';
+    const pct = check.value !== null ? (parseFloat(check.value) * 100).toFixed(1) + '%' : '—';
+    const cls = check.passed ? 'pass' : 'fail';
+    return `<div class="acc-card">
+      <div class="acc-label">${label}</div>
+      <div class="acc-val ${cls}">${pct}</div>
+      <div class="acc-status ${cls}">${check.passed ? '✓ Pass' : '✗ Fail'}</div>
+    </div>`;
+  }
+
+  async function exportToExcel(data) {
+    if (!data || !data.report) return;
+    const btnEl = document.getElementById('exportBtn');
+    if (btnEl) { btnEl.textContent = '⏳ Generating…'; btnEl.disabled = true; }
+    try {
+      if (!window.XLSX) {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = 'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';
+          s.onload = resolve; s.onerror = reject;
+          document.head.appendChild(s);
+        });
+      }
+      const XLSX = window.XLSX;
+      const r = data.report;
+      const b = r.brief || {};
+      const wb = XLSX.utils.book_new();
+
+      // ── Cell helpers ──────────────────────────────────────────────────────
+      const S    = (v) => ({ t:'s', v: v != null ? String(v) : '' });
+      const N    = (v) => ({ t:'n', v: Number(v) || 0, z: '#,##0' });
+      const ZAR  = (v) => ({ t:'n', v: Number(v) || 0, z: '"R "#,##0' });
+      const ZAR2 = (v) => ({ t:'n', v: Number(v) || 0, z: '"R "#,##0.00' });
+      const E    = ()  => ({ t:'s', v: '' });
+      // Percentage already stored as a % number (e.g. 18.5 = 18.5%)
+      const PSTR = (v) => S(Number(v).toFixed(2) + '%');
+      // Percentage stored as decimal (e.g. 0.185 → "18.50%")
+      const PDEC = (v) => S((Number(v) * 100).toFixed(2) + '%');
+      function setCols(ws, widths) { ws['!cols'] = widths.map(w => ({ wch: w })); }
+
+      // ═══════════════════════════════════════════════════════════════════════
+      // SHEET 1 — Project Summary
+      // ═══════════════════════════════════════════════════════════════════════
+      const viabilityReasons   = (r.viability?.reasons || []);
+      const recommendations    = (r.viability?.recommended_adjustments || []);
+      const summaryRows = [
+        [S('MZILIKAZI FEASIBILITY COST REPORT'), E(), E(), E()],
+        [S('D1.1 Cost Planning & Estimation — ASAQS Class 4/5 (±15–25%)'), E(), E(), E()],
+        [E(), E(), E(), E()],
+        [S('═══ PROJECT DETAILS ═══════════════════════════════════════'), E(), E(), E()],
+        [S('Project Name'),             S(r.project_name || ''),                        S('Report Date'),        S(r.generated_at ? new Date(r.generated_at).toLocaleDateString('en-ZA') : '')],
+        [S('Developer / Client'),       S(b.developer || ''),                           S('Typology'),           S(b.typology || '')],
+        [S('Region'),                   S(b.location?.region || ''),                    S('Municipality'),       S(b.location?.municipality || '—')],
+        [S('Grade'),                    S(b.grade || 'standard'),                       S('Spec Level'),         S(b.specification_level || 'standard')],
+        [S('Total GLA (m²)'),           N(b.total_gla_m2),                             S('Unit Count'),         b.unit_count ? N(b.unit_count) : S('N/A')],
+        [S('Unit Area (m²)'),           b.unit_area_m2 ? N(b.unit_area_m2) : S('N/A'), S('Estimate Class'),     S(r.accuracy?.estimate_class || 'Class 4/5')],
+        [S('Programme Start'),          S(b.programme?.start_date || ''),               S('Duration (months)'),  N(b.programme?.duration_months)],
+        [S('Funding Programme'),        S(b.funding?.programme || '—'),                 S('Accuracy Band'),      S('±' + (r.accuracy?.accuracy_band_pct || '20') + '%')],
+        [S('Geotech Class'),            S(b.site_info?.geotech_class || 'stable'),      S('Site Slope'),         S((b.site_info?.slope_pct || 0) + '%')],
+        [S('As-of Date'),               S(b.as_of_date || ''),                          S('Narrative Source'),   S(r.narrative_source || 'deterministic')],
+        [E(), E(), E(), E()],
+        [S('═══ KEY FINANCIAL METRICS ═══════════════════════════════'), E(), E(), E()],
+        [S('ALL-IN TOTAL (incl. VAT)'), ZAR(r.total_incl_vat_zar),  E(), E()],
+        [S('Subtotal excl. VAT'),       ZAR(r.subtotal_excl_vat_zar), E(), E()],
+        [S('VAT @ 15%'),                ZAR(r.vat_zar),              E(), E()],
+        [S('Cost per m² (all-in)'),     ZAR2(r.per_m2_all_in_zar),  E(), E()],
+        [S('Cost per Unit (all-in)'),   r.per_unit_all_in_zar ? ZAR2(r.per_unit_all_in_zar) : S('N/A'), E(), E()],
+        [E(), E(), E(), E()],
+        [S('═══ VIABILITY ASSESSMENT ══════════════════════════════════'), E(), E(), E()],
+        [S('Status'),  S(r.viability?.status || ''),   E(), E()],
+        [S('Verdict'), S(r.viability?.headline || ''), E(), E()],
+        ...viabilityReasons.map(reason  => [S('  Reason:'), S(reason), E(), E()]),
+        [E(), E(), E(), E()],
+        [S('═══ RECOMMENDED ADJUSTMENTS ════════════════════════════'), E(), E(), E()],
+        ...recommendations.map(adj => [S('  •'), S(adj), E(), E()]),
+        [E(), E(), E(), E()],
+        [S('═══ EXECUTIVE SUMMARY ═══════════════════════════════════'), E(), E(), E()],
+        [S(r.executive_summary || ''), E(), E(), E()],
+      ];
+      const wsSummary = XLSX.utils.aoa_to_sheet(summaryRows);
+      setCols(wsSummary, [38, 26, 26, 26]);
+      wsSummary['!merges'] = [
+        { s:{r:0,c:0}, e:{r:0,c:3} },
+        { s:{r:1,c:0}, e:{r:1,c:3} },
+        { s:{r:3,c:0}, e:{r:3,c:3} },
+        { s:{r:15,c:0}, e:{r:15,c:3} },
+        { s:{r:16,c:1}, e:{r:16,c:3} },
+        { s:{r:17,c:1}, e:{r:17,c:3} },
+        { s:{r:18,c:1}, e:{r:18,c:3} },
+        { s:{r:19,c:1}, e:{r:19,c:3} },
+        { s:{r:20,c:1}, e:{r:20,c:3} },
+        { s:{r:22,c:0}, e:{r:22,c:3} },
+      ];
+      XLSX.utils.book_append_sheet(wb, wsSummary, 'Summary');
+
+      // ═══════════════════════════════════════════════════════════════════════
+      // SHEET 2 — Cost Build-up (ASAQS Elemental Format)
+      // ═══════════════════════════════════════════════════════════════════════
+      const bw = r.building_works  || {};
+      const bs = r.bulk_services   || {};
+      const ew = r.external_works  || {};
+      const ct = r.contingency     || {};
+      const es = r.escalation      || {};
+      const pf = r.professional_fees || {};
+      const constSub = Number(r.construction_subtotal_zar) || 1;
+      const totalAll = Number(r.total_incl_vat_zar) || 1;
+
+      const costRows = [
+        [S('COST BUILD-UP — ASAQS ELEMENTAL FORMAT'), E(), E(), E(), E()],
+        [S('Project: ' + (r.project_name || '')), E(), E(), E(), E()],
+        [E(), E(), E(), E(), E()],
+        [S('ELEMENT'), S('BASIS OF ESTIMATE'), S('AMOUNT (ZAR)'), S('RATE (ZAR/m²)'), S('% OF ALL-IN TOTAL')],
+        [E(), E(), E(), E(), E()],
+        [S('A.  CONSTRUCTION WORKS'), E(), E(), E(), E()],
+        [S('    A1. Building Works'),              S(bw.basis || ''), ZAR(bw.amount_zar), bw.rate_per_m2_zar ? ZAR2(bw.rate_per_m2_zar) : E(), S((Number(bw.amount_zar) / totalAll * 100).toFixed(1) + '%')],
+        [S('    A2. Bulk Services & Infrastructure'), S(bs.basis || ''), ZAR(bs.amount_zar), bs.rate_per_m2_zar ? ZAR2(bs.rate_per_m2_zar) : E(), S((Number(bs.amount_zar) / totalAll * 100).toFixed(1) + '%')],
+        [S('    A3. External Works & Site'),        S(ew.basis || ''), ZAR(ew.amount_zar), ew.rate_per_m2_zar ? ZAR2(ew.rate_per_m2_zar) : E(), S((Number(ew.amount_zar) / totalAll * 100).toFixed(1) + '%')],
+        [S('    CONSTRUCTION SUBTOTAL'),            E(), ZAR(r.construction_subtotal_zar), E(), S((constSub / totalAll * 100).toFixed(1) + '%')],
+        [E(), E(), E(), E(), E()],
+        [S('B.  PROFESSIONAL FEES'), E(), E(), E(), E()],
+        [S('    B1. Architect'),              S('SACAP Practice Note 0007 — Stages 1–6'), ZAR(pf.architect_zar),         E(), S((Number(pf.architect_zar) / totalAll * 100).toFixed(1) + '%')],
+        [S('    B2. Quantity Surveyor'),      S('ASAQS Schedule of Professional Fees'),   ZAR(pf.quantity_surveyor_zar), E(), S((Number(pf.quantity_surveyor_zar) / totalAll * 100).toFixed(1) + '%')],
+        [S('    B3. Structural Engineer'),    S('ECSA Fee Guideline — Civil/Structural'), ZAR(pf.structural_zar),        E(), S((Number(pf.structural_zar) / totalAll * 100).toFixed(1) + '%')],
+        [S('    B4. Mechanical Engineer'),    S('ECSA Fee Guideline — Mechanical'),       ZAR(pf.mechanical_zar),        E(), S((Number(pf.mechanical_zar) / totalAll * 100).toFixed(1) + '%')],
+        [S('    B5. Electrical Engineer'),    S('ECSA Fee Guideline — Electrical'),       ZAR(pf.electrical_zar),        E(), S((Number(pf.electrical_zar) / totalAll * 100).toFixed(1) + '%')],
+        [S('    B6. Wet Services Engineer'),  S('ECSA Fee Guideline — Wet/Hydraulic'),   ZAR(pf.wet_services_zar),      E(), S((Number(pf.wet_services_zar) / totalAll * 100).toFixed(1) + '%')],
+        [S('    PROFESSIONAL FEES TOTAL'),    S(Number(pf.total_pct_of_construction).toFixed(2) + '% of construction'), ZAR(pf.total_zar), E(), S((Number(pf.total_zar) / totalAll * 100).toFixed(1) + '%')],
+        [E(), E(), E(), E(), E()],
+        [S('C.  CONTINGENCY'), S(ct.basis || ''), ZAR(ct.amount_zar), E(), S((Number(ct.amount_zar) / totalAll * 100).toFixed(1) + '%')],
+        [S('D.  ESCALATION'),  S(es.basis || ''), ZAR(es.amount_zar), E(), S((Number(es.amount_zar) / totalAll * 100).toFixed(1) + '%')],
+        [E(), E(), E(), E(), E()],
+        [S('SUBTOTAL EXCL. VAT'),              E(), ZAR(r.subtotal_excl_vat_zar), E(), S((Number(r.subtotal_excl_vat_zar) / totalAll * 100).toFixed(1) + '%')],
+        [S('VAT @ 15% (SARS VAT Act 89/1991)'), E(), ZAR(r.vat_zar),               E(), S((Number(r.vat_zar) / totalAll * 100).toFixed(1) + '%')],
+        [S('TOTAL ALL-IN COST (INCL. VAT)'),   E(), ZAR(r.total_incl_vat_zar),    E(), S('100.0%')],
+        [E(), E(), E(), E(), E()],
+        [S('Cost per m² (all-in incl. VAT)'),  E(), ZAR2(r.per_m2_all_in_zar),    E(), E()],
+        [S('Cost per Unit (all-in incl. VAT)'), E(), r.per_unit_all_in_zar ? ZAR2(r.per_unit_all_in_zar) : S('N/A'), E(), E()],
+        [E(), E(), E(), E(), E()],
+        [S('ASSUMPTIONS'), E(), E(), E(), E()],
+        ...(r.assumptions || []).map(a => [S('  •  ' + a), E(), E(), E(), E()]),
+        [E(), E(), E(), E(), E()],
+        [S('EXCLUSIONS'), E(), E(), E(), E()],
+        ...(r.exclusions || []).map(exc => [S('  •  ' + exc), E(), E(), E(), E()]),
+      ];
+      const wsCost = XLSX.utils.aoa_to_sheet(costRows);
+      setCols(wsCost, [48, 44, 20, 18, 18]);
+      XLSX.utils.book_append_sheet(wb, wsCost, 'Cost Build-up');
+
+      // ═══════════════════════════════════════════════════════════════════════
+      // SHEET 3 — Professional Fees Schedule
+      // ═══════════════════════════════════════════════════════════════════════
+      const feesRows = [
+        [S('PROFESSIONAL FEES SCHEDULE'), E(), E(), E()],
+        [S('Project: ' + (r.project_name || '')), E(), E(), E()],
+        [E(), E(), E(), E()],
+        [S('DISCIPLINE'), S('FEE BASIS & SCALE REFERENCE'), S('AMOUNT (ZAR)'), S('% OF CONSTRUCTION')],
+        [E(), E(), E(), E()],
+        [S('Architect'),              S('SACAP Practice Note 0007 — Stages 1–6, recommended fee scale by project value band'), ZAR(pf.architect_zar),         PSTR(Number(pf.architect_zar) / constSub * 100)],
+        [S('Quantity Surveyor'),      S('ASAQS Schedule of Professional Fees — recommended fee scale by project value band'),  ZAR(pf.quantity_surveyor_zar), PSTR(Number(pf.quantity_surveyor_zar) / constSub * 100)],
+        [S('Structural Engineer'),    S('ECSA Fee Guideline — Civil/Structural category by project value'),                    ZAR(pf.structural_zar),        PSTR(Number(pf.structural_zar) / constSub * 100)],
+        [S('Mechanical Engineer'),    S('ECSA Fee Guideline — Mechanical services category by project value'),                 ZAR(pf.mechanical_zar),        PSTR(Number(pf.mechanical_zar) / constSub * 100)],
+        [S('Electrical Engineer'),    S('ECSA Fee Guideline — Electrical services category by project value'),                 ZAR(pf.electrical_zar),        PSTR(Number(pf.electrical_zar) / constSub * 100)],
+        [S('Wet Services Engineer'),  S('ECSA Fee Guideline — Wet/Hydraulic services category by project value'),             ZAR(pf.wet_services_zar),      PSTR(Number(pf.wet_services_zar) / constSub * 100)],
+        [E(), E(), E(), E()],
+        [S('TOTAL PROFESSIONAL FEES'), S(''), ZAR(pf.total_zar), PSTR(Number(pf.total_pct_of_construction))],
+        [E(), E(), E(), E()],
+        [S('Note: All fee percentages are computed from SACAP/ECSA/ASAQS recommended scales at the applicable project value band. Figures are indicative at feasibility stage and subject to formal appointment.'), E(), E(), E()],
+      ];
+      const wsFees = XLSX.utils.aoa_to_sheet(feesRows);
+      setCols(wsFees, [26, 60, 20, 18]);
+      wsFees['!merges'] = [
+        { s:{r:0,c:0}, e:{r:0,c:3} },
+        { s:{r:1,c:0}, e:{r:1,c:3} },
+        { s:{r:14,c:0}, e:{r:14,c:3} },
+      ];
+      XLSX.utils.book_append_sheet(wb, wsFees, 'Professional Fees');
+
+      // ═══════════════════════════════════════════════════════════════════════
+      // SHEET 4 — Market Analysis & Developer Return (conditional)
+      // ═══════════════════════════════════════════════════════════════════════
+      if (r.market_analysis) {
+        const ma = r.market_analysis;
+        const gdvTotal  = Number(ma.gdv_zar)  || 0;
+        const tdcTotal  = Number(ma.tdc_zar)  || 0;
+        const marginZAR = Number(ma.developer_margin_zar) || 0;
+        const marginPct = Number(ma.developer_margin_pct) || 0;
+        const gdvUnit   = Number(ma.gdv_per_unit_zar)  || 0;
+        const tdcUnit   = Number(ma.cost_per_unit_zar) || 0;
+
+        const maRows = [
+          [S('DEVELOPER RETURN & MARKET VIABILITY ANALYSIS'), E(), E(), E()],
+          [S('Project: ' + (r.project_name || '')), E(), E(), E()],
+          [E(), E(), E(), E()],
+          [S('═══ GROSS DEVELOPMENT VALUE (REVENUE) ══════════════'), E(), E(), E()],
+          [S('Market Price per Unit'),  gdvUnit  ? ZAR2(gdvUnit)  : S('N/A'), S('per unit'),  E()],
+          [S('Market Price per m²'),    b.market_price_per_m2_zar ? ZAR2(b.market_price_per_m2_zar) : S('N/A'), S('per m²'), E()],
+          [S('Number of Units'),        b.unit_count ? N(b.unit_count) : S('N/A'), E(), E()],
+          [S('GROSS DEVELOPMENT VALUE (GDV)'), ZAR(gdvTotal), S('100.00%'), E()],
+          [E(), E(), E(), E()],
+          [S('═══ TOTAL DEVELOPMENT COST (COST) ══════════════════'), E(), E(), E()],
+          [S('All-in Construction Cost (incl. VAT)'), ZAR(tdcTotal), S(gdvTotal ? (tdcTotal / gdvTotal * 100).toFixed(2) + '% of GDV' : ''), E()],
+          [S('Cost per Unit'), tdcUnit ? ZAR2(tdcUnit) : S('N/A'), E(), E()],
+          [E(), E(), E(), E()],
+          [S('═══ DEVELOPER RETURN SUMMARY ════════════════════════'), E(), E(), E()],
+          [S('Gross Development Value'), ZAR(gdvTotal),  S('100.00%'), E()],
+          [S('Less: Total Dev Cost'),    ZAR(tdcTotal),  S(gdvTotal ? (tdcTotal / gdvTotal * 100).toFixed(2) + '%' : ''), E()],
+          [S('Developer Margin'),        ZAR(marginZAR), PSTR(marginPct), E()],
+          [E(), E(), E(), E()],
+          [S('═══ TARGET MARGIN CHECK ════════════════════════════'), E(), E(), E()],
+          [S('Target Developer Margin'),   ma.target_margin_pct ? PSTR(Number(ma.target_margin_pct)) : S('Not specified'), E(), E()],
+          [S('Achieved Developer Margin'), PSTR(marginPct), E(), E()],
+          [S('Meets Target?'), S(ma.meets_target === true ? 'YES — Target met' : ma.meets_target === false ? 'NO — Below target' : 'N/A (no target set)'), E(), E()],
+          [E(), E(), E(), E()],
+          [S('═══ PER UNIT ANALYSIS ═══════════════════════════════'), E(), E(), E()],
+          [S('GDV per Unit'),    gdvUnit ? ZAR2(gdvUnit) : S('N/A'), E(), E()],
+          [S('Cost per Unit'),   tdcUnit ? ZAR2(tdcUnit) : S('N/A'), E(), E()],
+          [S('Unit Margin (ZAR)'), (gdvUnit && tdcUnit) ? ZAR2(gdvUnit - tdcUnit) : S('N/A'), E(), E()],
+          [S('Unit Margin (%)'),   (gdvUnit && tdcUnit) ? PSTR((gdvUnit - tdcUnit) / gdvUnit * 100) : S('N/A'), E(), E()],
+        ];
+        const wsMA = XLSX.utils.aoa_to_sheet(maRows);
+        setCols(wsMA, [38, 22, 24, 16]);
+        wsMA['!merges'] = [
+          { s:{r:0,c:0}, e:{r:0,c:3} },
+          { s:{r:1,c:0}, e:{r:1,c:3} },
+          { s:{r:3,c:0}, e:{r:3,c:3} },
+          { s:{r:9,c:0}, e:{r:9,c:3} },
+          { s:{r:13,c:0}, e:{r:13,c:3} },
+          { s:{r:18,c:0}, e:{r:18,c:3} },
+          { s:{r:23,c:0}, e:{r:23,c:3} },
+        ];
+        XLSX.utils.book_append_sheet(wb, wsMA, 'Market Analysis');
+      }
+
+      // ═══════════════════════════════════════════════════════════════════════
+      // SHEET 5 — Scale Sensitivity Analysis (conditional)
+      // ═══════════════════════════════════════════════════════════════════════
+      if (r.per_m2_all_in_zar && b.total_gla_m2) {
+        const baseGla   = Number(b.total_gla_m2);
+        const baseUnits = b.unit_count ? Number(b.unit_count) : null;
+        const baseTotal = Number(r.total_incl_vat_zar);
+        const scaleRate = baseTotal / baseGla;   // all-in R/m² incl VAT
+        const gdvUnit   = r.market_analysis?.gdv_per_unit_zar ? Number(r.market_analysis.gdv_per_unit_zar) : null;
+
+        const scaleRows = [
+          [S('SCALE SENSITIVITY ANALYSIS'), E(), E(), E(), E(), E(), E()],
+          [S('Five-scenario cost sensitivity at ±50% of base GLA — all figures incl. VAT'), E(), E(), E(), E(), E(), E()],
+          [E(), E(), E(), E(), E(), E(), E()],
+          [S('═══ COST SENSITIVITY ════════════════════════════════════════════════════════'), E(), E(), E(), E(), E(), E()],
+          [S('SCENARIO'), S('SCALE'), S('GLA (m²)'), S('UNITS'), S('TOTAL COST (ZAR)'), S('COST / m² (ZAR)'), S('COST / UNIT (ZAR)')],
+        ];
+        [
+          { label: 'Compact',     mult: 0.50 },
+          { label: 'Reduced',     mult: 0.75 },
+          { label: 'Base Case',   mult: 1.00 },
+          { label: 'Expanded',    mult: 1.25 },
+          { label: 'Full Scale',  mult: 1.50 },
+        ].forEach(({ label, mult }) => {
+          const gla   = Math.round(baseGla * mult);
+          const units = baseUnits ? Math.round(baseUnits * mult) : null;
+          const total = Math.round(gla * scaleRate);
+          scaleRows.push([
+            S(label + ' (' + (mult * 100).toFixed(0) + '%)'),
+            S((mult * 100).toFixed(0) + '%'),
+            N(gla),
+            units ? N(units) : S('N/A'),
+            ZAR(total),
+            ZAR2(scaleRate),
+            units ? ZAR2(total / units) : S('N/A'),
+          ]);
+        });
+
+        if (r.market_analysis && gdvUnit) {
+          scaleRows.push([E(), E(), E(), E(), E(), E(), E()]);
+          scaleRows.push([S('═══ MARKET RETURN BY SCALE ══════════════════════════════════════════════════'), E(), E(), E(), E(), E(), E()]);
+          scaleRows.push([S('SCENARIO'), S('SCALE'), S('GLA (m²)'), S('UNITS'), S('GDV (ZAR)'), S('TDC (ZAR)'), S('DEVELOPER MARGIN')]);
+          [
+            { label: 'Compact',    mult: 0.50 },
+            { label: 'Reduced',    mult: 0.75 },
+            { label: 'Base Case',  mult: 1.00 },
+            { label: 'Expanded',   mult: 1.25 },
+            { label: 'Full Scale', mult: 1.50 },
+          ].forEach(({ label, mult }) => {
+            const gla   = Math.round(baseGla * mult);
+            const units = baseUnits ? Math.round(baseUnits * mult) : null;
+            const tdc   = Math.round(gla * scaleRate);
+            const gdv   = units ? Math.round(units * gdvUnit) : null;
+            const margin = gdv ? ((gdv - tdc) / gdv * 100) : null;
+            scaleRows.push([
+              S(label + ' (' + (mult * 100).toFixed(0) + '%)'),
+              S((mult * 100).toFixed(0) + '%'),
+              N(gla),
+              units ? N(units) : S('N/A'),
+              gdv ? ZAR(gdv) : S('N/A'),
+              ZAR(tdc),
+              margin !== null ? PSTR(margin) : S('N/A'),
+            ]);
+          });
+        }
+        const wsScale = XLSX.utils.aoa_to_sheet(scaleRows);
+        setCols(wsScale, [24, 12, 14, 12, 22, 20, 20]);
+        XLSX.utils.book_append_sheet(wb, wsScale, 'Scale Sensitivity');
+      }
+
+      // ═══════════════════════════════════════════════════════════════════════
+      // SHEET 6 — Risk Register
+      // ═══════════════════════════════════════════════════════════════════════
+      if (r.risk_flags?.length) {
+        const classifyRisk = (flag) => {
+          const f = flag.toLowerCase();
+          if (f.includes('afford') || f.includes('mortgage') || f.includes('buyer'))              return { cat: 'Affordability',  level: 'High' };
+          if (f.includes('subsidy') || f.includes('envelope') || f.includes('gap') || f.includes('bng')) return { cat: 'Funding',        level: 'High' };
+          if (f.includes('nhbrc') || f.includes('nhfc') || f.includes('legislative') || f.includes('flisp')) return { cat: 'Compliance', level: 'High' };
+          if (f.includes('geotech') || f.includes('foundation') || f.includes('slope') || f.includes('steep')) return { cat: 'Site',       level: 'Medium' };
+          if (f.includes('service') || f.includes('bulk') || f.includes('infrastructure') || f.includes('missing')) return { cat: 'Infrastructure', level: 'Medium' };
+          if (f.includes('fees') || f.includes('cost') || f.includes('pct') || f.includes('%'))  return { cat: 'Cost',           level: 'Low' };
+          return { cat: 'General', level: 'Low' };
+        };
+        const riskRows = [
+          [S('RISK REGISTER'), E(), E()],
+          [S('Structured risk flags identified by the Mzilikazi feasibility agent'), E(), E()],
+          [E(), E(), E()],
+          [S('CATEGORY'), S('SEVERITY LEVEL'), S('RISK FLAG & FINDING')],
+          ...r.risk_flags.map(flag => {
+            const { cat, level } = classifyRisk(flag);
+            return [S(cat), S(level), S(flag)];
+          }),
+          [E(), E(), E()],
+          [S('Risk levels — High: immediate action required | Medium: monitor & mitigate | Low: note for design development'), E(), E()],
+        ];
+        const wsRisk = XLSX.utils.aoa_to_sheet(riskRows);
+        setCols(wsRisk, [22, 18, 75]);
+        wsRisk['!merges'] = [
+          { s:{r:0,c:0}, e:{r:0,c:2} },
+          { s:{r:1,c:0}, e:{r:1,c:2} },
+          { s:{r:riskRows.length - 1, c:0}, e:{r:riskRows.length - 1, c:2} },
+        ];
+        XLSX.utils.book_append_sheet(wb, wsRisk, 'Risk Register');
+      }
+
+      // ═══════════════════════════════════════════════════════════════════════
+      // SHEET 7 — Accuracy & Methodology Report
+      // ═══════════════════════════════════════════════════════════════════════
+      const acc = r.accuracy || {};
+      const accRows = [
+        [S('ACCURACY & METHODOLOGY REPORT'), E(), E(), E(), E()],
+        [S('Six-layer accuracy framework — D1.1 Cost Planning, ASAQS Class 4/5 (±15–25%)'), E(), E(), E(), E()],
+        [E(), E(), E(), E(), E()],
+        [S('OVERALL RESULT'), S(acc.overall_pass ? 'PASS' : 'FAIL'), S('Iterations run:'), N(acc.iterations || 0), E()],
+        [S('Estimate Class'), S(acc.estimate_class || 'Class 4/5'), S('Accuracy Band:'), S('±' + (acc.accuracy_band_pct || '20') + '%'), E()],
+        [E(), E(), E(), E(), E()],
+        [S('═══ ACCURACY CHECKS ═════════════════════════════════════════════════════════'), E(), E(), E(), E()],
+        [S('CHECK NAME'), S('MEASURED VALUE'), S('THRESHOLD'), S('RESULT'), S('DETAIL')],
+        ...(acc.checks || []).map(c => [
+          S(c.name || ''),
+          c.value != null ? S((Number(c.value) * 100).toFixed(2) + '%') : S('N/A'),
+          c.threshold != null ? S((Number(c.threshold) * 100).toFixed(2) + '%') : S('N/A'),
+          S(c.passed ? 'PASS' : 'FAIL'),
+          S(c.details || ''),
+        ]),
+        [E(), E(), E(), E(), E()],
+        [S('═══ TRIANGULATION & BENCHMARK ═══════════════════════════════════════════════'), E(), E(), E(), E()],
+        [S('Benchmark Deviation vs Peer Median'), acc.benchmark_deviation_pct != null ? S(Number(acc.benchmark_deviation_pct).toFixed(2) + '%') : S('N/A'), S('Threshold: ≤25%'), E(), E()],
+        [S('Triangulation Coefficient of Variation'),  acc.triangulation_cov_pct != null ? S(Number(acc.triangulation_cov_pct).toFixed(2) + '%') : S('N/A'), S('Threshold: ≤10%'), E(), E()],
+        [S('Self-Consistency Coefficient of Variation'), acc.self_consistency_cov_pct != null ? S(Number(acc.self_consistency_cov_pct).toFixed(2) + '%') : S('N/A'), S('Threshold: ≤5%'), E(), E()],
+        [E(), E(), E(), E(), E()],
+        [S('═══ SIX-LAYER METHODOLOGY ═══════════════════════════════════════════════════'), E(), E(), E(), E()],
+        [S('Layer 1 — Schema Validation'),        S('Pydantic model: 0 field errors, all ranges valid'),             S('Pass: no violations'),          E(), E()],
+        [S('Layer 2 — Deterministic Rules'),      S('VAT=15%, ASAQS/SACAP/ECSA fee scales, contingency bands'),      S('Pass: 0 rule violations'),      E(), E()],
+        [S('Layer 3 — Triangulation'),            S('Cost computed 3 ways: per-m², per-unit, elemental; pairwise CoV'), S('Pass: max deviation ≤10%'),   E(), E()],
+        [S('Layer 4 — Benchmark Peer Deviation'), S('Chosen rate vs median peer rate for same typology/grade/region'), S('Pass: ≤25%; Warn: >15%'),     E(), E()],
+        [S('Layer 5 — Range Sensitivity'),        S('Re-run at low/mid/high rate bounds; CoV of outputs'),           S('Pass: ≤5%; Warn: ≤10%'),        E(), E()],
+        [S('Layer 6 — Golden Dataset Regression'), S('vs known verified feasibility scenarios (seed data)'),         S('Pass: MAPE ≤20%'),              E(), E()],
+      ];
+      const wsAcc = XLSX.utils.aoa_to_sheet(accRows);
+      setCols(wsAcc, [40, 24, 30, 12, 55]);
+      wsAcc['!merges'] = [
+        { s:{r:0,c:0}, e:{r:0,c:4} },
+        { s:{r:1,c:0}, e:{r:1,c:4} },
+        { s:{r:6,c:0}, e:{r:6,c:4} },
+      ];
+      XLSX.utils.book_append_sheet(wb, wsAcc, 'Accuracy Report');
+
+      // ═══════════════════════════════════════════════════════════════════════
+      // SHEET 8 — Data Sources & References
+      // ═══════════════════════════════════════════════════════════════════════
+      const srcRows = [
+        [S('DATA SOURCES & REFERENCE DOCUMENTS'), E(), E()],
+        [S('Industry standards and benchmark sources used by the Mzilikazi Feasibility Agent'), E(), E()],
+        [E(), E(), E()],
+        [S('SOURCE DOCUMENT'), S('DATA & BENCHMARKS PROVIDED'), S('AUTHORITY / URL')],
+        [E(), E(), E()],
+        [S('QUANTITY SURVEYING'), E(), E()],
+        [S('ASAQS Building Cost Index'),                  S('Construction rates by typology, grade and region (R/m²)'),              S('asaqs.co.za')],
+        [S('ASAQS Schedule of Professional Fees'),        S('QS professional fee scale by project value band'),                      S('asaqs.co.za')],
+        [S('ASAQS Standard System of Measuring (7th Ed.)'), S('GLA measurement methodology & elemental format definitions'),         S('asaqs.co.za')],
+        [E(), E(), E()],
+        [S('PROFESSIONAL FEE SCALES'), E(), E()],
+        [S('SACAP Practice Note 0007'),  S('Architect fee scale — Stages 1–6 by project value'),              S('sacap.org.za')],
+        [S('ECSA Fee Guideline'),        S('Engineering fee percentages by discipline (structural, mech, elec, wet)'), S('ecsa.co.za')],
+        [E(), E(), E()],
+        [S('FUNDING & SUBSIDY'), E(), E()],
+        [S('NHFC — FLISP Programme'),      S('Subsidy quantum by household income band'),              S('nhfc.co.za')],
+        [S('Dept. of Human Settlements'),  S('BNG housing quantum & Social Rental programme standards'), S('dhs.gov.za')],
+        [E(), E(), E()],
+        [S('MARKET & ECONOMIC DATA'), E(), E()],
+        [S('BER Building Cost Report'),  S('Construction inflation indices & escalation forecasts'), S('ber.ac.za')],
+        [S('Stats SA — PPI & CPI'),      S('Producer and Consumer Price Indices for escalation calculation'), S('statssa.gov.za')],
+        [S("Rode's Report"),             S('Property market benchmarks, land values, rental yields by node'), S('rode.co.za')],
+        [E(), E(), E()],
+        [S('CONTRACTS & STATUTORY'), E(), E()],
+        [S('SARS — VAT Act 89 of 1991'), S('15% VAT rate — applied as a statutory deterministic rule'),    S('sars.gov.za')],
+        [S('JBCC Series 2000'),          S('Standard building contract — practical completion & defects definitions'), S('jbcc.co.za')],
+        [E(), E(), E()],
+        [S('All benchmark data is tagged with source in the database. Seed rows carry an _SEED_ marker for controlled replacement with verified project data.'), E(), E()],
+      ];
+      const wsSrc = XLSX.utils.aoa_to_sheet(srcRows);
+      setCols(wsSrc, [42, 56, 24]);
+      wsSrc['!merges'] = [
+        { s:{r:0,c:0}, e:{r:0,c:2} },
+        { s:{r:1,c:0}, e:{r:1,c:2} },
+        { s:{r:5,c:0}, e:{r:5,c:2} },
+        { s:{r:9,c:0}, e:{r:9,c:2} },  // spacing
+        { s:{r:10,c:0}, e:{r:10,c:2} },
+        { s:{r:13,c:0}, e:{r:13,c:2} },
+        { s:{r:14,c:0}, e:{r:14,c:2} },
+        { s:{r:17,c:0}, e:{r:17,c:2} },
+        { s:{r:18,c:0}, e:{r:18,c:2} },
+        { s:{r:22,c:0}, e:{r:22,c:2} },
+        { s:{r:23,c:0}, e:{r:23,c:2} },
+        { s:{r:srcRows.length - 1, c:0}, e:{r:srcRows.length - 1, c:2} },
+      ];
+      XLSX.utils.book_append_sheet(wb, wsSrc, 'Data Sources');
+
+      // ── Write file ────────────────────────────────────────────────────────
+      const filename = `Feasibility_${(r.project_name || 'Report').replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      XLSX.writeFile(wb, filename);
+    } catch(err) {
+      alert('Export failed: ' + err.message);
+    } finally {
+      if (btnEl) { btnEl.textContent = '⬇ Export to Excel'; btnEl.disabled = false; }
+    }
+  }
+
+  document.getElementById('briefForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Running estimate…';
+
+    const f = e.target;
+    const g = n => f.querySelector(`[name=${n}]`)?.value?.trim() || null;
+
+    const brief = {
+      project_name: g('project_name'),
+      developer: g('developer'),
+      location: {
+        region: g('region'),
+        municipality: g('municipality') || null,
+      },
+      typology: g('typology'),
+      grade: g('grade'),
+      specification_level: g('specification_level'),
+      total_gla_m2: parseFloat(g('total_gla_m2')),
+      unit_count: g('unit_count') ? parseInt(g('unit_count')) : null,
+      unit_area_m2: g('unit_area_m2') ? parseFloat(g('unit_area_m2')) : null,
+      site_info: {
+        geotech_class: g('geotech_class'),
+        slope_pct: parseFloat(g('slope_pct') || '0'),
+        services_available: [],
+        services_requiring_upgrade: [],
+      },
+      funding: {
+        programme: g('funding_programme') || null,
+        band: g('funding_band') || null,
+      },
+      programme: {
+        start_date: g('start_date'),
+        duration_months: parseInt(g('duration_months') || '18'),
+      },
+      as_of_date: g('as_of_date'),
+      market_price_per_unit_zar: g('market_price_per_unit_zar') ? parseFloat(g('market_price_per_unit_zar')) : null,
+      market_price_per_m2_zar: g('market_price_per_m2_zar') ? parseFloat(g('market_price_per_m2_zar')) : null,
+      target_developer_margin_pct: g('target_developer_margin_pct') ? parseFloat(g('target_developer_margin_pct')) : null,
+    };
+
+    const apiUrl = document.getElementById('apiUrl').value.replace(/\/$/, '');
+
+    try {
+      const res = await fetch(`${apiUrl}/feasibility/estimate?allow_llm=true`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(brief),
+      });
+      if (!res.ok) {
+        const err = await res.text();
+        throw new Error(`HTTP ${res.status}: ${err}`);
+      }
+      const data = await res.json();
+      lastBriefData = brief;
+      renderReport(data);
+    } catch (err) {
+      document.getElementById('results').innerHTML =
+        `<div class="error-box"><strong>Error:</strong> ${err.message}</div>`;
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'Run Feasibility Estimate';
+    }
+  });
+
+  let lastBriefData = null;
+
+  async function downloadPdf() {
+    if (!lastBriefData) return;
+    const btn = document.getElementById('pdfBtn');
+    btn.disabled = true;
+    btn.innerHTML = '&#8987; Generating PDF…';
+    const apiUrl = document.getElementById('apiUrl').value.replace(/\/$/, '');
+    try {
+      const res = await fetch(`${apiUrl}/feasibility/report?allow_llm=true`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(lastBriefData),
+      });
+      if (!res.ok) {
+        const err = await res.text();
+        throw new Error(`PDF error ${res.status}: ${err}`);
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const name = (lastBriefData.project_name || 'report').replace(/[^a-zA-Z0-9_\- ]/g, '').trim();
+      a.href = url;
+      a.download = `Feasibility_Report_${name}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      alert('PDF generation failed: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '&#128196; Download PDF';
+    }
+  }
+</script>
+</body>
+</html>

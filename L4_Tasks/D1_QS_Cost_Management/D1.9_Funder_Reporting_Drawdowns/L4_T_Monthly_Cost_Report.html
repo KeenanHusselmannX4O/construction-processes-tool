@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>L4 — Tasks: Monthly Cost Report for Funder</title>
+    <style>
+        :root{--navy-950:#0a0f1e;--navy-900:#0f172a;--navy-800:#1e293b;--navy-700:#334155;--navy-600:#475569;--slate-400:#94a3b8;--slate-300:#cbd5e1;--white:#f8fafc;--accent:#3b82f6;--accent-light:#60a5fa}
+        *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;background:var(--navy-950);color:var(--slate-300);line-height:1.7;font-size:12px}
+        @page{size:A4;margin:15mm}.page{max-width:210mm;margin:0 auto;padding:32px 40px;background:var(--navy-900)}
+        .doc-header{border-bottom:3px solid var(--accent);padding-bottom:18px;margin-bottom:24px}
+        .doc-header .level-badge{display:inline-block;padding:3px 12px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:rgba(59,130,246,.15);color:var(--accent-light);margin-bottom:6px}
+        .doc-header h1{font-size:22px;font-weight:800;color:var(--white);margin-bottom:4px}
+        .doc-header .subtitle{font-size:13px;color:var(--slate-400)}
+        .doc-header .meta{display:flex;gap:20px;margin-top:10px;font-size:10px;color:var(--slate-400)}
+        h2{font-size:16px;font-weight:700;color:var(--white);margin:24px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--navy-700)}
+        h3{font-size:13px;font-weight:600;color:var(--accent-light);margin:16px 0 6px}
+        p{margin-bottom:10px}
+        .nav-bar{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap}
+        .nav-link{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:6px;font-size:10px;font-weight:600;text-decoration:none;border:1px solid var(--navy-700);color:var(--slate-300);background:var(--navy-800);transition:all .2s}
+        .nav-link:hover{border-color:var(--accent);color:var(--accent-light)}
+        .nav-link.active{border-color:var(--accent);color:var(--accent-light);background:rgba(59,130,246,.1)}
+        .nav-link .arrow{font-size:12px}
+        table{width:100%;border-collapse:collapse;margin:10px 0;font-size:11px}
+        thead th{background:var(--navy-800);color:var(--accent-light);font-weight:600;text-align:left;padding:7px 10px;border-bottom:2px solid var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+        tbody td{padding:7px 10px;border-bottom:1px solid var(--navy-700);vertical-align:top}
+        ul{margin:4px 0 8px 14px;font-size:11px}li{margin-bottom:3px}
+        .task-block{background:var(--navy-800);border:1px solid var(--navy-700);border-left:3px solid var(--accent);border-radius:8px;padding:14px;margin:10px 0}
+        .task-block .task-id{font-size:9px;font-weight:700;color:var(--accent-light);letter-spacing:1px;margin-bottom:3px}
+        .task-block h4{font-size:12px;font-weight:700;color:var(--white);margin-bottom:6px}
+        .task-block .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10px}
+        .task-block .detail-label{font-weight:600;color:var(--accent-light);font-size:9px;text-transform:uppercase;letter-spacing:.5px}
+        .task-block .detail-value{color:var(--slate-300)}
+        .check{color:#34d399;font-weight:600}
+        .doc-footer{margin-top:28px;padding-top:10px;border-top:1px solid var(--navy-700);font-size:9px;color:var(--navy-600);display:flex;justify-content:space-between}
+    </style>
+    <style id="pro-override">
+        :root{
+            --navy-950:#f0f0f0;--navy-900:#ffffff;--navy-800:#f5f5f5;
+            --navy-700:#d4d4d4;--navy-600:#888;
+            --slate-400:#666;--slate-300:#333;--white:#1c1c1c;
+            --blue-500:#555;--blue-400:#555;
+            --accent:#555;--accent-light:#555;
+            --amber-500:#888;--amber-400:#aaa;
+            --green-500:#666;--green-400:#888;
+            --cyan-500:#777;--cyan-400:#999;
+            --purple-500:#666;--purple-400:#888;
+            --rose-500:#777;--rose-400:#999;
+            --teal-500:#666;--teal-400:#888;
+            --red-500:#666;--orange-500:#777;--orange-400:#999;
+            --violet-500:#666;--violet-400:#888
+        }
+        body{font-family:'Segoe UI',Arial,sans-serif!important;background:#f0f0f0!important;color:#333!important}
+        .page{background:#fff!important;border:1px solid #d4d4d4;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+        .doc-header{border-bottom:1px solid #d4d4d4!important}
+        .level-badge{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc}
+        .doc-header h1{color:#1c1c1c!important;font-weight:700!important}
+        .doc-header .subtitle{color:#555!important}
+        .doc-header .meta{color:#888!important}
+        h2{color:#1c1c1c!important;border-bottom:1px solid #d4d4d4!important;font-weight:700!important}
+        h3{color:#444!important}
+        h4{color:#333!important}
+        p{color:#444}
+        .nav-bar{gap:6px}
+        .nav-link{background:#f5f5f5!important;border:1px solid #d0d0d0!important;color:#444!important;border-radius:3px!important}
+        .nav-link:hover{border-color:#888!important;color:#1c1c1c!important;background:#ebebeb!important}
+        .nav-link.active{border-color:#888!important;color:#1c1c1c!important;background:#e4e4e4!important;font-weight:600!important}
+        table{border:1px solid #e0e0e0}
+        thead th{background:#f0f0f0!important;color:#333!important;border-bottom:2px solid #d4d4d4!important;font-weight:700!important}
+        tbody td{border-bottom:1px solid #ebebeb!important;color:#444!important}
+        tbody tr:hover td{background:#fafafa}
+        .card,.phase-card,.domain-card,.info-card,.process-card,.step-card,.task-card{background:#f8f8f8!important;border:1px solid #d4d4d4!important}
+        .card h4{color:#333!important;text-transform:none!important}
+        .phase-card .phase-num{color:#666!important}
+        .phase-card h4{color:#1c1c1c!important}
+        .phase-card p{color:#555!important}
+        .phase-card.p1,.phase-card.p2,.phase-card.p3,.phase-card.p4,.phase-card.p5,.phase-card.p6,.phase-card.p7{border-top:2px solid #bbb!important}
+        .domain-card .domain-icon,.d1,.d2,.d3,.d4,.d5,.d6,.d7,.d8{background:#e8e8e8!important;color:#444!important}
+        .domain-card .domain-info h4{color:#1c1c1c!important}
+        .domain-card .domain-info .pa-count{color:#666!important}
+        .domain-card .domain-info .link{color:#444!important}
+        .domain-card:hover{border-color:#888!important}
+        .callout{background:#f5f5f5!important;border-left:3px solid #888!important;color:#444!important}
+        .callout strong{color:#333!important}
+        .doc-footer{border-top:1px solid #e4e4e4!important;color:#aaa!important}
+        .mermaid{background:#fff!important}
+        a{color:#333}
+        a:hover{color:#000}
+        code{background:#efefef!important;color:#333!important;border:1px solid #ddd}
+        li{color:#444}
+        .pa-card,.process-area-card{background:#f8f8f8!important;border-color:#d4d4d4!important}
+        .badge,.tag,.label{background:#e8e8e8!important;color:#555!important;border:1px solid #ccc!important}
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="doc-header">
+        <div class="level-badge">Level 4 — Tasks</div>
+        <h1>Tasks: Monthly Cost Report for Funder</h1>
+        <div class="subtitle">L0 → L1: D1 QS → L2: D1.9 Funder Reporting &amp; Drawdowns → L3: Monthly Cost Report → <strong>L4: Tasks</strong></div>
+        <div class="meta"><span>Task Set: D1.9-SP-001-T</span><span>BPMN Level: 4</span><span>7 Tasks</span><span>Version 2.0</span><span>April 2026</span></div>
+    </div>
+
+    <div class="nav-bar">
+        <a class="nav-link" href="../../../L3_Sub_Processes/D1_QS_Cost_Management/D1.9_Funder_Reporting_Drawdowns/SP_Monthly_Cost_Report.html"><span class="arrow">↑</span> L3 Monthly Cost Report</a>
+        <span class="nav-link active"><span class="arrow">●</span> L4 Tasks</span>
+    </div>
+
+    <h2>1. Task Overview</h2>
+    <p>This task set expands the Monthly Cost Report for Funder sub-process into granular work instructions. Each task covers a critical step in the monthly funder reporting cycle: gathering financial data from project registers, populating the funder's prescribed template (sections A–H), reconciling budget vs actual vs drawdown utilisation, preparing variance explanations, compiling risk and programme updates, conducting internal QA review, and submitting the report to the funder or DFI by the contractual deadline. Funder reports must reconcile to R0 variance against the latest payment certificate and project financial model.</p>
+
+    <h2>2. Detailed Task Breakdown</h2>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.9.1-01</div>
+        <h4>Gather Data from Latest Payment Certificate, PFC &amp; Registers</h4>
+        <p>Collect all source data required for the monthly funder report: the latest payment certificate (D1.5), projected final cost (D1.7), variation register (D1.6), contingency status (D1.7-SP-002), drawdown register, and programme status from the PM. This is the data assembly task that feeds all report sections.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">Day 1–2 after month-end cutoff</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Payment certificate (D1.5); PFC (D1.7-SP-001); VO register (D1.6); contingency register; drawdown register; PM programme report</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Data pack for funder report; checklist of source documents gathered; data gap list (if any)</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Source document checklist; platform data extract; project financial model</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">Funder loan agreement (reporting obligations); contractual month-end cutoff date</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: On the contractual month-end cutoff date, request/obtain the following: latest payment certificate, PFC update, VO register extract, contingency status, drawdown register, and PM programme update</li>
+            <li>Verify that the payment certificate period aligns with the reporting month — if there is a timing mismatch, use the most recent certified values and note the cutoff date discrepancy</li>
+            <li>Extract key figures: cumulative expenditure to date (from payment certs), PFC per cost category, total approved VOs, pending VOs, contingency utilised and remaining</li>
+            <li>Obtain the drawdown register: total facility amount, cumulative drawn, available balance, and forecast next drawdown</li>
+            <li>Request programme status from the PM: key milestones achieved this month, projected completion date, and any delays</li>
+            <li>Complete the data gathering checklist — flag any missing items and follow up immediately</li>
+            <li class="check">✓ Quality Check: All source documents gathered; figures cross-referenced for internal consistency; data gaps identified and escalated; data pack ready</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.9.1-02</div>
+        <h4>Populate Funder Reporting Template (Sections A–H)</h4>
+        <p>Transfer the gathered data into the funder's prescribed reporting template. Complete all eight sections: Executive Summary, Budget vs Actual, Projected Final Cost, Drawdown Summary, Variation &amp; Claims, Contingency Status, Programme Status, and Risk Register.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Quantity Surveyor</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">Day 3–4</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Data pack (Task 1.9.1-01); funder's reporting template; previous month's report (for comparison)</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Draft funder cost report (all sections populated); supporting charts and schedules</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Funder template (Excel/PDF); chart generation tools; platform reporting module</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">Funder's prescribed format; DFI reporting standards; accuracy to R0 variance</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Open the funder's prescribed reporting template — use the version specified in the loan agreement (do not alter the template structure)</li>
+            <li>Section A (Executive Summary): Draft key financial headlines — total budget, % spent, % complete, PFC, key flags. Complete this section last after all data is populated</li>
+            <li>Section B (Budget vs Actual): Enter line-by-line budget amounts and actual expenditure to date from the payment certificate data; calculate variances</li>
+            <li>Section C (Projected Final Cost): Enter PFC per cost category with trend arrows (up/down/flat) vs previous month</li>
+            <li>Section D (Drawdown Summary): Enter total facility, drawn to date, available balance, and forecast next drawdown amount and date</li>
+            <li>Section E (Variation &amp; Claims): Enter approved VOs (count and value), pending VOs, and claims status</li>
+            <li>Section F (Contingency): Enter original contingency, utilised to date, committed, and remaining balance</li>
+            <li>Section G (Programme): Enter key milestones from PM report; record any delays with revised completion dates</li>
+            <li>Section H (Risk Register): Enter top 5 cost/time risks with probability, financial exposure (R), and mitigation actions</li>
+            <li class="check">✓ Quality Check: All 8 sections populated; figures match data pack; charts generated; previous month comparison included</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.9.1-03</div>
+        <h4>Reconcile Budget vs Actual vs Drawdown Utilisation</h4>
+        <p>Perform a three-way reconciliation ensuring the budget figures, actual expenditure, and drawdown utilisation all align. Identify and explain any discrepancies — these are critical for funder confidence and continued drawdown approvals.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">Day 4</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Populated report (Task 1.9.1-02); project financial model; drawdown register; bank statements (if available)</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Three-way reconciliation schedule; variance analysis; discrepancy notes</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Reconciliation template; financial model; platform reconciliation module</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">R0 tolerance between report and payment certificates; funder reconciliation requirements</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Prepare a three-way reconciliation: (1) Approved Budget per funder, (2) Actual Expenditure per payment certificates, (3) Drawdown Utilisation per funder register</li>
+            <li>Check that cumulative expenditure in the report = sum of all payment certificates issued to date — must be R0 variance</li>
+            <li>Check that cumulative drawdown = total funds received from funder — reconcile against bank receipts</li>
+            <li>Calculate the "expenditure vs drawdown" reconciliation: expenditure to date should not exceed total drawn (flag if it does — indicates funding gap)</li>
+            <li>Identify any timing differences (e.g., payment certificate issued but drawdown not yet received) and note them as reconciling items</li>
+            <li>Ensure the remaining facility balance is sufficient to cover projected expenditure to completion — flag any projected funding shortfall</li>
+            <li class="check">✓ Quality Check: Three-way reconciliation balances to R0; all discrepancies explained; no unexplained funding gaps; projected facility sufficiency confirmed</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.9.1-04</div>
+        <h4>Prepare Variance Explanations for Outlier Items</h4>
+        <p>For all cost categories where the actual expenditure or PFC varies significantly from budget (typically &gt;5% or &gt;R100,000), prepare clear, concise variance explanation narratives for the funder. Funders require written explanations for material variances.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">Day 5</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Reconciliation (Task 1.9.1-03); budget vs actual analysis; VO register; contingency utilisation log</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Variance explanation notes per outlier category; supporting references; recommended actions</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Variance explanation template; cost report narrative section; platform analytics</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">Funder's materiality threshold (typically 5% or R100k); professional narrative standards</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Identify all cost categories with variance &gt;5% or &gt;R100,000 (whichever is lower per funder requirements) between budget and actual or PFC</li>
+            <li>For each outlier: prepare a structured variance note with: (a) category/item description, (b) budget amount, (c) actual/PFC amount, (d) variance R and %, (e) root cause explanation, (f) corrective action (if required)</li>
+            <li>Common root causes to investigate: VO approvals, re-measurement adjustments, PS/PC adjustments, CPA, programme delays, material price escalation</li>
+            <li>Where the PFC exceeds budget: clearly state whether the overrun is funded (from contingency) or unfunded (risk to funder)</li>
+            <li>Keep narratives concise — funders review many projects; 2–3 sentences per variance is sufficient</li>
+            <li>Cross-reference variance notes to the relevant report section (e.g., "See Section E — VO #12 for R450,000 addition")</li>
+            <li class="check">✓ Quality Check: All material variances explained; root causes identified; corrective actions stated; narratives concise and cross-referenced</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.9.1-05</div>
+        <h4>Compile Risk Register &amp; Programme Update</h4>
+        <p>Update the funder risk register with the top 5 cost and time risks facing the project. Incorporate the PM's programme status update including key milestones, delays, and the projected completion date. Funders use this section to assess project delivery risk.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS + PM</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">Day 5</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Project risk register; PM programme report; previous month's risk assessment; VO and claims pipeline</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Top 5 risk register (with financial exposure R); programme milestone tracker; projected completion date</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Risk register template; programme bar chart / S-curve; platform risk module</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">Funder risk reporting requirements; SACQSP risk management guidelines</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Review the project risk register and select the top 5 risks by financial exposure (probability × impact in R)</li>
+            <li>For each risk: state the risk description, probability (High/Medium/Low), financial exposure (R), mitigation action, and status update since last month</li>
+            <li>Typical funder-critical risks: programme delays, contractor capacity, material supply, pending VOs, claims, contingency depletion</li>
+            <li>From the PM's programme report: extract key milestones achieved this month and upcoming milestones for next month</li>
+            <li>State the current projected completion date and compare against the contractual completion date — explain any slippage</li>
+            <li>For housing projects: include the unit completion status — number of units at each construction milestone vs programme target</li>
+            <li class="check">✓ Quality Check: Top 5 risks updated with current financial exposure; programme status current; completion date projection provided; housing unit count (if applicable)</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.9.1-06</div>
+        <h4>Internal QA Review &amp; Senior QS Sign-off</h4>
+        <p>Subject the draft funder report to an internal quality assurance review by a senior QS or practice director. The reviewer checks arithmetic accuracy, narrative quality, completeness of sections, and consistency with previous reports. This is a mandatory quality gate before funder submission.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">Senior QS / Practice Director</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">Day 6–7</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">Draft funder report (all sections); reconciliation schedule; variance notes; previous month's report</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">QA-reviewed report; Senior QS sign-off; review comments log (if revisions needed)</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">QA review checklist; report comparison tool; platform QA workflow</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">SACQSP quality management standards; practice QA procedures; professional indemnity requirements</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: The Senior QS reviews the complete draft report against the QA checklist covering: arithmetic accuracy (spot-check 5 line items), narrative coherence, section completeness, and funder template compliance</li>
+            <li>Compare key figures against the previous month's report — verify that movements are logical and explained</li>
+            <li>Check that the Executive Summary (Section A) accurately reflects the detail in Sections B–H — no contradictions</li>
+            <li>Verify the reconciliation (Task 1.9.1-03) is balanced and all discrepancies are explained</li>
+            <li>Check variance notes for professional tone, accuracy, and completeness — funders treat these as formal QS representations</li>
+            <li>If revisions are needed: return to QS with review comments; QS revises and re-submits for final sign-off</li>
+            <li>Senior QS signs the report — this sign-off activates professional liability coverage for the report's contents</li>
+            <li class="check">✓ Quality Check: QA checklist complete; arithmetic verified; narrative reviewed; Senior QS signed; report ready for submission</li>
+        </ul>
+    </div>
+
+    <div class="task-block">
+        <div class="task-id">TASK 1.9.1-07</div>
+        <h4>Submit Report to Funder &amp; File Submission Record</h4>
+        <p>Submit the approved funder report by the contractual deadline via the funder's prescribed channel (portal upload, email, or hard copy). Log the submission date, method, and recipient for the project record. Follow up to confirm receipt.</p>
+        <div class="detail-grid">
+            <div><div class="detail-label">Role</div><div class="detail-value">QS / PM</div></div>
+            <div><div class="detail-label">SLA</div><div class="detail-value">Day 7–10 (per contractual deadline)</div></div>
+            <div><div class="detail-label">Inputs</div><div class="detail-value">QA-approved report (Task 1.9.1-06); funder submission requirements; funder portal credentials</div></div>
+            <div><div class="detail-label">Outputs</div><div class="detail-value">Submitted report; submission receipt/confirmation; filing record; funder feedback log</div></div>
+            <div><div class="detail-label">Tools</div><div class="detail-value">Funder portal / email; document management system; submission tracker</div></div>
+            <div><div class="detail-label">Standard</div><div class="detail-value">Funder loan agreement (submission deadline and method); professional correspondence standards</div></div>
+        </div>
+        <ul>
+            <li>Work Instruction: Submit the signed report via the funder's prescribed channel — ensure the submission method complies with the loan agreement requirements</li>
+            <li>If portal submission: upload the report and all supporting schedules; download the upload confirmation receipt</li>
+            <li>If email submission: send to the designated funder representative with the report attached; request a read receipt</li>
+            <li>Log the submission: date, time, method, recipient name, and confirmation reference number in the project submission tracker</li>
+            <li>File a copy of the submitted report (with sign-off) in the project document management system under the reporting month</li>
+            <li>If the funder raises queries: log them in the funder feedback register and respond within the prescribed response time (typically 5 business days)</li>
+            <li class="check">✓ Quality Check: Report submitted by deadline; receipt confirmed; filed in DMS; submission tracker updated; ready for funder queries</li>
+        </ul>
+    </div>
+
+    <h2>3. Task Summary</h2>
+    <table>
+        <thead><tr><th>Task ID</th><th>Task Name</th><th>Role</th><th>SLA</th><th>Output</th></tr></thead>
+        <tbody>
+            <tr><td>1.9.1-01</td><td>Gather Data from Payment Certs, PFC &amp; Registers</td><td>QS</td><td>Day 1–2</td><td>Data pack for report</td></tr>
+            <tr><td>1.9.1-02</td><td>Populate Funder Template (Sections A–H)</td><td>QS</td><td>Day 3–4</td><td>Draft cost report</td></tr>
+            <tr><td>1.9.1-03</td><td>Reconcile Budget vs Actual vs Drawdown</td><td>QS</td><td>Day 4</td><td>Three-way reconciliation</td></tr>
+            <tr><td>1.9.1-04</td><td>Prepare Variance Explanations</td><td>QS</td><td>Day 5</td><td>Variance notes per outlier</td></tr>
+            <tr><td>1.9.1-05</td><td>Risk Register &amp; Programme Update</td><td>QS + PM</td><td>Day 5</td><td>Top 5 risks + programme status</td></tr>
+            <tr><td>1.9.1-06</td><td>Internal QA Review &amp; Senior QS Sign-off</td><td>Senior QS</td><td>Day 6–7</td><td>QA-approved report</td></tr>
+            <tr><td>1.9.1-07</td><td>Submit to Funder &amp; File Record</td><td>QS / PM</td><td>Day 7–10</td><td>Submitted report + receipt</td></tr>
+        </tbody>
+    </table>
+
+    <div class="doc-footer"><span>L4 Tasks — D1.9-SP-001 Monthly Cost Report v2.0</span><span>Confidential — Swift Designz</span></div>
+</div>
+    <script src="../../../nav.js"></script>
+</body>
+</html>
